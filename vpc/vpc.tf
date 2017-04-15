@@ -2,6 +2,13 @@ provider "aws" {
   region     = "eu-west-1"
 }
 
+resource "aws_vpc" "poc" {
+	cidr_block = "10.0.0.0/28"
+	instance_tenancy = ""
+	enable_dns_support = ""
+	enable_dns_hostnames = ""
+}
+
 resource "aws_security_group" "helloworld" {
   name        = "helloworld"
   
