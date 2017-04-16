@@ -58,6 +58,34 @@ resource "aws_subnet" "default" {
   }
 }
 
+resource "aws_network_acl" "default" {
+  vpc_id = "${data.aws_vpc.selected.id}"
+
+  egress {
+    protocol = "-1"
+    rule_no = "100"
+    action = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port = "0"
+    to_port = "0"
+  }
+    		
+  ingress {
+    protocol = "-1"
+    rule_no = "100"
+    action = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port = "0"
+    to_port = "0"
+  }
+
+  tags {
+    Name = "${var.nameTag}"
+	Ecosystem = "${var.ecosystem}"
+	Environment = "${var.environment}"
+  }
+}
+
 resource "aws_security_group" "helloworld" {
   name        = "helloworld"
   
