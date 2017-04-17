@@ -1,4 +1,4 @@
-resource "aws_instance" "weblayer" {
+resource "aws_instance" "weblayer1" {
 	ami = "ami-95f8d2f3"
 	availability_zone = "${var.availability_zone}"
 	tenancy = "default",

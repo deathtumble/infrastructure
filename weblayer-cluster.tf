@@ -19,11 +19,11 @@ resource "aws_ecs_task_definition" "weblayer" {
 		    "name": "web_layer",
 		    "cpu": 0,
 		    "essential": true,
-		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/helloworld-http:latest",
+		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/greeting:0.0.1-SNAPSHOT",
 		    "memory": 128,
 		    "portMappings": [
 		    	{
-		    		"containerPort": 80,
+		    		"containerPort": 8080,
 		    		"hostPort": 80
 		    	}
 		    ]
