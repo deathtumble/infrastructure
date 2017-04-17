@@ -20,6 +20,10 @@ variable "environment" {
 
 variable "nameTag" {
 	type = "string"
-	default = "poc.poc"
+	default = "poc-poc"
 }
 
+variable "admin_cidr" {
+	type = "string"
+	default = "81.174.166.51/32"
+}

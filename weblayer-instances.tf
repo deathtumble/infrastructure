@@ -1,4 +1,4 @@
-resource "aws_instance" "helloworld" {
+resource "aws_instance" "weblayer" {
 	ami = "ami-95f8d2f3"
 	availability_zone = "${var.availability_zone}"
 	tenancy = "default",
@@ -7,19 +7,19 @@ resource "aws_instance" "helloworld" {
     instance_type= "t2.micro"
     key_name = "poc"
     monitoring = "false",
-    vpc_security_group_ids = ["${aws_security_group.helloworld.id}"]
-    subnet_id = "${data.aws_subnet.selected.id}",
+    vpc_security_group_ids = ["${aws_security_group.weblayer.id}"]
+    subnet_id = "${data.aws_subnet.weblayer.id}",
     associate_public_ip_address = "true"
 	source_dest_check = "true",
 	iam_instance_profile = "ecsinstancerole",
 	ipv6_address_count = "0",
 	user_data = <<EOF
 #!/bin/bash
-echo ECS_CLUSTER=helloworld > /etc/ecs/ecs.config
+echo ECS_CLUSTER=weblayer > /etc/ecs/ecs.config
 EOF
 
   tags {
-    Name = "helloworld2"
+    Name = "weblayer-${var.nameTag}"
 	Ecosystem = "${var.ecosystem}"
 	Environment = "${var.environment}"
   }
