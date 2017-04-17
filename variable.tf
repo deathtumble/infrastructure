@@ -1,6 +1,11 @@
-variable "subnet_id" {
+variable "region" {
   type = "string"
-  default = "subnet-42abac34"
+  default = "eu-west-1"
+}
+
+variable "availability_zone" {
+  type = "string"
+  default = "eu-west-1c"
 }
 
 variable "ecosystem" {

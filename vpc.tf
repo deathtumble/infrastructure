@@ -1,5 +1,5 @@
 provider "aws" {
-  region     = "eu-west-1"
+  region     = "${var.region}"
 }
 
 data "aws_vpc" "selected" {
@@ -50,6 +50,7 @@ resource "aws_vpc" "default" {
 resource "aws_subnet" "default" {
   vpc_id     = "${data.aws_vpc.selected.id}"
   cidr_block = "10.0.0.0/28"
+  availability_zone = "${var.availability_zone}"
 
   tags {
     Name = "${var.nameTag}"
