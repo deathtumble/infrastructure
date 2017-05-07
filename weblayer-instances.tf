@@ -4,7 +4,7 @@ resource "aws_instance" "weblayer1" {
 	tenancy = "default",
 	ebs_optimized = "false",
 	disable_api_termination = "false",
-    instance_type= "t2.micro"
+    instance_type= "t2.small"
     key_name = "poc"
     monitoring = "false",
     vpc_security_group_ids = ["${aws_security_group.weblayer.id}"]

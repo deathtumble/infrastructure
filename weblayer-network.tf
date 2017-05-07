@@ -26,7 +26,7 @@ resource "aws_route_table" "weblayer" {
     Name = "weblayer-${var.nameTag}"
 	Ecosystem = "${var.ecosystem}"
 	Environment = "${var.environment}"
-	Layer = "web_layer"
+	Layer = "weblayer"
   }
 }
 
@@ -43,14 +43,21 @@ resource "aws_route_table_association" "default" {
 
 
 resource "aws_security_group" "weblayer" {
-  name        = "helloworld"
+  name        = "weblayer"
   
-  description = "helloworld Security Group"
+  description = "weblayer security group"
   vpc_id = "${data.aws_vpc.selected.id}"
 
   ingress {
     from_port   = 8081
     to_port     = 8081
+    protocol    = "tcp"
+    cidr_blocks = ["${var.admin_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8181
+    to_port     = 8181
     protocol    = "tcp"
     cidr_blocks = ["${var.admin_cidr}"]
   }
@@ -79,18 +86,20 @@ resource "aws_security_group" "weblayer" {
     Name = "weblayer-${var.nameTag}"
 	Ecosystem = "${var.ecosystem}"
 	Environment = "${var.environment}"
+	Layer = "weblayer"
   }
 }
 
 resource "aws_subnet" "weblayer" {
   vpc_id     = "${data.aws_vpc.selected.id}"
-  cidr_block = "10.0.0.0/28"
+  cidr_block = "10.0.0.0/27"
   availability_zone = "${var.availability_zone}"
 
   tags {
     Name = "weblayer-${var.nameTag}"
 	Ecosystem = "${var.ecosystem}"
 	Environment = "${var.environment}"
+	Layer = "weblayer"
   }
 }
 
