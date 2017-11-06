@@ -113,12 +113,12 @@ resource "aws_ecs_task_definition" "zookeeper" {
 		    ],
 		    "environment": [
 		    	{
-		    		"name": "ZOOKEEPER_SERVER_2",
-		    		"value": "10.0.0.69"
-		    	},
-		    	{
 		    		"name": "ZOOKEEPER_SERVER_1",
 		    		"value": "10.0.0.68"
+		    	},
+		    	{
+		    		"name": "ZOOKEEPER_SERVER_2",
+		    		"value": "10.0.0.69"
 		    	},
 		    	{
 		    		"name": "ZOOKEEPER_SERVER_3",
