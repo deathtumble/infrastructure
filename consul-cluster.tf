@@ -112,7 +112,7 @@ resource "aws_ecs_task_definition" "consul-server" {
 		    "cpu": 0,
 		    "essential": true,
 		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/consul:0.1.0",
-		    "memory": 1024,
+		    "memory": 500,
 		    "environment": [
 		    	{
 		    		"Name": "CONSUL_LOCAL_CONFIG",

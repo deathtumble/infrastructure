@@ -76,6 +76,27 @@ resource "aws_security_group" "weblayer" {
     cidr_blocks = ["${var.admin_cidr}"]
   }
 
+  ingress {
+    from_port   = 8300
+    to_port     = 8300
+    protocol    = "tcp"
+    cidr_blocks = ["${var.consul_cidr}","${var.admin_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8301
+    to_port     = 8301
+    protocol    = "tcp"
+    cidr_blocks = ["${var.consul_cidr}","${var.admin_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8301
+    to_port     = 8301
+    protocol    = "udp"
+    cidr_blocks = ["${var.consul_cidr}","${var.admin_cidr}"]
+  }
+
   egress {
     from_port       = 0
     to_port         = 0

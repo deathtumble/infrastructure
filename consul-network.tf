@@ -21,7 +21,7 @@ data "aws_security_group" "consul" {
 
 variable "consul_cidr" {
 	type = "string"
-	default = "10.0.0.64/27"
+	default = "10.0.0.0/16"
 }
 
 variable "consul_server_instance_ips" {
@@ -136,7 +136,7 @@ resource "aws_security_group" "consul" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["${var.consul_cidr}"]
+    cidr_blocks = ["${var.consul_cidr}","${var.admin_cidr}"]
   }
 
   egress {
