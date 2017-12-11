@@ -1,0 +1,22 @@
+#!/bin/bash
+
+apply() {
+	terraform apply -auto-approve -target=aws_instance.graphite
+	terraform apply -auto-approve -target=aws_ecs_service.graphite
+}
+
+destroy() {
+	terraform destroy -force -target=aws_ecs_service.graphite
+	terraform destroy -force -target=aws_instance.graphite
+}
+
+case "$1" in
+  destroy)
+    destroy
+    ;;
+  apply)
+    apply
+    ;;
+  *)
+    echo "Usage: $0 {apply|destroy}"
+esac

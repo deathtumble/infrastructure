@@ -1,0 +1,30 @@
+#!/bin/bash
+
+apply() {
+	terraform apply -auto-approve -target=aws_vpc.default
+	terraform apply -auto-approve -target=aws_internet_gateway.default
+	terraform apply -auto-approve -target=aws_network_acl.default
+	terraform apply -auto-approve -target=aws_route_table.main
+	terraform apply -auto-approve -target=aws_main_route_table_association.default
+	
+	terraform apply -auto-approve -target=aws_lb_cookie_stickiness_policy.consului
+}
+
+destroy() {
+	terraform destroy -force -target=aws_main_route_table_association.default
+	terraform destroy -force -target=aws_route_table.main
+	terraform destroy -force -target=aws_network_acl.default
+	terraform destroy -force -target=aws_internet_gateway.default
+	terraform destroy -force -target=aws_vpc.default
+}
+
+case "$1" in
+  destroy)
+    destroy
+    ;;
+  apply)
+    apply
+    ;;
+  *)
+    echo "Usage: $0 {apply|destroy}"
+esac
