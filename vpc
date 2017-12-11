@@ -11,6 +11,8 @@ apply() {
 }
 
 destroy() {
+	terraform destroy -force -target=aws_lb_cookie_stickiness_policy.consului
+
 	terraform destroy -force -target=aws_main_route_table_association.default
 	terraform destroy -force -target=aws_route_table.main
 	terraform destroy -force -target=aws_network_acl.default
