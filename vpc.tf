@@ -2,13 +2,6 @@ provider "aws" {
   region     = "${var.region}"
 }
 
-data "aws_vpc" "selected" {
- filter {
-    name   = "tag:Name"
-    values = ["${var.nameTag}"]
-  }
-}
-
 resource "aws_vpc" "default" {
 	cidr_block = "10.0.0.0/16"
 	instance_tenancy = "default"
@@ -24,17 +17,19 @@ resource "aws_vpc" "default" {
 }
 
 resource "aws_internet_gateway" "default" {
-  vpc_id = "${data.aws_vpc.selected.id}"
+  vpc_id = "${aws_vpc.default.id}"
 
   tags {
     Name = "${var.nameTag}"
 	Ecosystem = "${var.ecosystem}"
 	Environment = "${var.environment}"
   }
+  
+  depends_on = ["aws_vpc.default"]
 }
 
 resource "aws_network_acl" "default" {
-  vpc_id = "${data.aws_vpc.selected.id}"
+  vpc_id = "${aws_vpc.default.id}"
 
   egress {
     protocol = "-1"
@@ -59,10 +54,12 @@ resource "aws_network_acl" "default" {
 	Ecosystem = "${var.ecosystem}"
 	Environment = "${var.environment}"
   }
+
+  depends_on = ["aws_vpc.default"]
 }
 
 resource "aws_route_table" "main" {
-  vpc_id = "${data.aws_vpc.selected.id}"
+  vpc_id = "${aws_vpc.default.id}"
 
   tags {
     Name = "main-${var.nameTag}"
@@ -75,9 +72,21 @@ resource "aws_route_table" "main" {
 	Ecosystem = "${var.ecosystem}"
 	Environment = "${var.environment}"
   }
+
+  depends_on = ["aws_vpc.default"]
 }
 
 resource "aws_main_route_table_association" "default" {
-  vpc_id         = "${data.aws_vpc.selected.id}"
+  vpc_id         = "${aws_vpc.default.id}"
   route_table_id = "${aws_route_table.main.id}"
+  depends_on = ["aws_vpc.default", "aws_route_table.main"]
+}
+
+resource "aws_route53_zone" "poc" {
+  name = "poc.urbanfortress.co.uk"
+}
+
+resource "aws_route53_zone" "poc-poc" {
+  name = "poc.poc.urbanfortress.co.uk"
+    depends_on = ["aws_route53_zone.poc"]
 }

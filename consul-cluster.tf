@@ -6,6 +6,7 @@ resource "aws_ecs_service" "consul-leader" {
   name            = "consul-leader"
   cluster         = "consul-leader"
   task_definition = "consul-leader:${aws_ecs_task_definition.consul-leader.revision}"
+  depends_on = ["aws_ecs_cluster.consul-leader", "aws_ecs_task_definition.consul-leader"]
   desired_count   = 1
 }
 
@@ -16,10 +17,31 @@ resource "aws_ecs_task_definition" "consul-leader" {
   container_definitions = <<DEFINITION
 	[
 		{
+			"name": "collectd",
+			"cpu": 0,
+		    "essential": true,
+		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/collectd-write-graphite:0.1.1",
+		    "memory": 500,
+		    "environment": [
+		    	{
+		    		"Name": "HOST_NAME",
+		    		"Value": "consul-leader"
+		    	},
+		    	{
+		    		"Name": "GRAPHITE_HOST",
+		    		"Value": "10.0.0.80"
+		    	}, 
+		    	{
+		    		"Name": "GRAPHITE_PREFIX",
+		    		"Value": "${var.ecosystem}.${var.environment}.consul."
+		    	}
+		    ]
+		},
+		{
 		    "name": "consul-leader",
 		    "cpu": 0,
 		    "essential": true,
-		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/consul:0.1.0",
+		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/consul:0.1.1",
 		    "memory": 500,
 		    "environment": [
 		    	{
@@ -98,6 +120,7 @@ resource "aws_ecs_service" "consul-server" {
   name            = "consul-server"
   cluster         = "consul-server"
   task_definition = "consul-server:${aws_ecs_task_definition.consul-server.revision}"
+  depends_on = ["aws_ecs_cluster.consul-server", "aws_ecs_task_definition.consul-server"]
   desired_count   = 2
 }
 
@@ -107,6 +130,23 @@ resource "aws_ecs_task_definition" "consul-server" {
   
   container_definitions = <<DEFINITION
 	[
+		{
+			"name": "collectd",
+			"cpu": 0,
+		    "essential": true,
+		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/collectd-write-graphite:0.1.1",
+		    "memory": 500,
+		    "environment": [
+		    	{
+		    		"Name": "GRAPHITE_HOST",
+		    		"Value": "10.0.0.80"
+		    	}, 
+		    	{
+		    		"Name": "GRAPHITE_PREFIX",
+		    		"Value": "${var.ecosystem}.${var.environment}.consul."
+		    	}
+		    ]
+		},
 		{
 		    "name": "consul-server",
 		    "cpu": 0,
