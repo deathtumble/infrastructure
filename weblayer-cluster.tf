@@ -1,12 +1,19 @@
+variable "weblayer_count" {
+	type = "string"
+	default = "1"
+}
+
 resource "aws_ecs_cluster" "weblayer" {
-  name = "weblayer"
+  name            = "weblayer"
+  depends_on      = ["aws_instance.weblayer"]
 }
 
 resource "aws_ecs_service" "weblayer" {
   name            = "weblayer"
   cluster         = "weblayer"
   task_definition = "weblayer:${aws_ecs_task_definition.weblayer.revision}"
-  desired_count   = 1
+  desired_count   = "${var.weblayer_count}"
+  depends_on      = ["aws_ecs_task_definition.weblayer", "aws_ecs_cluster.weblayer"]
 }
 
 resource "aws_ecs_task_definition" "weblayer" {
@@ -19,8 +26,35 @@ resource "aws_ecs_task_definition" "weblayer" {
 		    "name": "web_layer",
 		    "cpu": 0,
 		    "essential": true,
-		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/greeting:latest",
+		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/greeting:0.1.0",
 		    "memory": 500,
+		    "portMappings": [
+		    	{
+		    		"containerPort": 80,
+		    		"hostPort": 80
+		    	}
+		    ]
+		},
+		{
+		    "name": "web_layer",
+		    "cpu": 0,
+		    "essential": true,
+		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/collectd-write-graphite:0.1.0",
+		    "memory": 500,
+		    "environment": [
+		    	{
+		    		"Name": "HOST_NAME=desktop",
+		    		"Value": "{\"leave_on_terminate\": true}"
+		    	},
+		    	{
+		    		"Name": "GRAPHITE_HOST=172.17.0.2",
+		    		"Value": "eth0"
+		    	}, 
+		    	{
+		    		"Name": "GRAPHITE_PREFIX=test.desktop.",
+		    		"Value": "eth0"
+		    	}
+		    ],
 		    "portMappings": [
 		    	{
 		    		"containerPort": 80,
