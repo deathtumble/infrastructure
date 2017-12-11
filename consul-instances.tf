@@ -1,3 +1,11 @@
+variable "consul_server_instance_names" {
+  default = {
+    "0" = "1"
+    "1" = "2"
+    "2" = "3"
+  }
+}
+
 resource "aws_instance" "consul-leader" {
 	count = "1"
 	ami = "ami-95f8d2f3"
