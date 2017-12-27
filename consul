@@ -1,6 +1,8 @@
 #!/bin/bash
 
 apply() {
+	terraform apply -auto-approve -target=aws_route53_record.consul
+
 	terraform apply -auto-approve -target=aws_security_group.consul
 
 	terraform apply -auto-approve -target=aws_route.consul
@@ -26,6 +28,8 @@ destroy() {
 
 	terraform destroy -force -target=aws_route_table_association.consul
 	terraform destroy -force -target=aws_route.consul
+
+	terraform destroy -force -target=aws_route53_record.consul
 }
 
 case "$1" in

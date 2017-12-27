@@ -29,7 +29,7 @@ resource "aws_ecs_task_definition" "consul-leader" {
 		    	},
 		    	{
 		    		"Name": "GRAPHITE_HOST",
-		    		"Value": "10.0.0.80"
+		    		"Value": "10.0.0.36"
 		    	}, 
 		    	{
 		    		"Name": "GRAPHITE_PREFIX",
@@ -41,7 +41,7 @@ resource "aws_ecs_task_definition" "consul-leader" {
 		    "name": "consul-leader",
 		    "cpu": 0,
 		    "essential": true,
-		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/consul:0.1.1",
+		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/consul:0.1.0",
 		    "memory": 500,
 		    "environment": [
 		    	{
@@ -139,7 +139,7 @@ resource "aws_ecs_task_definition" "consul-server" {
 		    "environment": [
 		    	{
 		    		"Name": "GRAPHITE_HOST",
-		    		"Value": "10.0.0.80"
+		    		"Value": "10.0.0.36"
 		    	}, 
 		    	{
 		    		"Name": "GRAPHITE_PREFIX",

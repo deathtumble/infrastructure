@@ -1,13 +1,23 @@
 #!/bin/bash
 
 apply() {
+	terraform apply -auto-approve -target=aws_security_group.monitoring
+
 	terraform apply -auto-approve -target=aws_instance.graphite
 	terraform apply -auto-approve -target=aws_ecs_service.graphite
+
+	terraform apply -auto-approve -target=aws_route.monitoring
+	terraform apply -auto-approve -target=aws_route_table_association.monitoring
 }
 
 destroy() {
+	terraform destroy -force -target=aws_route_table_association.monitoring
+	terraform destroy -force -target=aws_route.monitoring
+
 	terraform destroy -force -target=aws_ecs_service.graphite
 	terraform destroy -force -target=aws_instance.graphite
+
+	terraform destroy -force -target=aws_security_group.monitoring
 }
 
 case "$1" in

@@ -1,9 +1,9 @@
 provider "aws" {
-  region     = "${var.region}"
+  region = "${var.region}"
 }
 
 resource "aws_vpc" "default" {
-	cidr_block = "10.0.0.0/16"
+	cidr_block = "${var.ecosystem_cidr}"
 	instance_tenancy = "default"
 	enable_dns_support = true
 	enable_dns_hostnames = true
@@ -82,11 +82,21 @@ resource "aws_main_route_table_association" "default" {
   depends_on = ["aws_vpc.default", "aws_route_table.main"]
 }
 
-resource "aws_route53_zone" "poc" {
-  name = "poc.urbanfortress.co.uk"
+resource "aws_route53_zone" "root" {
+  name = "${var.root_domain_name}"
 }
 
-resource "aws_route53_zone" "poc-poc" {
-  name = "poc.poc.urbanfortress.co.uk"
-    depends_on = ["aws_route53_zone.poc"]
+resource "aws_route53_zone" "grafana" {
+  name = "graphite.${var.root_domain_name}"
 }
+
+resource "aws_route53_zone" "environment" {
+  name = "${var.environment}.${var.root_domain_name}"
+}
+
+data "aws_route53_zone" "environment" {
+  name         = "${var.environment}.${var.root_domain_name}"
+}
+
+
+

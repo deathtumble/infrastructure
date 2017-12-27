@@ -1,24 +1,29 @@
 resource "aws_instance" "graphite" {
 	count = "1"
-	ami = "ami-95f8d2f3"
+	ami = "${var.ecs_ami_id}"
 	availability_zone = "${var.availability_zone}"
 	tenancy = "default",
 	ebs_optimized = "false",
 	disable_api_termination = "false",
     instance_type= "t2.small"
     key_name = "poc"
-    private_ip = "10.0.0.80"
+    private_ip = "10.0.0.36"
     monitoring = "false",
-    vpc_security_group_ids = ["${aws_security_group.consul.id}"]
-    subnet_id = "${aws_subnet.consul.id}",
+    vpc_security_group_ids = [
+    	"${aws_security_group.graphite.id}",
+    	"${aws_security_group.ssh.id}",
+    	"${aws_security_group.consul-client.id}"
+    ],
+    subnet_id = "${aws_subnet.monitoring.id}",
     associate_public_ip_address = "true"
 	source_dest_check = "true",
 	iam_instance_profile = "ecsinstancerole",
 	ipv6_address_count = "0",
-    depends_on      = ["aws_security_group.consul", "aws_subnet.consul"]
+    depends_on      = ["aws_security_group.graphite", "aws_security_group.ssh", "aws_security_group.consul-client", "aws_subnet.consul"]
 	user_data = <<EOF
 #!/bin/bash
-echo ECS_CLUSTER=graphite > /etc/ecs/ecs.config
+cat <<'EOF' >> /etc/ecs/ecs.config
+ECS_CLUSTER=graphite
 EOF
 
   tags {

@@ -1,5 +1,5 @@
 resource "aws_instance" "weblayer" {
-	ami = "ami-dbfee1bf"
+	ami = "${var.ecs_ami_id}"
 	availability_zone = "${var.availability_zone}"
 	tenancy = "default",
 	ebs_optimized = "false",
@@ -7,7 +7,11 @@ resource "aws_instance" "weblayer" {
     instance_type= "t2.small"
     key_name = "poc"
     monitoring = "false",
-    vpc_security_group_ids = ["${aws_security_group.weblayer.id}"]
+    vpc_security_group_ids = [
+    	"${aws_security_group.weblayer.id}",
+    	"${aws_security_group.ssh.id}",
+    	"${aws_security_group.consul-client.id}"
+    ],
     subnet_id = "${aws_subnet.weblayer.id}",
     associate_public_ip_address = "true"
 	source_dest_check = "true",
@@ -23,6 +27,7 @@ EOF
     Name = "weblayer-${var.nameTag}"
 	Ecosystem = "${var.ecosystem}"
 	Environment = "${var.environment}"
+	ConsulCluster = "${var.nameTag}"
   }
 }
 

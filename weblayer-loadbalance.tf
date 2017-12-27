@@ -48,11 +48,10 @@ resource "aws_elb" "weblayerui" {
   }
 }
 
-resource "aws_route53_record" "weblayer" {
-	zone_id = "${aws_route53_zone.poc-poc.zone_id}"
+resource "aws_route53_record" "www" {
+	zone_id = "${data.aws_route53_zone.environment.zone_id}"
 	name    = "www."
     type    = "A"
-    depends_on = ["aws_route53_zone.poc-poc"]
 
 	alias {
 		 name = "${aws_elb.weblayerui.dns_name}"

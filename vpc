@@ -7,7 +7,7 @@ apply() {
 	terraform apply -auto-approve -target=aws_route_table.main
 	terraform apply -auto-approve -target=aws_main_route_table_association.default
 	
-	terraform apply -auto-approve -target=aws_lb_cookie_stickiness_policy.consului
+	terraform apply -auto-approve -target=aws_main_route_table_association.default
 }
 
 destroy() {

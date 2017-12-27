@@ -1,31 +1,3 @@
-resource "aws_security_group" "consului" {
-  name        = "consului"
-  
-  description = "consului security group"
-  vpc_id = "${aws_vpc.default.id}"
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}"]
-  }
-  
-  egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
-  }
-
-  tags {
-    Name = "consului-${var.nameTag}"
-	Ecosystem = "${var.ecosystem}"
-	Environment = "${var.environment}"
-	Layer = "consul"
-  }
-}
-
 resource "aws_lb_cookie_stickiness_policy" "consului" {
   name                     = "consului"
   load_balancer            = "${aws_elb.consului.id}"
@@ -56,14 +28,14 @@ resource "aws_elb" "consului" {
 }
 
 resource "aws_route53_record" "consul" {
-	zone_id = "${aws_route53_zone.poc-poc.zone_id}"
+	zone_id = "${aws_route53_zone.root.zone_id}"
 	name    = "consul"
     type    = "A"
-    depends_on = ["aws_route53_zone.poc-poc"]
+    depends_on = ["aws_route53_zone.root", "aws_elb.consului"]
 
 	alias {
 		 name = "${aws_elb.consului.dns_name}"
 		 zone_id = "${aws_elb.consului.zone_id}"
-		 evaluate_target_health = "false"
+		 evaluate_target_health = "true"
 	}
 }
