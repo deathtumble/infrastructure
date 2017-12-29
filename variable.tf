@@ -58,6 +58,11 @@ variable "monitoring_subnet" {
 	default = "10.0.0.32/27"
 }
 
+variable "chatops_subnet" {
+	type = "string"
+	default = "10.0.0.64/27"
+}
+
 variable "consul_leader_ip" {
 	type = "string"
 	default = "10.0.0.4"

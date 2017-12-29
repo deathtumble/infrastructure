@@ -1,0 +1,34 @@
+#!/bin/bash
+
+set -e
+
+apply() {
+	terraform apply -auto-approve -target=aws_security_group.chatops
+
+	terraform apply -auto-approve -target=aws_instance.chatops
+	terraform apply -auto-approve -target=aws_ecs_service.chatops
+
+	terraform apply -auto-approve -target=aws_route.chatops
+	terraform apply -auto-approve -target=aws_route_table_association.chatops
+}
+
+destroy() {
+	terraform destroy -force -target=aws_route_table_association.chatops
+	terraform destroy -force -target=aws_route.chatops
+
+	terraform destroy -force -target=aws_ecs_service.chatops
+	terraform destroy -force -target=aws_instance.chatops
+
+	terraform destroy -force -target=aws_security_group.chatops
+}
+
+case "$1" in
+  destroy)
+    destroy
+    ;;
+  apply)
+    apply
+    ;;
+  *)
+    echo "Usage: $0 {apply|destroy}"
+esac
