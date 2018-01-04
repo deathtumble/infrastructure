@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 apply() {
 	terraform apply -auto-approve -target=aws_route53_record.consul
 
