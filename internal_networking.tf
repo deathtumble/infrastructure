@@ -185,6 +185,34 @@ resource "aws_security_group" "consului" {
   }
 }
 
+resource "aws_security_group" "grafana" {
+  name        = "grafana"
+  
+  description = "grafana security group"
+  vpc_id = "${aws_vpc.default.id}"
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["${var.admin_cidr}"]
+  }
+  
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = ["0.0.0.0/0"]
+  }
+
+  tags {
+    Name = "grafana-${var.nameTag}"
+	Ecosystem = "${var.ecosystem}"
+	Environment = "${var.environment}"
+	Layer = "grafana"
+  }
+}
+
 resource "aws_security_group" "ssh" {
   name        = "ssh-${var.nameTag}"
   
