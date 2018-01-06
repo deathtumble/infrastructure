@@ -85,6 +85,22 @@ resource "aws_ecs_task_definition" "chatops" {
 		    		"Value": "${var.higgins_grafana_api_key}"
 		    	},
 		    	{
+		    		"Name": "HUBOT_GRAFANA_S3_BUCKET",
+		    		"Value": "${var.higgin_grafana_s3_bucket}"
+		    	},
+		    	{
+		    		"Name": "HUBOT_GRAFANA_S3_ACCESS_KEY_ID",
+		    		"Value": "${var.higgins_grafana_s3_access_key_id}"
+		    	},
+		    	{
+		    		"Name": "HUBOT_GRAFANA_S3_SECRET_ACCESS_KEY",
+		    		"Value": "${var.higgin_grafana_s3_secret_access_key}"
+		    	},
+		    	{
+		    		"Name": "HUBOT_GRAFANA_S3_PREFIX",
+		    		"Value": "${var.higgin_grafana_s3_prefix}"
+		    	},
+		    	{
 		    		"Name": "HUBOT_SLACK_TOKEN",
 		    		"Value": "${var.hubot_slack_token}"
 		    	}
