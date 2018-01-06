@@ -63,6 +63,11 @@ variable "chatops_subnet" {
 	default = "10.0.0.64/27"
 }
 
+variable "concourse_subnet" {
+	type = "string"
+	default = "10.0.0.96/27"
+}
+
 variable "consul_leader_ip" {
 	type = "string"
 	default = "10.0.0.4"
@@ -86,6 +91,11 @@ variable "consul_server_instance_ips" {
 variable "consul_server_count" {
 	type = "string"
 	default = "2"
+}
+
+variable "concourse_ip" {
+	type = "string"
+	default = "10.0.0.100"
 }
 
 variable "ecs_ami_id" {

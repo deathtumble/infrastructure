@@ -1,0 +1,41 @@
+#!/bin/bash
+
+set -e
+
+apply() {
+	terraform apply -auto-approve -target=aws_security_group.concourse
+
+	terraform apply -auto-approve -target=aws_ebs_volume.concourse
+	terraform apply -auto-approve -target=aws_volume_attachment.concourse
+	terraform apply -auto-approve -target=aws_instance.concourse
+	terraform apply -auto-approve -target=aws_ecs_service.concourse
+
+	terraform apply -auto-approve -target=aws_route.concourse
+	terraform apply -auto-approve -target=aws_route_table_association.concourse
+
+	terraform apply -auto-approve -target=aws_instance.concourse
+	terraform apply -auto-approve -target=aws_ecs_service.concourse
+	terraform apply -auto-approve -target=aws_elb_attachment.concourse
+}
+
+destroy() {
+	terraform destroy -force -target=aws_route_table_association.concourse
+	terraform destroy -force -target=aws_route.concourse
+
+	terraform destroy -force -target=aws_ecs_service.concourse
+	terraform destroy -force -target=aws_instance.concourse
+	terraform destroy -force -target=aws_ebs_volume.concourse
+
+	terraform destroy -force -target=aws_security_group.concourse
+}
+
+case "$1" in
+  destroy)
+    destroy
+    ;;
+  apply)
+    apply
+    ;;
+  *)
+    echo "Usage: $0 {apply|destroy}"
+esac
