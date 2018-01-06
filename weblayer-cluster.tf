@@ -44,7 +44,7 @@ resource "aws_ecs_task_definition" "weblayer" {
 		    "environment": [
 		    	{
 		    		"Name": "HOST_NAME=desktop",
-		    		"Value": "{\"leave_on_terminate\": true}"
+		    		"Value": "{\"skip_leave_on_interrupt\": true, \"telemetry\": {\"metrics_prefix\":\"${var.ecosystem}.${var.environment}.consul.server\", \"statsd_address\":\"10.0.0.36:8125\"}}"
 		    	},
 		    	{
 		    		"Name": "GRAPHITE_HOST=172.17.0.2",

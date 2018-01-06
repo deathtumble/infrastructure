@@ -46,7 +46,7 @@ resource "aws_ecs_task_definition" "consul-leader" {
 		    "environment": [
 		    	{
 		    		"Name": "CONSUL_LOCAL_CONFIG",
-		    		"Value": "{\"skip_leave_on_interrupt\": true}"
+		    		"Value": "{\"skip_leave_on_interrupt\": true, \"telemetry\": {\"metrics_prefix\":\"${var.ecosystem}.${var.environment}.consul.server\", \"statsd_address\":\"10.0.0.36:8125\"}}"
 		    	},
 		    	{
 		    		"Name": "CONSUL_BIND_INTERFACE",
@@ -156,7 +156,7 @@ resource "aws_ecs_task_definition" "consul-server" {
 		    "environment": [
 		    	{
 		    		"Name": "CONSUL_LOCAL_CONFIG",
-		    		"Value": "{\"skip_leave_on_interrupt\": true}"
+		    		"Value": "{\"skip_leave_on_interrupt\": true, \"telemetry\": {\"metrics_prefix\":\"${var.ecosystem}.${var.environment}.consul.server\", \"statsd_address\":\"10.0.0.36:8125\"}}"
 		    	},
 		    	{
 		    		"Name": "CONSUL_BIND_INTERFACE",
