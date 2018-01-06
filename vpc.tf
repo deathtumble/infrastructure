@@ -86,17 +86,6 @@ resource "aws_route53_zone" "root" {
   name = "${var.root_domain_name}"
 }
 
-resource "aws_route53_zone" "grafana" {
-  name = "graphite.${var.root_domain_name}"
-}
-
-resource "aws_route53_zone" "environment" {
-  name = "${var.environment}.${var.root_domain_name}"
-}
-
-data "aws_route53_zone" "environment" {
-  name         = "${var.environment}.${var.root_domain_name}"
-}
 
 
 
