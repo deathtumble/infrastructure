@@ -10,6 +10,7 @@ resource "aws_volume_attachment" "monitoring" {
   device_name = "/dev/sdh"
   volume_id   = "${aws_ebs_volume.monitoring.id}"
   instance_id = "${aws_instance.graphite.id}"
+  skip_destroy = true
   depends_on      = ["aws_ebs_volume.monitoring", "aws_instance.graphite"]
 }
 
@@ -21,7 +22,7 @@ resource "aws_instance" "graphite" {
 	tenancy = "default",
 	ebs_optimized = "false",
 	disable_api_termination = "false",
-    instance_type= "t2.small"
+    instance_type= "t2.medium"
     key_name = "poc"
     private_ip = "10.0.0.36"
     monitoring = "false",
@@ -38,15 +39,15 @@ resource "aws_instance" "graphite" {
     depends_on      = ["aws_security_group.graphite", "aws_security_group.ssh", "aws_security_group.consul-client", "aws_subnet.consul"]
 	user_data = <<EOF
 #!/bin/bash
-mkdir /var/monitoring
-mount /dev/xvdh /var/monitoring
-ln -s /var/monitoring/grafana/ /var/lib/grafana
-ln -s /var/monitoring/grafana_logs/ /var/log/grafana
-ln -s /var/monitoring/graphite/ /opt/graphite
-ln -s /var/monitoring/nginx_config/ /etc/nginx
-ln -s /var/monitoring/statsd_config/ /opt/statsd
-ln -s /var/monitoring/graphite_logrotate_config/ /etc/logrotate.d
-ln -s /var/monitoring/graphite_log_files/ /var/log/graphite
+mkdir /opt/mount1
+mount /dev/xvdh /opt/mount1
+echo /dev/xvdh  /opt/mount1 ext4 defaults,nofail 0 2 >> /etc/fstab
+ln -s /opt/mount1/grafana/ /var/lib/grafana
+ln -s /opt/mount1/grafana_logs/ /var/log/grafana
+ln -s /opt/mount1/graphite/ /opt/graphite
+ln -s /opt/mount1/nginx_config/ /etc/nginx
+ln -s /opt/mount1/statsd_config/ /opt/statsd
+ln -s /opt/mount1/graphite_log_files/ /var/log/graphite
 cat <<'EOF' >> /etc/ecs/ecs.config
 ECS_CLUSTER=graphite
 EOF
