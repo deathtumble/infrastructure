@@ -10,6 +10,7 @@ resource "aws_volume_attachment" "concourse" {
   device_name = "/dev/sdh"
   volume_id   = "${aws_ebs_volume.concourse.id}"
   instance_id = "${aws_instance.concourse.id}"
+  force_detach = false
   depends_on      = ["aws_ebs_volume.concourse", "aws_instance.concourse"]
 }
 
