@@ -20,7 +20,7 @@ resource "aws_instance" "concourse" {
 	tenancy = "default",
 	ebs_optimized = "false",
 	disable_api_termination = "false",
-    instance_type= "t2.small"
+    instance_type= "t2.medium"
     key_name = "poc"
     private_ip = "${var.concourse_ip}"
     monitoring = "false",
@@ -36,7 +36,6 @@ resource "aws_instance" "concourse" {
 	ipv6_address_count = "0",
 	user_data = <<EOF
 #!/bin/bash
-mkfs -t ext4 /dev/xvdh
 mkdir /opt/mount1
 mount /dev/xvdh /opt/mount1
 echo /dev/xvdh  /opt/mount1 ext4 defaults,nofail 0 2 >> /etc/fstab
@@ -86,7 +85,7 @@ resource "aws_ecs_task_definition" "concourse" {
 		{
 			"name": "collectd",
 			"cpu": 0,
-		    "essential": true,
+		    "essential": false,
 		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/collectd-write-graphite:0.1.1",
 		    "memory": 500,
 		    "environment": [
