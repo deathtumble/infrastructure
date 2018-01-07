@@ -68,6 +68,11 @@ variable "concourse_subnet" {
 	default = "10.0.0.96/27"
 }
 
+variable "nexus_subnet" {
+	type = "string"
+	default = "10.0.0.128/28"
+}
+
 variable "consul_leader_ip" {
 	type = "string"
 	default = "10.0.0.4"
@@ -96,6 +101,11 @@ variable "consul_server_count" {
 variable "concourse_ip" {
 	type = "string"
 	default = "10.0.0.100"
+}
+
+variable "nexus_ip" {
+	type = "string"
+	default = "10.0.0.132"
 }
 
 variable "ecs_ami_id" {
