@@ -83,7 +83,7 @@ resource "aws_main_route_table_association" "default" {
 }
 
 resource "aws_route53_zone" "root" {
-  name = "${var.root_domain_name}"
+  name = "${var.root_domain_name}."
 }
 
 

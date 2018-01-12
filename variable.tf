@@ -10,7 +10,7 @@ variable "availability_zone" {
 
 variable "root_domain_name" {
   type = "string"
-  default = "urbanfortress.co.uk"
+  default = "urbanfortress.uk"
 }
 
 variable "ecosystem" {
