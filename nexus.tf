@@ -147,14 +147,10 @@ resource "aws_elb" "nexus" {
 resource "aws_route53_record" "nexus" {
 	zone_id = "${aws_route53_zone.root.zone_id}"
 	name    = "nexus"
-    type    = "A"
+    type    = "CNAME"
+    ttl     = 300
+    records = ["${aws_elb.nexus.dns_name}"]
     depends_on = ["aws_route53_zone.root", "aws_elb.nexus"]
-
-	alias {
-		 name = "${aws_elb.nexus.dns_name}"
-		 zone_id = "${aws_elb.nexus.zone_id}"
-		 evaluate_target_health = "true"
-	}
 }
 
 resource "aws_elb_attachment" "nexus" {

@@ -30,12 +30,8 @@ resource "aws_elb" "consului" {
 resource "aws_route53_record" "consul" {
 	zone_id = "${aws_route53_zone.root.zone_id}"
 	name    = "consul"
-    type    = "A"
+    type    = "CNAME"
+    ttl     = 300
     depends_on = ["aws_route53_zone.root", "aws_elb.consului"]
-
-	alias {
-		 name = "${aws_elb.consului.dns_name}"
-		 zone_id = "${aws_elb.consului.zone_id}"
-		 evaluate_target_health = "true"
-	}
+    records = ["${aws_elb.consului.dns_name}"]
 }

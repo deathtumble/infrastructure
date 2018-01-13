@@ -254,14 +254,10 @@ resource "aws_elb" "concourse" {
 resource "aws_route53_record" "concourse" {
 	zone_id = "${aws_route53_zone.root.zone_id}"
 	name    = "concourse"
-    type    = "A"
+    type    = "CNAME"
+    ttl     = 300
+    records = ["${aws_elb.concourse.zone_id}"]
     depends_on = ["aws_route53_zone.root", "aws_elb.concourse"]
-
-	alias {
-		 name = "${aws_elb.concourse.dns_name}"
-		 zone_id = "${aws_elb.concourse.zone_id}"
-		 evaluate_target_health = "true"
-	}
 }
 
 resource "aws_elb_attachment" "concourse" {
