@@ -48,7 +48,6 @@ EOF
     Name = "concourse-${var.nameTag}"
 	Ecosystem = "${var.ecosystem}"
 	Environment = "${var.environment}"
-	ConsulCluster = "${var.nameTag}"
   }
 }
 

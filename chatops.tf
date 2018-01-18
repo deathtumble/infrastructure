@@ -30,7 +30,6 @@ EOF
     Name = "chatops-${var.nameTag}"
 	Ecosystem = "${var.ecosystem}"
 	Environment = "${var.environment}"
-	ConsulCluster = "${var.nameTag}"
   }
 }
 
