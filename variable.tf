@@ -38,6 +38,11 @@ variable "ecosystem_cidr" {
 	default = "10.0.0.0/16"
 }
 
+variable "dns_ip" {
+    type = "string"
+    default = "10.0.0.2"
+}
+
 variable "environment_cidr" {
 	type = "string"
 	default = "10.0.16.0/20"

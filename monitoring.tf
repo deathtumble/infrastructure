@@ -40,8 +40,8 @@ resource "aws_instance" "graphite" {
 	user_data = <<EOF
 #!/bin/bash
 mkdir /opt/mount1
-mount /dev/xvdh /opt/mount1
 echo /dev/xvdh  /opt/mount1 ext4 defaults,nofail 0 2 >> /etc/fstab
+mount /dev/xvdh /opt/mount1
 ln -s /opt/mount1/grafana/ /var/lib/grafana
 ln -s /opt/mount1/grafana_logs/ /var/log/grafana
 ln -s /opt/mount1/graphite/ /opt/graphite
@@ -135,11 +135,17 @@ resource "aws_ecs_task_definition" "graphite" {
 		    	}, 
 		    	{
 		    		"Name": "CONSUL_CLIENT_INTERFACE",
-		    		"Value": "eth0"
+		    		"Value": "lo"
+                }, 
+                {
+                    "Name": "CONSUL_ALLOW_PRIVILEGED_PORTS",
+                    "Value": ""
 		    	}
 		    ],
 		    "command": [
         		"agent",
+        		"-dns-port=53",
+        		"-recursor=10.0.0.2",
         		"-retry-join",
         		"provider=aws tag_key=ConsulCluster tag_value=${var.nameTag}"
       		],
@@ -187,8 +193,8 @@ resource "aws_ecs_task_definition" "graphite" {
 		          "protocol": "tcp"
 		        },
 		        {
-		          "hostPort": 8600,
-		          "containerPort": 8600,
+		          "hostPort": 53,
+		          "containerPort": 53,
 		          "protocol": "udp"
 		        }
 		    ]

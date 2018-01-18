@@ -54,12 +54,18 @@ resource "aws_ecs_task_definition" "consul-leader" {
 		    	}, 
 		    	{
 		    		"Name": "CONSUL_CLIENT_INTERFACE",
-		    		"Value": "eth0"
+		    		"Value": "lo"
+                }, 
+                {
+                    "Name": "CONSUL_ALLOW_PRIVILEGED_PORTS",
+                    "Value": ""
 		    	}
 		    ],
 		    "command": [
         		"agent",
         		"-server",
+                "-dns-port=53",
+                "-recursor=${var.dns_ip}",
         		"-bootstrap",
         		"-retry-join",
         		"provider=aws tag_key=ConsulCluster tag_value=${var.nameTag}",
@@ -97,13 +103,13 @@ resource "aws_ecs_task_definition" "consul-leader" {
 		          "protocol": "tcp"
 		        },
 		        {
-		          "hostPort": 8600,
-		          "containerPort": 8600,
+		          "hostPort": 53,
+		          "containerPort": 53,
 		          "protocol": "tcp"
 		        },
 		        {
-		          "hostPort": 8600,
-		          "containerPort": 8600,
+		          "hostPort": 53,
+		          "containerPort": 53,
 		          "protocol": "udp"
 		        }
 		    ]
@@ -136,10 +142,11 @@ resource "aws_ecs_task_definition" "consul-server" {
 		    "essential": true,
 		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/collectd-write-graphite:0.1.1",
 		    "memory": 500,
+            "dnsServers": ["127.0.0.1"],
 		    "environment": [
 		    	{
 		    		"Name": "GRAPHITE_HOST",
-		    		"Value": "10.0.0.36"
+		    		"Value": "graphite.service.consul"
 		    	}, 
 		    	{
 		    		"Name": "GRAPHITE_PREFIX",
@@ -164,12 +171,18 @@ resource "aws_ecs_task_definition" "consul-server" {
 		    	}, 
 		    	{
 		    		"Name": "CONSUL_CLIENT_INTERFACE",
-		    		"Value": "eth0"
-		    	}
+		    		"Value": "lo"
+		    	},
+                {
+                    "Name": "CONSUL_ALLOW_PRIVILEGED_PORTS",
+                    "Value": ""
+                }
 		    ],
 		    "command": [
         		"agent",
         		"-server",
+                "-dns-port=53",
+                "-recursor=${var.dns_ip}",
         		"-retry-join",
         		"provider=aws tag_key=ConsulCluster tag_value=${var.nameTag}",
         		"-ui"
@@ -206,13 +219,13 @@ resource "aws_ecs_task_definition" "consul-server" {
 		          "protocol": "tcp"
 		        },
 		        {
-		          "hostPort": 8600,
-		          "containerPort": 8600,
+		          "hostPort": 53,
+		          "containerPort": 53,
 		          "protocol": "tcp"
 		        },
 		        {
-		          "hostPort": 8600,
-		          "containerPort": 8600,
+		          "hostPort": 53,
+		          "containerPort": 53,
 		          "protocol": "udp"
 		        }
 		    ]
