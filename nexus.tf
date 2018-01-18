@@ -10,7 +10,7 @@ resource "aws_volume_attachment" "nexus" {
   device_name = "/dev/sdh"
   volume_id   = "${aws_ebs_volume.nexus.id}"
   instance_id = "${aws_instance.nexus.id}"
-  force_detach =false
+  force_detach = true
   depends_on      = ["aws_ebs_volume.nexus", "aws_instance.nexus"]
 }
 

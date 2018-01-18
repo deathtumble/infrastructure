@@ -10,7 +10,7 @@ resource "aws_volume_attachment" "monitoring" {
   device_name = "/dev/sdh"
   volume_id   = "${aws_ebs_volume.monitoring.id}"
   instance_id = "${aws_instance.graphite.id}"
-  force_detach =false
+  force_detach = true
   depends_on      = ["aws_ebs_volume.monitoring", "aws_instance.graphite"]
 }
 
