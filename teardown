@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -e
+
+terraform taint aws_instance.concourse
+terraform destroy -force -target=aws_instance.concourse
+terraform destroy -force -target=aws_instance.consul-leader
+terraform destroy -force -target=aws_instance.consul-server
+terraform destroy -force -target=aws_instance.nexus
+terraform destroy -force -target=aws_instance.monitoring
+terraform destroy -force -target=aws_instance.ci
