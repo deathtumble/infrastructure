@@ -65,7 +65,7 @@ resource "aws_ecs_service" "concourse" {
 
 resource "aws_ecs_task_definition" "concourse" {
   family = "concourse"
-  network_mode = "host"
+  network_mode = "bridge"
   volume {
 			name = "postgres_data"
 			host_path = "/opt/mount1/database"
@@ -80,8 +80,93 @@ resource "aws_ecs_task_definition" "concourse" {
 			name = "concourse_worker_keys"
 			host_path = "/opt/mount1/keys/worker"
 		}
+  volume {
+            name = "consul_config"
+            host_path = "/opt/consul/conf"
+        }
   container_definitions = <<DEFINITION
 	[
+        {
+            "name": "consul-agent",
+            "cpu": 0,
+            "essential": false,
+            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/consul:0.1.0",
+            "memory": 500,
+            "environment": [
+                {
+                    "Name": "CONSUL_LOCAL_CONFIG",
+                    "Value": "{\"leave_on_terminate\": true}"
+                },
+                {
+                    "Name": "CONSUL_BIND_INTERFACE",
+                    "Value": "eth0"
+                }, 
+                {
+                    "Name": "CONSUL_CLIENT_INTERFACE",
+                    "Value": "lo"
+                }, 
+                {
+                    "Name": "CONSUL_ALLOW_PRIVILEGED_PORTS",
+                    "Value": ""
+                }
+            ],
+            "command": [
+                "agent",
+                "-dns-port=53",
+                "-recursor=10.0.0.2",
+                "-retry-join",
+                "provider=aws tag_key=ConsulCluster tag_value=${var.nameTag}"
+            ],
+            "mountPoints": [
+                {
+                  "sourceVolume": "consul_config",
+                  "containerPath": "/consul/config",
+                  "readOnly": false
+                }
+            ],
+            "portMappings": [
+                {
+                  "hostPort": 8300,
+                  "containerPort": 8300,
+                  "protocol": "tcp"
+                },
+                {
+                  "hostPort": 8301,
+                  "containerPort": 8301,
+                  "protocol": "tcp"
+                },
+                {
+                  "hostPort": 8301,
+                  "containerPort": 8301,
+                  "protocol": "udp"
+                },
+                {
+                  "hostPort": 8302,
+                  "containerPort": 8302,
+                  "protocol": "tcp"
+                },
+                {
+                  "hostPort": 8302,
+                  "containerPort": 8302,
+                  "protocol": "udp"
+                },
+                {
+                  "hostPort": 8500,
+                  "containerPort": 8500,
+                  "protocol": "tcp"
+                },
+                {
+                  "hostPort": 53,
+                  "containerPort": 53,
+                  "protocol": "tcp"
+                },
+                {
+                  "hostPort": 53,
+                  "containerPort": 53,
+                  "protocol": "udp"
+                }
+            ]
+        },
 		{
 			"name": "collectd",
 			"cpu": 0,
@@ -255,7 +340,7 @@ resource "aws_route53_record" "concourse" {
 	name    = "concourse"
     type    = "CNAME"
     ttl     = 300
-    records = ["${aws_elb.concourse.zone_id}"]
+    records = ["${aws_elb.concourse.dns_name}"]
     depends_on = ["aws_route53_zone.root", "aws_elb.concourse"]
 }
 
