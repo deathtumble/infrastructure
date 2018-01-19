@@ -315,11 +315,3 @@ resource "aws_security_group" "nexus" {
 	Layer = "nexus"
   }
 }
-
-
-
-
-
-
-
-

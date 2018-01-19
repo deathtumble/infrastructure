@@ -170,13 +170,14 @@ resource "aws_ecs_task_definition" "concourse" {
 		{
 			"name": "collectd",
 			"cpu": 0,
+			"dnsServers": ["127.0.0.1"],
 		    "essential": false,
 		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/collectd-write-graphite:0.1.1",
 		    "memory": 500,
 		    "environment": [
 		    	{
 		    		"Name": "GRAPHITE_HOST",
-		    		"Value": "10.0.0.36"
+		    		"Value": "graphite.service.consul"
 		    	}, 
 		    	{
 		    		"Name": "GRAPHITE_PREFIX",
@@ -350,4 +351,74 @@ resource "aws_elb_attachment" "concourse" {
   instance = "${aws_instance.concourse.id}"
 }
 
+resource "aws_route_table" "concourse" {
+  vpc_id = "${aws_vpc.default.id}"
+  depends_on = ["aws_vpc.default"]
 
+  tags {
+    Name = "concourse-${var.nameTag}"
+    Ecosystem = "${var.ecosystem}"
+    Environment = "${var.environment}"
+    Layer = "concourse"
+  }
+}
+
+resource "aws_route" "concourse" {
+  route_table_id = "${aws_route_table.concourse.id}"
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id = "${aws_internet_gateway.default.id}"
+  
+  depends_on = ["aws_route_table.concourse", "aws_internet_gateway.default"]
+}
+
+resource "aws_subnet" "concourse" {
+  vpc_id = "${aws_vpc.default.id}"
+  cidr_block = "${var.concourse_subnet}"
+  availability_zone = "${var.availability_zone}"
+  depends_on      = ["aws_vpc.default"]
+
+  tags {
+    Name = "concourse-${var.nameTag}"
+  }
+}
+
+resource "aws_route_table_association" "concourse" {
+  subnet_id      = "${aws_subnet.concourse.id}"
+  route_table_id = "${aws_route_table.concourse.id}"
+  depends_on = ["aws_route_table.concourse", "aws_subnet.concourse"]
+}
+
+resource "aws_security_group" "concourse" {
+  name        = "concourse"
+  
+  description = "concourse security group"
+  vpc_id = "${aws_vpc.default.id}"
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["${var.admin_cidr}"]
+  }
+  
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["${var.admin_cidr}","${var.ecosystem_cidr}"]
+  }
+  
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = ["0.0.0.0/0"]
+  }
+
+  tags {
+    Name = "concourse-${var.nameTag}"
+    Ecosystem = "${var.ecosystem}"
+    Environment = "${var.environment}"
+    Layer = "concourse"
+  }
+}
