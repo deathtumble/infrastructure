@@ -2,10 +2,13 @@
 
 set -e
 
-terraform taint aws_instance.concourse
-terraform destroy -force -target=aws_instance.concourse
-terraform destroy -force -target=aws_instance.consul-leader
-terraform destroy -force -target=aws_instance.consul-server
-terraform destroy -force -target=aws_instance.nexus
-terraform destroy -force -target=aws_instance.monitoring
-terraform destroy -force -target=aws_instance.ci
+terraform refresh
+
+terraform destroy -force -target=aws_instance.concourse \
+                         -target=aws_instance.consul-leader \
+                         -target=aws_instance.consul-server \
+                         -target=aws_instance.nexus \
+                         -target=aws_instance.graphite \
+                         -target=aws_instance.chatops \
+                         -target=aws_instance.dashing \
+                         -target=aws_instance.ci
