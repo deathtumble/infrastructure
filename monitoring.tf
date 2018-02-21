@@ -14,7 +14,6 @@ resource "aws_volume_attachment" "monitoring" {
   depends_on      = ["aws_ebs_volume.monitoring", "aws_instance.graphite"]
 }
 
-
 resource "aws_instance" "graphite" {
 	count = "1"
 	ami = "${var.ecs_ami_id}"
@@ -37,26 +36,37 @@ resource "aws_instance" "graphite" {
 	iam_instance_profile = "ecsinstancerole",
 	ipv6_address_count = "0",
     depends_on      = ["aws_security_group.graphite", "aws_security_group.ssh", "aws_security_group.consul-client", "aws_subnet.consul"]
-	user_data = <<EOF
-#!/bin/bash
-mkdir /opt/mount1
-echo /dev/xvdh  /opt/mount1 ext4 defaults,nofail 0 2 >> /etc/fstab
-mount /dev/xvdh /opt/mount1
-ln -s /opt/mount1/grafana/ /var/lib/grafana
-ln -s /opt/mount1/grafana_logs/ /var/log/grafana
-ln -s /opt/mount1/graphite/ /opt/graphite
-ln -s /opt/mount1/nginx_config/ /etc/nginx
-ln -s /opt/mount1/statsd_config/ /opt/statsd
-ln -s /opt/mount1/graphite_log_files/ /var/log/graphite
-cat <<'EOF' >> /etc/ecs/ecs.config
-ECS_CLUSTER=graphite
+    user_data = <<EOF
+#cloud-config
+hostname: monitoring
+write_files:
+ - content: ECS_CLUSTER=graphite
+   path: /etc/ecs/ecs.config   
+   permissions: 644
+ - content: ${base64encode(file("files/monitoring_consul.json"))}
+   path: /opt/consul/conf/monitoring_consul.json
+   encoding: b64
+   permissions: 644
+ - content: ${base64encode(file("files/monitoring_goss.yml"))}
+   path: /etc/goss/goss.yaml
+   encoding: b64
+   permissions: 644
+runcmd:
+ - mkdir /opt/mount1
+ - sleep 18
+ - sudo mount /dev/xvdh /opt/mount1
+ - sudo echo /dev/xvdh  /opt/mount1 ext4 defaults,nofail 0 2 >> /etc/fstab
+ - chmod 644 /opt/consul/conf/monitoring_consul.json
+ - sudo mount -a
+ - service goss start
 EOF
 
   tags {
-    Name = "graphite-${var.nameTag}"
+    Name = "graphite"
 	Ecosystem = "${var.ecosystem}"
 	Environment = "${var.environment}"
 	ConsulCluster = "${var.nameTag}"
+	Goss = "true"
   }
 }
 
@@ -81,31 +91,31 @@ resource "aws_ecs_task_definition" "graphite" {
 		}
   volume {
 			name = "grafana_data"
-			host_path = "/var/lib/grafana/"
+			host_path = "/opt/mount1/grafana"
 		}
   volume {
 			name = "grafana_plugins"
-			host_path = "/var/lib/grafana/plugins"
+			host_path = "/opt/mount1/grafana/plugins"
 		}
   volume {
 			name = "grafana_logs",
-			host_path = "/var/log/grafana"
+			host_path = "/opt/mount1/grafana_logs"
 		}
   volume {
 			name = "graphite_config",
-			host_path = "/opt/graphite/conf"
+			host_path = "/opt/mount1/graphite/conf"
 		}
   volume {
 			name = "graphite_stats_storage",
-			host_path = "/opt/graphite/storage"
+			host_path = "/opt/mount1/graphite/storage"
 		}
   volume {
 			name = "nginx_config",
-			host_path = "/etc/nginx"
+			host_path = "/opt/mount1/nginx_config"
 		}
   volume {
 			name = "statsd_config",
-			host_path = "/opt/statsd"
+			host_path = "/opt/mount1/statsd_config"
 		}
   volume {
 			name = "graphite_logrotate_config",
@@ -113,7 +123,7 @@ resource "aws_ecs_task_definition" "graphite" {
 		}
   volume {
 			name = "graphite_log_files",
-			host_path = "/var/log/graphite"
+			host_path = "/opt/mount1/graphite_log_files"
 		}
   
   container_definitions = <<DEFINITION
@@ -121,7 +131,7 @@ resource "aws_ecs_task_definition" "graphite" {
 		{
 		    "name": "consul-agent",
 		    "cpu": 0,
-		    "essential": true,
+		    "essential": false,
 		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/consul:0.1.0",
 		    "memory": 500,
 		    "environment": [
@@ -202,7 +212,7 @@ resource "aws_ecs_task_definition" "graphite" {
 		{
 			"name": "collectd",
 			"cpu": 0,
-		    "essential": true,
+		    "essential": false,
 		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/collectd-write-graphite:0.1.1",
 		    "memory": 100,
 		    "environment": [
@@ -369,4 +379,110 @@ resource "aws_elb_attachment" "grafana" {
   count = "1" 
   elb      = "${aws_elb.grafana.id}"
   instance = "${aws_instance.graphite.id}"
+}
+
+resource "aws_route_table" "monitoring" {
+  vpc_id = "${aws_vpc.default.id}"
+  depends_on = ["aws_vpc.default"]
+
+  tags {
+    Name = "monitoring-${var.nameTag}"
+    Ecosystem = "${var.ecosystem}"
+    Environment = "${var.environment}"
+    Layer = "monitoring"
+  }
+}
+
+resource "aws_route" "monitoring" {
+  route_table_id = "${aws_route_table.monitoring.id}"
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id = "${aws_internet_gateway.default.id}"
+  
+  depends_on = ["aws_route_table.monitoring", "aws_internet_gateway.default"]
+}
+
+resource "aws_subnet" "monitoring" {
+  vpc_id = "${aws_vpc.default.id}"
+  cidr_block = "${var.monitoring_subnet}"
+  availability_zone = "${var.availability_zone}"
+  depends_on      = ["aws_vpc.default"]
+
+  tags {
+    Name = "monitoring-${var.nameTag}"
+  }
+}
+
+resource "aws_route_table_association" "monitoring" {
+  subnet_id      = "${aws_subnet.monitoring.id}"
+  route_table_id = "${aws_route_table.monitoring.id}"
+  depends_on = ["aws_route_table.monitoring", "aws_subnet.monitoring"]
+}
+
+resource "aws_security_group" "graphite" {
+  name        = "graphite-${var.nameTag}"
+  
+  vpc_id = "${aws_vpc.default.id}"
+  depends_on = ["aws_vpc.default"]
+  
+  ingress {
+    from_port   = 2003
+    to_port     = 2003
+    protocol    = "tcp"
+    cidr_blocks = ["${var.ecosystem_cidr}"]
+  }
+
+  ingress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "udp"
+    cidr_blocks = ["${var.ecosystem_cidr}","${var.admin_cidr}"]
+  }
+
+  ingress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["${var.ecosystem_cidr}","${var.admin_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8082
+    to_port     = 8082
+    protocol    = "tcp"
+    cidr_blocks = ["${var.ecosystem_cidr}","${var.admin_cidr}"]
+  }
+
+  tags {
+    Name = "graphite-${var.nameTag}"
+    Ecosystem = "${var.ecosystem}"
+    Environment = "${var.environment}"
+  }
+}
+
+resource "aws_security_group" "grafana" {
+  name        = "grafana"
+  
+  description = "grafana security group"
+  vpc_id = "${aws_vpc.default.id}"
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["${var.admin_cidr}"]
+  }
+  
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = ["0.0.0.0/0"]
+  }
+
+  tags {
+    Name = "grafana-${var.nameTag}"
+    Ecosystem = "${var.ecosystem}"
+    Environment = "${var.environment}"
+    Layer = "grafana"
+  }
 }
