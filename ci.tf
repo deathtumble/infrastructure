@@ -36,12 +36,28 @@ resource "aws_instance" "concourse" {
 	iam_instance_profile = "ecsinstancerole",
 	ipv6_address_count = "0",
 	user_data = <<EOF
-#!/bin/bash
-mkdir /opt/mount1
-mount /dev/xvdh /opt/mount1
-echo /dev/xvdh  /opt/mount1 ext4 defaults,nofail 0 2 >> /etc/fstab
-cat <<'EOF' >> /etc/ecs/ecs.config
-ECS_CLUSTER=concourse
+#cloud-config
+hostname: monitoring
+write_files:
+ - content: ECS_CLUSTER=concourse
+   path: /etc/ecs/ecs.config   
+   permissions: 644
+ - content: ${base64encode(file("files/concourse_consul.json"))}
+   path: /opt/consul/conf/concourse_consul.json
+   encoding: b64
+   permissions: 644
+ - content: ${base64encode(file("files/concourse_goss.yml"))}
+   path: /etc/goss/goss.yaml
+   encoding: b64
+   permissions: 644
+runcmd:
+ - mkdir /opt/mount1
+ - sleep 18
+ - sudo mount /dev/xvdh /opt/mount1
+ - sudo echo /dev/xvdh  /opt/mount1 ext4 defaults,nofail 0 2 >> /etc/fstab
+ - chmod 644 /opt/consul/conf/concourse_consul.json
+ - sudo mount -a
+ - service goss start
 EOF
 
   tags {
@@ -65,7 +81,7 @@ resource "aws_ecs_service" "concourse" {
 
 resource "aws_ecs_task_definition" "concourse" {
   family = "concourse"
-  network_mode = "bridge"
+  network_mode = "host"
   volume {
 			name = "postgres_data"
 			host_path = "/opt/mount1/database"
@@ -404,6 +420,13 @@ resource "aws_security_group" "concourse" {
   ingress {
     from_port   = 8080
     to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["${var.admin_cidr}","${var.ecosystem_cidr}"]
+  }
+  
+  ingress {
+    from_port   = 8082
+    to_port     = 8082
     protocol    = "tcp"
     cidr_blocks = ["${var.admin_cidr}","${var.ecosystem_cidr}"]
   }
