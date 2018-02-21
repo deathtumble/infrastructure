@@ -80,7 +80,7 @@ variable "nexus_subnet" {
 
 variable "dashing_subnet" {
     type = "string"
-    default = "10.0.0.136/29"
+    default = "10.0.0.144/28"
 }
 
 variable "consul_leader_ip" {
@@ -120,7 +120,7 @@ variable "nexus_ip" {
 
 variable "dashing_ip" {
     type = "string"
-    default = "10.0.0.140"
+    default = "10.0.0.148"
 }
 
 variable "ecs_ami_id" {
