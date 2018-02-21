@@ -125,5 +125,5 @@ variable "dashing_ip" {
 
 variable "ecs_ami_id" {
 	type = "string"
-	default = "ami-4cbe0935"
+	default = "ami-567b1a2f"
 }
