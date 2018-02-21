@@ -19,7 +19,7 @@ resource "aws_ecs_task_definition" "consul-leader" {
 		{
 			"name": "collectd",
 			"cpu": 0,
-		    "essential": true,
+		    "essential": false,
 		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/collectd-write-graphite:0.1.1",
 		    "memory": 500,
 		    "environment": [
@@ -54,7 +54,7 @@ resource "aws_ecs_task_definition" "consul-leader" {
 		    	}, 
 		    	{
 		    		"Name": "CONSUL_CLIENT_INTERFACE",
-		    		"Value": "lo"
+		    		"Value": "eth0"
                 }, 
                 {
                     "Name": "CONSUL_ALLOW_PRIVILEGED_PORTS",
@@ -171,7 +171,7 @@ resource "aws_ecs_task_definition" "consul-server" {
 		    	}, 
 		    	{
 		    		"Name": "CONSUL_CLIENT_INTERFACE",
-		    		"Value": "lo"
+		    		"Value": "eth0"
 		    	},
                 {
                     "Name": "CONSUL_ALLOW_PRIVILEGED_PORTS",
