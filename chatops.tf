@@ -22,8 +22,28 @@ resource "aws_instance" "chatops" {
     depends_on      = ["aws_security_group.chatops", "aws_security_group.ssh", "aws_security_group.consul-client", "aws_subnet.consul"]
 	user_data = <<EOF
 #!/bin/bash
-cat <<'EOF' >> /etc/ecs/ecs.config
-ECS_CLUSTER=chatops
+#cloud-config
+hostname: monitoring
+write_files:
+ - content: ECS_CLUSTER=graphite
+   path: /etc/ecs/ecs.config   
+   permissions: 644
+ - content: ${base64encode(file("files/chatops_consul.json"))}
+   path: /opt/consul/conf/chatops_consul.json
+   encoding: b64
+   permissions: 644
+ - content: ${base64encode(file("files/chatops_goss.yml"))}
+   path: /etc/goss/goss.yaml
+   encoding: b64
+   permissions: 644
+runcmd:
+ - mkdir /opt/mount1
+ - sleep 18
+ - sudo mount /dev/xvdh /opt/mount1
+ - sudo echo /dev/xvdh  /opt/mount1 ext4 defaults,nofail 0 2 >> /etc/fstab
+ - chmod 644 /opt/consul/conf/monitoring_consul.json
+ - sudo mount -a
+ - service goss start
 EOF
 
   tags {
