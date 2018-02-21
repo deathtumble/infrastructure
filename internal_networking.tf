@@ -36,43 +36,6 @@ resource "aws_route_table_association" "consul" {
   depends_on = ["aws_route_table.consul", "aws_subnet.consul"]
 }
 
-resource "aws_route_table" "monitoring" {
-  vpc_id = "${aws_vpc.default.id}"
-  depends_on = ["aws_vpc.default"]
-
-  tags {
-    Name = "monitoring-${var.nameTag}"
-	Ecosystem = "${var.ecosystem}"
-	Environment = "${var.environment}"
-	Layer = "monitoring"
-  }
-}
-
-resource "aws_route" "monitoring" {
-  route_table_id = "${aws_route_table.monitoring.id}"
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id = "${aws_internet_gateway.default.id}"
-  
-  depends_on = ["aws_route_table.monitoring", "aws_internet_gateway.default"]
-}
-
-resource "aws_subnet" "monitoring" {
-  vpc_id = "${aws_vpc.default.id}"
-  cidr_block = "${var.monitoring_subnet}"
-  availability_zone = "${var.availability_zone}"
-  depends_on      = ["aws_vpc.default"]
-
-  tags {
-    Name = "monitoring-${var.nameTag}"
-  }
-}
-
-resource "aws_route_table_association" "monitoring" {
-  subnet_id      = "${aws_subnet.monitoring.id}"
-  route_table_id = "${aws_route_table.monitoring.id}"
-  depends_on = ["aws_route_table.monitoring", "aws_subnet.monitoring"]
-}
-
 resource "aws_route_table" "weblayer" {
   vpc_id = "${aws_vpc.default.id}"
   depends_on = ["aws_vpc.default"]
@@ -145,34 +108,6 @@ resource "aws_security_group" "consului" {
 	Ecosystem = "${var.ecosystem}"
 	Environment = "${var.environment}"
 	Layer = "consul"
-  }
-}
-
-resource "aws_security_group" "grafana" {
-  name        = "grafana"
-  
-  description = "grafana security group"
-  vpc_id = "${aws_vpc.default.id}"
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}"]
-  }
-  
-  egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
-  }
-
-  tags {
-    Name = "grafana-${var.nameTag}"
-	Ecosystem = "${var.ecosystem}"
-	Environment = "${var.environment}"
-	Layer = "grafana"
   }
 }
 
@@ -308,40 +243,6 @@ resource "aws_security_group" "consul-client" {
 
   tags {
     Name = "consul-client-${var.nameTag}"
-	Ecosystem = "${var.ecosystem}"
-	Environment = "${var.environment}"
-  }
-}
-
-resource "aws_security_group" "graphite" {
-  name        = "graphite-${var.nameTag}"
-  
-  vpc_id = "${aws_vpc.default.id}"
-  depends_on = ["aws_vpc.default"]
-  
-  ingress {
-    from_port   = 2003
-    to_port     = 2003
-    protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}"]
-  }
-
-  ingress {
-    from_port   = 3000
-    to_port     = 3000
-    protocol    = "udp"
-    cidr_blocks = ["${var.ecosystem_cidr}","${var.admin_cidr}"]
-  }
-
-  ingress {
-    from_port   = 3000
-    to_port     = 3000
-    protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}","${var.admin_cidr}"]
-  }
-
-  tags {
-    Name = "graphite-${var.nameTag}"
 	Ecosystem = "${var.ecosystem}"
 	Environment = "${var.environment}"
   }
