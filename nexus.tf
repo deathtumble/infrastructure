@@ -226,7 +226,7 @@ resource "aws_elb" "nexus" {
     unhealthy_threshold = 2
     timeout             = 3
     target              = "HTTP:8081/nexus/service/local/status"
-    interval            = 30
+    interval            = 5
   }
 }
 
@@ -289,10 +289,17 @@ resource "aws_security_group" "nexus" {
   vpc_id = "${aws_vpc.default.id}"
 
   ingress {
+    from_port   = 8082
+    to_port     = 8082
+    protocol    = "tcp"
+    cidr_blocks = ["${var.admin_cidr}"]
+  }
+  
+  ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}"]
+    cidr_blocks = ["${var.admin_cidr}","${var.ecosystem_cidr}"]
   }
   
   ingress {
