@@ -2,6 +2,10 @@ provider "aws" {
   region = "${var.region}"
 }
 
+provider "template" {
+  version = "~> 0.1"
+}
+
 resource "aws_vpc" "default" {
 	cidr_block = "${var.ecosystem_cidr}"
 	instance_tenancy = "default"
