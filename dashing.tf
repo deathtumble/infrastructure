@@ -67,9 +67,33 @@ resource "aws_ecs_task_definition" "dashing" {
   family = "dashing"
   network_mode = "host"
   volume {
-			name = "dashing-data"
-			host_path = "/opt/mount1/dashing"
+			name = "dashboards"
+			host_path = "/opt/smashing/dashboards"
 		}
+  volume {
+            name = "assets"
+            host_path = "/opt/smashing/assets"
+        }
+  volume {
+            name = "config"
+            host_path = "/opt/smashing/config"
+        }
+  volume {
+            name = "public"
+            host_path = "/opt/smashing/public"
+        }
+  volume {
+            name = "lib"
+            host_path = "/opt/smashing/lib"
+        }
+  volume {
+            name = "jobs"
+            host_path = "/opt/smashing/jobs"
+        }
+  volume {
+            name = "widgets"
+            host_path = "/opt/smashing/widgets"
+        }
   volume {
             name = "consul_config"
             host_path = "/opt/consul/conf"
@@ -179,8 +203,14 @@ resource "aws_ecs_task_definition" "dashing" {
 			"name": "dashing",
 			"cpu": 0,
 		    "essential": true,
-		    "image": "rgcamus/alpine_smashing",
+		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/smashing:e9cbf47b9e36",
 		    "memory": 500,
+            "environment": [
+                {
+                    "Name": "PORT",
+                    "Value": "8080"
+                }
+             ], 
 		    "portMappings": [
 		        {
 		          "hostPort": 8080,
@@ -189,6 +219,11 @@ resource "aws_ecs_task_definition" "dashing" {
 		        }
 		    ],
 		    "mountPoints": [
+                {
+                  "sourceVolume": "assets",
+                  "containerPath": "/assets",
+                  "readOnly": false
+                },
                 {
                   "sourceVolume": "dashboards",
                   "containerPath": "/dashboards",
@@ -200,8 +235,23 @@ resource "aws_ecs_task_definition" "dashing" {
                   "readOnly": false
                 },
                 {
+                  "sourceVolume": "lib",
+                  "containerPath": "/lib-smashing",
+                  "readOnly": false
+                },
+                {
+                  "sourceVolume": "public",
+                  "containerPath": "/public",
+                  "readOnly": false
+                },
+                {
                   "sourceVolume": "widgets",
                   "containerPath": "/widgets",
+                  "readOnly": false
+                },
+                {
+                  "sourceVolume": "config",
+                  "containerPath": "/config",
                   "readOnly": false
                 }
             ]
@@ -234,7 +284,7 @@ resource "aws_elb" "dashing" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 3
-    target              = "HTTP:8080/"
+    target              = "HTTP:8080/sample"
     interval            = 30
   }
 }
