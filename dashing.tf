@@ -45,7 +45,7 @@ ECS_CLUSTER=dashing
 EOF
 
   tags {
-    Name = "dashing-${var.nameTag}"
+    Name = "dashing"
 	Ecosystem = "${var.ecosystem}"
 	Environment = "${var.environment}"
   }

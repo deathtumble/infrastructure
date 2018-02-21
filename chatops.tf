@@ -27,7 +27,7 @@ ECS_CLUSTER=chatops
 EOF
 
   tags {
-    Name = "chatops-${var.nameTag}"
+    Name = "chatops"
 	Ecosystem = "${var.ecosystem}"
 	Environment = "${var.environment}"
   }

@@ -45,7 +45,7 @@ ECS_CLUSTER=concourse
 EOF
 
   tags {
-    Name = "concourse-${var.nameTag}"
+    Name = "concourse"
 	Ecosystem = "${var.ecosystem}"
 	Environment = "${var.environment}"
   }

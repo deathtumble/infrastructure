@@ -35,7 +35,7 @@ HOSTNAME=consul-${var.nameTag}-leader
 EOF
 
   tags {
-    Name = "consul-${var.nameTag}-leader"
+    Name = "consul-0"
 	Ecosystem = "${var.ecosystem}"
 	Environment = "${var.environment}"
 	ConsulCluster = "${var.nameTag}"
@@ -76,7 +76,7 @@ HOST_NAME=consul-${var.nameTag}-${lookup(var.consul_server_instance_names, count
 EOF
 
   tags {
-    Name = "consul-${var.nameTag}-${lookup(var.consul_server_instance_names, count.index)}"
+    Name = "consul-${lookup(var.consul_server_instance_names, count.index)}"
 	Ecosystem = "${var.ecosystem}"
 	Environment = "${var.environment}"
 	ConsulCluster = "${var.nameTag}"

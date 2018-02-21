@@ -45,7 +45,7 @@ ECS_CLUSTER=nexus
 EOF
 
   tags {
-    Name = "nexus-${var.nameTag}"
+    Name = "nexus"
 	Ecosystem = "${var.ecosystem}"
 	Environment = "${var.environment}"
   }
