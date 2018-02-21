@@ -38,8 +38,9 @@ resource "aws_instance" "nexus" {
 	user_data = <<EOF
 #!/bin/bash
 mkdir /opt/mount1
-mount /dev/xvdh /opt/mount1
 echo /dev/xvdh  /opt/mount1 ext4 defaults,nofail 0 2 >> /etc/fstab
+sleep 10
+mount /dev/xvdh /opt/mount1
 cat <<'EOF' >> /etc/ecs/ecs.config
 ECS_CLUSTER=nexus
 EOF
