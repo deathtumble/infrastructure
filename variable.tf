@@ -78,6 +78,11 @@ variable "nexus_subnet" {
 	default = "10.0.0.128/28"
 }
 
+variable "dashing_subnet" {
+    type = "string"
+    default = "10.0.0.136/29"
+}
+
 variable "consul_leader_ip" {
 	type = "string"
 	default = "10.0.0.4"
@@ -111,6 +116,11 @@ variable "concourse_ip" {
 variable "nexus_ip" {
 	type = "string"
 	default = "10.0.0.132"
+}
+
+variable "dashing_ip" {
+    type = "string"
+    default = "10.0.0.140"
 }
 
 variable "ecs_ami_id" {
