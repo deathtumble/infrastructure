@@ -1,55 +1,20 @@
-resource "aws_ebs_volume" "nexus" {
-	availability_zone = "${var.availability_zone}"
-    size = 22
-    tags {
-        Name = "nexus"
-    }
-}
-
-resource "aws_volume_attachment" "nexus" {
-  device_name = "/dev/sdh"
-  volume_id   = "${aws_ebs_volume.nexus.id}"
-  instance_id = "${aws_instance.nexus.id}"
-  force_detach = true
-  depends_on      = ["aws_ebs_volume.nexus", "aws_instance.nexus"]
-}
-
-resource "aws_instance" "nexus" {
-	count = "1"
-	ami = "${var.ecs_ami_id}"
-	availability_zone = "${var.availability_zone}"
-	tenancy = "default",
-	ebs_optimized = "false",
-	disable_api_termination = "false",
-    instance_type= "t2.small"
-    key_name = "poc"
+module "nexus" {
+    source = "./role"
+        
+    role = "nexus"
     private_ip = "${var.nexus_ip}"
-    monitoring = "false",
-    vpc_security_group_ids = [
-    	"${aws_security_group.nexus.id}",
-    	"${aws_security_group.ssh.id}",
-    	"${aws_security_group.consul-client.id}"
-    ],
-    subnet_id = "${aws_subnet.nexus.id}",
-    associate_public_ip_address = "true"
-	source_dest_check = "true",
-	iam_instance_profile = "ecsinstancerole",
-	ipv6_address_count = "0",
-	user_data = <<EOF
-#!/bin/bash
-mkdir /opt/mount1
-echo /dev/xvdh  /opt/mount1 ext4 defaults,nofail 0 2 >> /etc/fstab
-sleep 10
-mount /dev/xvdh /opt/mount1
-cat <<'EOF' >> /etc/ecs/ecs.config
-ECS_CLUSTER=nexus
-EOF
-
-  tags {
-    Name = "nexus"
-	Ecosystem = "${var.ecosystem}"
-	Environment = "${var.environment}"
-  }
+    aws_security_group_id = "${aws_security_group.nexus.id}"
+    aws_subnet_id = "${aws_subnet.nexus.id}" 
+    
+    availability_zone = "${var.availability_zone}"
+    ami_id = "ami-567b1a2f"
+    
+    ecosystem = "${var.ecosystem}"
+    environment = "${var.environment}"
+    aws_security_group_ssh_id = "${aws_security_group.ssh.id}"
+    aws_security_group_consul-client_id = "${aws_security_group.consul-client.id}"
+    
+    volume_id = "vol-0c80683f4a8142d69"
 }
 
 resource "aws_ecs_cluster" "nexus" {
@@ -60,7 +25,6 @@ resource "aws_ecs_service" "nexus" {
   name            = "nexus"
   cluster         = "nexus"
   task_definition = "nexus:${aws_ecs_task_definition.nexus.revision}"
-  depends_on = ["aws_ecs_cluster.nexus", "aws_instance.nexus"]
   desired_count   = 1
 }
 
@@ -242,7 +206,7 @@ resource "aws_route53_record" "nexus" {
 resource "aws_elb_attachment" "nexus" {
   count = "1" 
   elb      = "${aws_elb.nexus.id}"
-  instance = "${aws_instance.nexus.id}"
+  instance = "${module.nexus.instance_id}"
 }
 
 resource "aws_route_table" "nexus" {
