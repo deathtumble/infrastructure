@@ -18,20 +18,15 @@ variable "instance_type" {
 variable "aws_subnet_id" {
 } 
 
-variable "aws_security_group_id" {
-}
-
 variable "ecosystem" {
 }
 
 variable "environment" {
 }
 
-variable "aws_security_group_ssh_id" {
-}
-
-variable "aws_security_group_consul-client_id" {
-}
-
 variable "volume_id" {
+}
+
+variable "vpc_security_group_ids" {
+    type    = "list"
 }

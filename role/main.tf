@@ -16,11 +16,7 @@ resource "aws_instance" "this" {
     key_name = "poc"
     private_ip = "${var.private_ip}"
     monitoring = "false",
-    vpc_security_group_ids = [
-        "${var.aws_security_group_id}",
-        "${var.aws_security_group_ssh_id}",
-        "${var.aws_security_group_consul-client_id}"
-    ],
+    vpc_security_group_ids = ["${var.vpc_security_group_ids}"]
     subnet_id = "${var.aws_subnet_id}",
     associate_public_ip_address = "true"
     source_dest_check = "true",

@@ -3,7 +3,6 @@ module "nexus" {
         
     role = "nexus"
     private_ip = "${var.nexus_ip}"
-    aws_security_group_id = "${aws_security_group.nexus.id}"
     aws_subnet_id = "${aws_subnet.nexus.id}" 
     
     availability_zone = "${var.availability_zone}"
@@ -11,8 +10,12 @@ module "nexus" {
     
     ecosystem = "${var.ecosystem}"
     environment = "${var.environment}"
-    aws_security_group_ssh_id = "${aws_security_group.ssh.id}"
-    aws_security_group_consul-client_id = "${aws_security_group.consul-client.id}"
+    
+    vpc_security_group_ids = [
+        "${aws_security_group.nexus.id}",
+        "${aws_security_group.ssh.id}",
+        "${aws_security_group.consul-client.id}"
+    ]
     
     volume_id = "vol-0c80683f4a8142d69"
 }
