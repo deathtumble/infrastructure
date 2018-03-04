@@ -15,9 +15,6 @@ variable "instance_type" {
     default = "t2.small"
 }
 
-variable "aws_subnet_id" {
-} 
-
 variable "ecosystem" {
 }
 
@@ -27,6 +24,30 @@ variable "environment" {
 variable "volume_id" {
 }
 
+variable "cidr_block" {
+}
+
+variable "vpc_id" {
+}
+
 variable "vpc_security_group_ids" {
     type    = "list"
+}
+
+variable "gateway_id" {
+}
+
+variable "elb_security_group" {
+}
+
+variable "elb_instance_port" {
+}
+
+variable "elb_port" {
+}
+
+variable "healthcheck_target" {
+}
+
+variable "aws_route53_record_zone_id" {
 }
