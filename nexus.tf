@@ -71,17 +71,10 @@ resource "aws_security_group" "nexus" {
   vpc_id = "${aws_vpc.default.id}"
 
   ingress {
-    from_port   = 8082
-    to_port     = 8082
-    protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}"]
-  }
-  
-  ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}","${var.ecosystem_cidr}"]
+    cidr_blocks = "${var.admin_cidrs}"
   }
   
   ingress {
