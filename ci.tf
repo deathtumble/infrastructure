@@ -414,7 +414,7 @@ resource "aws_security_group" "concourse" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}"]
+    cidr_blocks = "${var.admin_cidrs}"
   }
   
   ingress {
