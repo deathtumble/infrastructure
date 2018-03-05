@@ -25,7 +25,7 @@ module "nexus" {
     vpc_id = "${aws_vpc.default.id}"
     gateway_id = "${aws_internet_gateway.default.id}"
     availability_zone = "${var.availability_zone}"
-    ami_id = "ami-567b1a2f"
+    ami_id = "${var.ecs_ami_id}"
     ecosystem = "${var.ecosystem}"
     environment = "${var.environment}"
     aws_route53_record_zone_id = "${aws_route53_zone.root.zone_id}" 
@@ -71,6 +71,13 @@ resource "aws_security_group" "nexus" {
   ingress {
     from_port   = 8081
     to_port     = 8081
+    protocol    = "tcp"
+    cidr_blocks = ["${var.admin_cidr}","${var.ecosystem_cidr}"]
+  }
+  
+  ingress {
+    from_port   = 8082
+    to_port     = 8082
     protocol    = "tcp"
     cidr_blocks = ["${var.admin_cidr}","${var.ecosystem_cidr}"]
   }

@@ -23,19 +23,36 @@ resource "aws_instance" "this" {
     iam_instance_profile = "ecsinstancerole",
     ipv6_address_count = "0",
     user_data = <<EOF
-#!/bin/bash
-mkdir /opt/mount1
-echo /dev/xvdh  /opt/mount1 ext4 defaults,nofail 0 2 >> /etc/fstab
-sleep 10
-mount /dev/xvdh /opt/mount1
-cat <<'EOF' >> /etc/ecs/ecs.config
-ECS_CLUSTER=${var.role}
+#cloud-config
+hostname: ${var.role}    
+write_files:
+ - content: ECS_CLUSTER=${var.role}
+   path: /etc/ecs/ecs.config   
+   permissions: 644
+ - content: ${base64encode(file("files/${var.role}_consul.json"))}
+   path: /opt/consul/conf/consul.json
+   encoding: b64
+   permissions: 644
+ - content: ${base64encode(file("files/${var.role}_goss.yml"))}
+   path: /etc/goss/goss.yaml
+   encoding: b64
+   permissions: 644
+runcmd:
+ - mkdir /opt/mount1
+ - sleep 18
+ - sudo mount /dev/xvdh /opt/mount1
+ - sudo echo /dev/xvdh  /opt/mount1 ext4 defaults,nofail 0 2 >> /etc/fstab
+ - chmod 644 /opt/consul/conf/consul.json
+ - sudo mount -a
+ - service goss start
 EOF
 
   tags {
     Name = "${var.role}"
     Ecosystem = "${var.ecosystem}"
     Environment = "${var.environment}"
+    ConsulCluster = "${var.role}"
+    Goss = "true"
   }
 }
 
