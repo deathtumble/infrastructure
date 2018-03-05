@@ -115,5 +115,16 @@ resource "aws_elb_attachment" "this" {
   instance = "${aws_instance.this.id}"
 }
 
+resource "aws_ecs_cluster" "this" {
+    name    = "${var.role}"
+}
+
+resource "aws_ecs_service" "this" {
+    name    = "${var.role}"
+  cluster         = "${var.role}"
+  task_definition = "${var.task_definition}"
+  desired_count   = "${var.desired_count}"
+}
+
 
 

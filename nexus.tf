@@ -12,6 +12,8 @@ module "nexus" {
     elb_instance_port = "8081"
     elb_port = "80"
     healthcheck_target = "HTTP:8081/nexus/service/local/status"
+    task_definition = "nexus:${aws_ecs_task_definition.nexus.revision}"
+    desired_count = "1"
     
     volume_id = "vol-0c80683f4a8142d69"
 
@@ -27,17 +29,6 @@ module "nexus" {
     ecosystem = "${var.ecosystem}"
     environment = "${var.environment}"
     aws_route53_record_zone_id = "${aws_route53_zone.root.zone_id}" 
-}
-
-resource "aws_ecs_cluster" "nexus" {
-  name = "nexus"
-}
-
-resource "aws_ecs_service" "nexus" {
-  name            = "nexus"
-  cluster         = "nexus"
-  task_definition = "nexus:${aws_ecs_task_definition.nexus.revision}"
-  desired_count   = 1
 }
 
 data "template_file" "nexus" {

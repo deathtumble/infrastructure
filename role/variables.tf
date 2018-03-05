@@ -51,3 +51,9 @@ variable "healthcheck_target" {
 
 variable "aws_route53_record_zone_id" {
 }
+
+variable "task_definition" {
+}
+
+variable "desired_count" {
+}
