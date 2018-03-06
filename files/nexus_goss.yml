@@ -38,6 +38,6 @@ process:
   sshd:
     running: true
 http:
-  http://localhost:8081//nexus/service/local/status:
+  http://localhost:8081/nexus/service/local/status:
     status: 200
   
