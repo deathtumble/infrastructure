@@ -1,5 +1,5 @@
 file:
-  /opt/consul/conf/concourse_consul.json:
+  /opt/consul/conf/consul.json:
     exists: true
     mode: "0644"
     owner: root
@@ -51,3 +51,7 @@ group:
 process:
   sshd:
     running: true
+http:
+  http://localhost:8080/:
+    status: 200
+    
