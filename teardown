@@ -4,11 +4,20 @@ set -e
 
 terraform refresh
 
-terraform destroy -force -target=aws_instance.concourse \
-                         -target=aws_instance.consul-leader \
-                         -target=aws_instance.consul-server \
-                         -target=aws_instance.nexus \
-                         -target=aws_instance.graphite \
-                         -target=aws_instance.chatops \
-                         -target=aws_instance.dashing \
-                         -target=aws_instance.ci
+terraform destroy -force \
+\
+-target=aws_instance.concourse \
+-target=aws_instance.consul-leader \
+-target=aws_instance.consul-server \
+-target=aws_instance.chatops \
+-target=aws_instance.dashing \
+-target=module.nexus.aws_instance.this \
+-target=module.monitoring.aws_instance.this \
+\
+-target=aws_ecs_service.concourse \
+-target=aws_ecs_service.consul-leader \
+-target=aws_ecs_service.consul-server \
+-target=aws_ecs_service.chatops \
+-target=aws_ecs_service.dashing \
+-target=module.nexus.aws_ecs_service.this \
+-target=module.monitoring.aws_ecs_service.this
