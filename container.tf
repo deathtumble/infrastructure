@@ -6,10 +6,3 @@ data "template_file" "consul_agent" {
   }
 }
 
-data "template_file" "collectd" {
-  template = "${file("files/collectd.tpl")}"
-
-  vars {
-    graphite_prefix = "${var.ecosystem}.${var.environment}.nexus."
-  }
-}

@@ -35,6 +35,15 @@ data "template_file" "nexus" {
   template = "${file("files/nexus_container.tpl")}"
 }
 
+data "template_file" "collectd-nexus" {
+  template = "${file("files/collectd.tpl")}"
+
+  vars {
+    graphite_prefix = "${var.ecosystem}.${var.environment}.nexus."
+  }
+}
+
+
 resource "aws_ecs_task_definition" "nexus" {
   family = "nexus"
   network_mode = "host"
@@ -49,7 +58,7 @@ resource "aws_ecs_task_definition" "nexus" {
   container_definitions = <<DEFINITION
 	[
         ${data.template_file.consul_agent.rendered},
-        ${data.template_file.collectd.rendered},
+        ${data.template_file.collectd-nexus.rendered},
         ${data.template_file.nexus.rendered}
 	]
     DEFINITION

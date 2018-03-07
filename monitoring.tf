@@ -31,6 +31,14 @@ module "monitoring" {
     aws_route53_record_zone_id = "${aws_route53_zone.root.zone_id}" 
 }
 
+data "template_file" "collectd-monitoring" {
+  template = "${file("files/collectd.tpl")}"
+
+  vars {
+    graphite_prefix = "${var.ecosystem}.${var.environment}.monitoring."
+  }
+}
+
 resource "aws_ecs_task_definition" "monitoring" {
   family = "monitoring"
   network_mode = "host"
@@ -78,7 +86,7 @@ resource "aws_ecs_task_definition" "monitoring" {
   container_definitions = <<DEFINITION
 	[
         ${data.template_file.consul_agent.rendered},
-        ${data.template_file.collectd.rendered},
+        ${data.template_file.collectd-monitoring.rendered},
 		{
 		    "name": "graphite-statsd",
 		    "cpu": 0,
