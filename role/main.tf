@@ -1,4 +1,23 @@
+variable "mount-cloud-config" {
+    type = "string"
+    default = <<EOF
+ - mkdir /opt/mount1
+ - sleep 18
+ - sudo mount /dev/xvdh /opt/mount1
+ - sudo echo /dev/xvdh  /opt/mount1 ext4 defaults,nofail 0 2 >> /etc/fstab
+ - chmod 644 /opt/consul/conf/consul.json
+ - sudo mount -a
+EOF
+
+}
+
+variable "no-mount-cloud-config" {
+    type = "string"
+    default = ""
+}
+
 resource "aws_volume_attachment" "this" {
+  count = "${var.volume_id == "" ? 0 : 1}"    
   device_name = "/dev/sdh"
   volume_id   = "${var.volume_id}"
   instance_id = "${aws_instance.this.id}"
@@ -38,12 +57,7 @@ write_files:
    encoding: b64
    permissions: 644
 runcmd:
- - mkdir /opt/mount1
- - sleep 18
- - sudo mount /dev/xvdh /opt/mount1
- - sudo echo /dev/xvdh  /opt/mount1 ext4 defaults,nofail 0 2 >> /etc/fstab
- - chmod 644 /opt/consul/conf/consul.json
- - sudo mount -a
+${var.volume_id == "" ? var.no-mount-cloud-config : var.mount-cloud-config}    
  - service goss start
 EOF
 

@@ -22,6 +22,7 @@ variable "environment" {
 }
 
 variable "volume_id" {
+    default = ""
 }
 
 variable "cidr_block" {
