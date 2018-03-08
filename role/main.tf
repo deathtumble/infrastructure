@@ -1,6 +1,7 @@
 variable "mount-cloud-config" {
-    type = "string"
-    default = <<EOF
+  type = "string"
+
+  default = <<EOF
  - mkdir /opt/mount1
  - sleep 18
  - sudo mount /dev/xvdh /opt/mount1
@@ -8,40 +9,40 @@ variable "mount-cloud-config" {
  - chmod 644 /opt/consul/conf/consul.json
  - sudo mount -a
 EOF
-
 }
 
 variable "no-mount-cloud-config" {
-    type = "string"
-    default = ""
+  type    = "string"
+  default = ""
 }
 
 resource "aws_volume_attachment" "this" {
-  count = "${var.volume_id == "" ? 0 : 1}"    
-  device_name = "/dev/sdh"
-  volume_id   = "${var.volume_id}"
-  instance_id = "${aws_instance.this.id}"
+  count        = "${var.volume_id == "" ? 0 : 1}"
+  device_name  = "/dev/sdh"
+  volume_id    = "${var.volume_id}"
+  instance_id  = "${aws_instance.this.id}"
   force_detach = true
 }
 
 resource "aws_instance" "this" {
-    count = "1"
-    ami = "${var.ami_id}"
-    availability_zone = "${var.availability_zone}"
-    tenancy = "default",
-    ebs_optimized = "false",
-    disable_api_termination = "false",
-    instance_type= "${var.instance_type}"
-    key_name = "poc"
-    private_ip = "${var.private_ip}"
-    monitoring = "false",
-    vpc_security_group_ids = ["${var.vpc_security_group_ids}"]
-    subnet_id = "${aws_subnet.this.id}",
-    associate_public_ip_address = "true"
-    source_dest_check = "true",
-    iam_instance_profile = "ecsinstancerole",
-    ipv6_address_count = "0",
-    user_data = <<EOF
+  count                       = "1"
+  ami                         = "${var.ami_id}"
+  availability_zone           = "${var.availability_zone}"
+  tenancy                     = "default"
+  ebs_optimized               = "false"
+  disable_api_termination     = "false"
+  instance_type               = "${var.instance_type}"
+  key_name                    = "poc"
+  private_ip                  = "${var.private_ip}"
+  monitoring                  = "false"
+  vpc_security_group_ids      = ["${var.vpc_security_group_ids}"]
+  subnet_id                   = "${aws_subnet.this.id}"
+  associate_public_ip_address = "true"
+  source_dest_check           = "true"
+  iam_instance_profile        = "ecsinstancerole"
+  ipv6_address_count          = "0"
+
+  user_data = <<EOF
 #cloud-config
 hostname: ${var.role}    
 write_files:
@@ -62,11 +63,11 @@ ${var.volume_id == "" ? var.no-mount-cloud-config : var.mount-cloud-config}
 EOF
 
   tags {
-    Name = "${var.role}"
-    Ecosystem = "${var.ecosystem}"
-    Environment = "${var.environment}"
+    Name          = "${var.role}"
+    Ecosystem     = "${var.ecosystem}"
+    Environment   = "${var.environment}"
     ConsulCluster = "${var.role}"
-    Goss = "true"
+    Goss          = "true"
   }
 }
 
@@ -74,26 +75,26 @@ resource "aws_route_table" "this" {
   vpc_id = "${var.vpc_id}"
 
   tags {
-    Name = "${var.role}"
-    Ecosystem = "${var.ecosystem}"
+    Name        = "${var.role}"
+    Ecosystem   = "${var.ecosystem}"
     Environment = "${var.environment}"
   }
 }
 
 resource "aws_route" "this" {
-  route_table_id = "${aws_route_table.this.id}"
+  route_table_id         = "${aws_route_table.this.id}"
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id = "${var.gateway_id}"
+  gateway_id             = "${var.gateway_id}"
 }
 
 resource "aws_subnet" "this" {
-  vpc_id = "${var.vpc_id}"
-  cidr_block = "${var.cidr_block}"
+  vpc_id            = "${var.vpc_id}"
+  cidr_block        = "${var.cidr_block}"
   availability_zone = "${var.availability_zone}"
 
   tags {
-    Name = "${var.role}"
-    Ecosystem = "${var.ecosystem}"
+    Name        = "${var.role}"
+    Ecosystem   = "${var.ecosystem}"
     Environment = "${var.environment}"
   }
 }
@@ -101,37 +102,34 @@ resource "aws_subnet" "this" {
 resource "aws_route_table_association" "this" {
   subnet_id      = "${aws_subnet.this.id}"
   route_table_id = "${aws_route_table.this.id}"
-  depends_on = ["aws_route_table.this", "aws_subnet.this"]
+  depends_on     = ["aws_route_table.this", "aws_subnet.this"]
 }
 
 module "elb" {
-    source = "../elb"
-        
-    role = "${var.role}"
-    subnets = "${aws_subnet.this.id}"
-    elb_security_group = "${var.elb_security_group}",
-    elb_instance_port = "${var.elb_instance_port}"
-    elb_port = "${var.elb_port}"
-    healthcheck_port = "${var.healthcheck_port}"
-    healthcheck_protocol = "${var.healthcheck_protocol}"
-    healthcheck_path = "${var.healthcheck_path}"
-    aws_instance_id = "${aws_instance.this.id}"
-    aws_route53_record_zone_id = "${var.aws_route53_record_zone_id}"
+  source = "../elb"
 
-    ecosystem = "${var.ecosystem}"
-    environment = "${var.environment}"
-}    
+  role                       = "${var.role}"
+  subnets                    = "${aws_subnet.this.id}"
+  elb_security_group         = "${var.elb_security_group}"
+  elb_instance_port          = "${var.elb_instance_port}"
+  elb_port                   = "${var.elb_port}"
+  healthcheck_port           = "${var.healthcheck_port}"
+  healthcheck_protocol       = "${var.healthcheck_protocol}"
+  healthcheck_path           = "${var.healthcheck_path}"
+  aws_instance_id            = "${aws_instance.this.id}"
+  aws_route53_record_zone_id = "${var.aws_route53_record_zone_id}"
+
+  ecosystem   = "${var.ecosystem}"
+  environment = "${var.environment}"
+}
 
 resource "aws_ecs_cluster" "this" {
-    name    = "${var.role}"
+  name = "${var.role}"
 }
 
 resource "aws_ecs_service" "this" {
-    name    = "${var.role}"
+  name            = "${var.role}"
   cluster         = "${var.role}"
   task_definition = "${var.task_definition}"
   desired_count   = "${var.desired_count}"
 }
-
-
-

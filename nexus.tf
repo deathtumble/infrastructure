@@ -1,36 +1,37 @@
 module "nexus" {
-    source = "./role"
-        
-    role = "nexus"
-    vpc_security_group_ids = [
-        "${aws_security_group.nexus.id}",
-        "${aws_security_group.ssh.id}",
-        "${aws_security_group.consul-client.id}"
-    ]
-    
-    elb_security_group = "${aws_security_group.nexus.id}",
-    elb_instance_port = "8081"
-    elb_port = "80"
-    healthcheck_port = "8081"
-    healthcheck_protocol = "HTTP"
-    healthcheck_path = "/nexus/service/local/status"
-    task_definition = "nexus:${aws_ecs_task_definition.nexus.revision}"
-    desired_count = "1"
-    
-    volume_id = "vol-0c80683f4a8142d69"
+  source = "./role"
 
-    // todo remove need to specify    
-    cidr_block = "${var.nexus_subnet}"
-    private_ip = "${var.nexus_ip}"
+  role = "nexus"
 
-    // globals
-    vpc_id = "${aws_vpc.default.id}"
-    gateway_id = "${aws_internet_gateway.default.id}"
-    availability_zone = "${var.availability_zone}"
-    ami_id = "${var.ecs_ami_id}"
-    ecosystem = "${var.ecosystem}"
-    environment = "${var.environment}"
-    aws_route53_record_zone_id = "${aws_route53_zone.root.zone_id}" 
+  vpc_security_group_ids = [
+    "${aws_security_group.nexus.id}",
+    "${aws_security_group.ssh.id}",
+    "${aws_security_group.consul-client.id}",
+  ]
+
+  elb_security_group   = "${aws_security_group.nexus.id}"
+  elb_instance_port    = "8081"
+  elb_port             = "80"
+  healthcheck_port     = "8081"
+  healthcheck_protocol = "HTTP"
+  healthcheck_path     = "/nexus/service/local/status"
+  task_definition      = "nexus:${aws_ecs_task_definition.nexus.revision}"
+  desired_count        = "1"
+
+  volume_id = "vol-0c80683f4a8142d69"
+
+  // todo remove need to specify    
+  cidr_block = "${var.nexus_subnet}"
+  private_ip = "${var.nexus_ip}"
+
+  // globals
+  vpc_id                     = "${aws_vpc.default.id}"
+  gateway_id                 = "${aws_internet_gateway.default.id}"
+  availability_zone          = "${var.availability_zone}"
+  ami_id                     = "${var.ecs_ami_id}"
+  ecosystem                  = "${var.ecosystem}"
+  environment                = "${var.environment}"
+  aws_route53_record_zone_id = "${aws_route53_zone.root.zone_id}"
 }
 
 data "template_file" "nexus" {
@@ -45,18 +46,20 @@ data "template_file" "collectd-nexus" {
   }
 }
 
-
 resource "aws_ecs_task_definition" "nexus" {
-  family = "nexus"
+  family       = "nexus"
   network_mode = "host"
+
   volume {
-			name = "nexus-data"
-			host_path = "/opt/mount1/nexus"
-		}
+    name      = "nexus-data"
+    host_path = "/opt/mount1/nexus"
+  }
+
   volume {
-            name = "consul_config"
-            host_path = "/opt/consul/conf"
-        }
+    name      = "consul_config"
+    host_path = "/opt/consul/conf"
+  }
+
   container_definitions = <<DEFINITION
 	[
         ${data.template_file.consul_agent.rendered},
@@ -67,10 +70,10 @@ resource "aws_ecs_task_definition" "nexus" {
 }
 
 resource "aws_security_group" "nexus" {
-  name        = "nexus"
-  
+  name = "nexus"
+
   description = "nexus security group"
-  vpc_id = "${aws_vpc.default.id}"
+  vpc_id      = "${aws_vpc.default.id}"
 
   ingress {
     from_port   = 80
@@ -78,32 +81,32 @@ resource "aws_security_group" "nexus" {
     protocol    = "tcp"
     cidr_blocks = "${var.admin_cidrs}"
   }
-  
+
   ingress {
     from_port   = 8081
     to_port     = 8081
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}","${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.admin_cidr}", "${var.ecosystem_cidr}"]
   }
-  
+
   ingress {
     from_port   = 8082
     to_port     = 8082
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}","${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.admin_cidr}", "${var.ecosystem_cidr}"]
   }
-  
+
   egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags {
-    Name = "nexus-${var.nameTag}"
-	Ecosystem = "${var.ecosystem}"
-	Environment = "${var.environment}"
-	Layer = "nexus"
+    Name        = "nexus-${var.nameTag}"
+    Ecosystem   = "${var.ecosystem}"
+    Environment = "${var.environment}"
+    Layer       = "nexus"
   }
 }

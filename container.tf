@@ -5,4 +5,3 @@ data "template_file" "consul_agent" {
     nameTag = "${var.nameTag}"
   }
 }
-

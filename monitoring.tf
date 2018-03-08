@@ -1,36 +1,37 @@
 module "monitoring" {
-    source = "./role"
-        
-    role = "monitoring"
-    vpc_security_group_ids = [
-        "${aws_security_group.graphite.id}",
-        "${aws_security_group.ssh.id}",
-        "${aws_security_group.consul-client.id}"
-    ]
-    
-    elb_security_group = "${aws_security_group.grafana.id}",
-    elb_instance_port = "3000"
-    elb_port = "80"
-    healthcheck_port = "3000"
-    healthcheck_protocol = "HTTP"
-    healthcheck_path = "/api/health"
-    task_definition = "monitoring:${aws_ecs_task_definition.monitoring.revision}"
-    desired_count = "1"
-    
-    volume_id = "vol-0a53b71d35611d427"
+  source = "./role"
 
-    // todo remove need to specify    
-    cidr_block = "${var.monitoring_subnet}"
-    private_ip = "10.0.0.36"
+  role = "monitoring"
 
-    // globals
-    vpc_id = "${aws_vpc.default.id}"
-    gateway_id = "${aws_internet_gateway.default.id}"
-    availability_zone = "${var.availability_zone}"
-    ami_id = "${var.ecs_ami_id}"
-    ecosystem = "${var.ecosystem}"
-    environment = "${var.environment}"
-    aws_route53_record_zone_id = "${aws_route53_zone.root.zone_id}" 
+  vpc_security_group_ids = [
+    "${aws_security_group.graphite.id}",
+    "${aws_security_group.ssh.id}",
+    "${aws_security_group.consul-client.id}",
+  ]
+
+  elb_security_group   = "${aws_security_group.grafana.id}"
+  elb_instance_port    = "3000"
+  elb_port             = "80"
+  healthcheck_port     = "3000"
+  healthcheck_protocol = "HTTP"
+  healthcheck_path     = "/api/health"
+  task_definition      = "monitoring:${aws_ecs_task_definition.monitoring.revision}"
+  desired_count        = "1"
+
+  volume_id = "vol-0a53b71d35611d427"
+
+  // todo remove need to specify    
+  cidr_block = "${var.monitoring_subnet}"
+  private_ip = "10.0.0.36"
+
+  // globals
+  vpc_id                     = "${aws_vpc.default.id}"
+  gateway_id                 = "${aws_internet_gateway.default.id}"
+  availability_zone          = "${var.availability_zone}"
+  ami_id                     = "${var.ecs_ami_id}"
+  ecosystem                  = "${var.ecosystem}"
+  environment                = "${var.environment}"
+  aws_route53_record_zone_id = "${aws_route53_zone.root.zone_id}"
 }
 
 data "template_file" "collectd-monitoring" {
@@ -42,49 +43,59 @@ data "template_file" "collectd-monitoring" {
 }
 
 resource "aws_ecs_task_definition" "monitoring" {
-  family = "monitoring"
+  family       = "monitoring"
   network_mode = "host"
+
   volume {
-			name = "consul_config"
-			host_path = "/opt/consul/conf"
-		}
+    name      = "consul_config"
+    host_path = "/opt/consul/conf"
+  }
+
   volume {
-			name = "grafana_data"
-			host_path = "/opt/mount1/grafana"
-		}
+    name      = "grafana_data"
+    host_path = "/opt/mount1/grafana"
+  }
+
   volume {
-			name = "grafana_plugins"
-			host_path = "/opt/mount1/grafana/plugins"
-		}
+    name      = "grafana_plugins"
+    host_path = "/opt/mount1/grafana/plugins"
+  }
+
   volume {
-			name = "grafana_logs",
-			host_path = "/opt/mount1/grafana_logs"
-		}
+    name      = "grafana_logs"
+    host_path = "/opt/mount1/grafana_logs"
+  }
+
   volume {
-			name = "graphite_config",
-			host_path = "/opt/mount1/graphite/conf"
-		}
+    name      = "graphite_config"
+    host_path = "/opt/mount1/graphite/conf"
+  }
+
   volume {
-			name = "graphite_stats_storage",
-			host_path = "/opt/mount1/graphite/storage"
-		}
+    name      = "graphite_stats_storage"
+    host_path = "/opt/mount1/graphite/storage"
+  }
+
   volume {
-			name = "nginx_config",
-			host_path = "/opt/mount1/nginx_config"
-		}
+    name      = "nginx_config"
+    host_path = "/opt/mount1/nginx_config"
+  }
+
   volume {
-			name = "statsd_config",
-			host_path = "/opt/mount1/statsd_config"
-		}
+    name      = "statsd_config"
+    host_path = "/opt/mount1/statsd_config"
+  }
+
   volume {
-			name = "graphite_logrotate_config",
-			host_path = "/etc/logrotate.d"
-		}
+    name      = "graphite_logrotate_config"
+    host_path = "/etc/logrotate.d"
+  }
+
   volume {
-			name = "graphite_log_files",
-			host_path = "/opt/mount1/graphite_log_files"
-		}
-  
+    name      = "graphite_log_files"
+    host_path = "/opt/mount1/graphite_log_files"
+  }
+
   container_definitions = <<DEFINITION
 	[
         ${data.template_file.consul_agent.rendered},
@@ -206,11 +217,11 @@ resource "aws_ecs_task_definition" "monitoring" {
 }
 
 resource "aws_security_group" "graphite" {
-  name        = "graphite-${var.nameTag}"
-  
-  vpc_id = "${aws_vpc.default.id}"
+  name = "graphite-${var.nameTag}"
+
+  vpc_id     = "${aws_vpc.default.id}"
   depends_on = ["aws_vpc.default"]
-  
+
   ingress {
     from_port   = 2003
     to_port     = 2003
@@ -222,35 +233,35 @@ resource "aws_security_group" "graphite" {
     from_port   = 3000
     to_port     = 3000
     protocol    = "udp"
-    cidr_blocks = ["${var.ecosystem_cidr}","${var.admin_cidr}"]
+    cidr_blocks = ["${var.ecosystem_cidr}", "${var.admin_cidr}"]
   }
 
   ingress {
     from_port   = 3000
     to_port     = 3000
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}","${var.admin_cidr}"]
+    cidr_blocks = ["${var.ecosystem_cidr}", "${var.admin_cidr}"]
   }
 
   ingress {
     from_port   = 8082
     to_port     = 8082
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}","${var.admin_cidr}"]
+    cidr_blocks = ["${var.ecosystem_cidr}", "${var.admin_cidr}"]
   }
 
   tags {
-    Name = "graphite-${var.nameTag}"
-    Ecosystem = "${var.ecosystem}"
+    Name        = "graphite-${var.nameTag}"
+    Ecosystem   = "${var.ecosystem}"
     Environment = "${var.environment}"
   }
 }
 
 resource "aws_security_group" "grafana" {
-  name        = "grafana"
-  
+  name = "grafana"
+
   description = "grafana security group"
-  vpc_id = "${aws_vpc.default.id}"
+  vpc_id      = "${aws_vpc.default.id}"
 
   ingress {
     from_port   = 80
@@ -258,18 +269,18 @@ resource "aws_security_group" "grafana" {
     protocol    = "tcp"
     cidr_blocks = "${var.admin_cidrs}"
   }
-  
+
   egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags {
-    Name = "grafana-${var.nameTag}"
-    Ecosystem = "${var.ecosystem}"
+    Name        = "grafana-${var.nameTag}"
+    Ecosystem   = "${var.ecosystem}"
     Environment = "${var.environment}"
-    Layer = "grafana"
+    Layer       = "grafana"
   }
 }

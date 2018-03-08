@@ -1,26 +1,29 @@
 resource "aws_instance" "chatops" {
-	count = "1"
-	ami = "${var.ecs_ami_id}"
-	availability_zone = "${var.availability_zone}"
-	tenancy = "default",
-	ebs_optimized = "false",
-	disable_api_termination = "false",
-    instance_type= "t2.small"
-    key_name = "poc"
-    private_ip = "10.0.0.68"
-    monitoring = "false",
-    vpc_security_group_ids = [
-    	"${aws_security_group.chatops.id}",
-    	"${aws_security_group.ssh.id}",
-    	"${aws_security_group.consul-client.id}"
-    ],
-    subnet_id = "${aws_subnet.chatops.id}",
-    associate_public_ip_address = "true"
-	source_dest_check = "true",
-	iam_instance_profile = "ecsinstancerole",
-	ipv6_address_count = "0",
-    depends_on      = ["aws_security_group.chatops", "aws_security_group.ssh", "aws_security_group.consul-client", "aws_subnet.consul"]
-	user_data = <<EOF
+  count                   = "1"
+  ami                     = "${var.ecs_ami_id}"
+  availability_zone       = "${var.availability_zone}"
+  tenancy                 = "default"
+  ebs_optimized           = "false"
+  disable_api_termination = "false"
+  instance_type           = "t2.small"
+  key_name                = "poc"
+  private_ip              = "10.0.0.68"
+  monitoring              = "false"
+
+  vpc_security_group_ids = [
+    "${aws_security_group.chatops.id}",
+    "${aws_security_group.ssh.id}",
+    "${aws_security_group.consul-client.id}",
+  ]
+
+  subnet_id                   = "${aws_subnet.chatops.id}"
+  associate_public_ip_address = "true"
+  source_dest_check           = "true"
+  iam_instance_profile        = "ecsinstancerole"
+  ipv6_address_count          = "0"
+  depends_on                  = ["aws_security_group.chatops", "aws_security_group.ssh", "aws_security_group.consul-client", "aws_subnet.consul"]
+
+  user_data = <<EOF
 #!/bin/bash
 #cloud-config
 hostname: monitoring
@@ -47,9 +50,9 @@ runcmd:
 EOF
 
   tags {
-    Name = "chatops"
-	Ecosystem = "${var.ecosystem}"
-	Environment = "${var.environment}"
+    Name        = "chatops"
+    Ecosystem   = "${var.ecosystem}"
+    Environment = "${var.environment}"
   }
 }
 
@@ -61,17 +64,18 @@ resource "aws_ecs_service" "chatops" {
   name            = "chatops"
   cluster         = "chatops"
   task_definition = "chatops:${aws_ecs_task_definition.chatops.revision}"
-  depends_on = ["aws_ecs_cluster.chatops", "aws_ecs_task_definition.chatops"]
+  depends_on      = ["aws_ecs_cluster.chatops", "aws_ecs_task_definition.chatops"]
   desired_count   = 1
 }
 
 resource "aws_ecs_task_definition" "chatops" {
-  family = "chatops"
+  family       = "chatops"
   network_mode = "host"
+
   volume {
-            name = "consul_config"
-            host_path = "/opt/consul/conf"
-        }
+    name      = "consul_config"
+    host_path = "/opt/consul/conf"
+  }
 
   container_definitions = <<DEFINITION
 	[
@@ -222,30 +226,30 @@ resource "aws_ecs_task_definition" "chatops" {
 }
 
 resource "aws_route_table" "chatops" {
-  vpc_id = "${aws_vpc.default.id}"
+  vpc_id     = "${aws_vpc.default.id}"
   depends_on = ["aws_vpc.default"]
 
   tags {
-    Name = "chatops-${var.nameTag}"
-    Ecosystem = "${var.ecosystem}"
+    Name        = "chatops-${var.nameTag}"
+    Ecosystem   = "${var.ecosystem}"
     Environment = "${var.environment}"
-    Layer = "chatops"
+    Layer       = "chatops"
   }
 }
 
 resource "aws_route" "chatops" {
-  route_table_id = "${aws_route_table.chatops.id}"
+  route_table_id         = "${aws_route_table.chatops.id}"
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id = "${aws_internet_gateway.default.id}"
-  
+  gateway_id             = "${aws_internet_gateway.default.id}"
+
   depends_on = ["aws_route_table.chatops", "aws_internet_gateway.default"]
 }
 
 resource "aws_subnet" "chatops" {
-  vpc_id = "${aws_vpc.default.id}"
-  cidr_block = "${var.chatops_subnet}"
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.chatops_subnet}"
   availability_zone = "${var.availability_zone}"
-  depends_on      = ["aws_vpc.default"]
+  depends_on        = ["aws_vpc.default"]
 
   tags {
     Name = "chatops-${var.nameTag}"
@@ -255,15 +259,15 @@ resource "aws_subnet" "chatops" {
 resource "aws_route_table_association" "chatops" {
   subnet_id      = "${aws_subnet.chatops.id}"
   route_table_id = "${aws_route_table.chatops.id}"
-  depends_on = ["aws_route_table.chatops", "aws_subnet.chatops"]
+  depends_on     = ["aws_route_table.chatops", "aws_subnet.chatops"]
 }
 
 resource "aws_security_group" "chatops" {
-  name        = "chatops-${var.nameTag}"
-  
-  vpc_id = "${aws_vpc.default.id}"
+  name = "chatops-${var.nameTag}"
+
+  vpc_id     = "${aws_vpc.default.id}"
   depends_on = ["aws_vpc.default"]
-  
+
   ingress {
     from_port   = 2003
     to_port     = 2003
@@ -275,20 +279,19 @@ resource "aws_security_group" "chatops" {
     from_port   = 3000
     to_port     = 3000
     protocol    = "udp"
-    cidr_blocks = ["${var.ecosystem_cidr}","${var.admin_cidr}"]
+    cidr_blocks = ["${var.ecosystem_cidr}", "${var.admin_cidr}"]
   }
 
   ingress {
     from_port   = 3000
     to_port     = 3000
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}","${var.admin_cidr}"]
+    cidr_blocks = ["${var.ecosystem_cidr}", "${var.admin_cidr}"]
   }
 
   tags {
-    Name = "graphite-${var.nameTag}"
-    Ecosystem = "${var.ecosystem}"
+    Name        = "graphite-${var.nameTag}"
+    Ecosystem   = "${var.ecosystem}"
     Environment = "${var.environment}"
   }
 }
-

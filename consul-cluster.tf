@@ -6,14 +6,14 @@ resource "aws_ecs_service" "consul-leader" {
   name            = "consul-leader"
   cluster         = "consul-leader"
   task_definition = "consul-leader:${aws_ecs_task_definition.consul-leader.revision}"
-  depends_on = ["aws_ecs_cluster.consul-leader", "aws_ecs_task_definition.consul-leader"]
+  depends_on      = ["aws_ecs_cluster.consul-leader", "aws_ecs_task_definition.consul-leader"]
   desired_count   = 1
 }
 
 resource "aws_ecs_task_definition" "consul-leader" {
-  family = "consul-leader"
+  family       = "consul-leader"
   network_mode = "host"
-  
+
   container_definitions = <<DEFINITION
 	[
 		{
@@ -126,14 +126,14 @@ resource "aws_ecs_service" "consul-server" {
   name            = "consul-server"
   cluster         = "consul-server"
   task_definition = "consul-server:${aws_ecs_task_definition.consul-server.revision}"
-  depends_on = ["aws_ecs_cluster.consul-server", "aws_ecs_task_definition.consul-server"]
+  depends_on      = ["aws_ecs_cluster.consul-server", "aws_ecs_task_definition.consul-server"]
   desired_count   = 2
 }
 
 resource "aws_ecs_task_definition" "consul-server" {
-  family = "consul-server"
+  family       = "consul-server"
   network_mode = "host"
-  
+
   container_definitions = <<DEFINITION
 	[
 		{

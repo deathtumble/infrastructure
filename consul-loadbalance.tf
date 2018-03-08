@@ -8,15 +8,15 @@ resource "aws_lb_cookie_stickiness_policy" "consului" {
 resource "aws_elb" "consului" {
   name            = "consului"
   security_groups = ["${aws_security_group.consului.id}"]
-  subnets = ["${aws_subnet.consul.id}"]
-  depends_on = ["aws_security_group.consului"]
-  
+  subnets         = ["${aws_subnet.consul.id}"]
+  depends_on      = ["aws_security_group.consului"]
+
   listener {
-    instance_port      = 8500
-    instance_protocol  = "http"
-    lb_port            = 80
-    lb_protocol        = "http"
-  }  
+    instance_port     = 8500
+    instance_protocol = "http"
+    lb_port           = 80
+    lb_protocol       = "http"
+  }
 
   health_check {
     healthy_threshold   = 2
@@ -28,10 +28,10 @@ resource "aws_elb" "consului" {
 }
 
 resource "aws_route53_record" "consul" {
-	zone_id = "${aws_route53_zone.root.zone_id}"
-	name    = "consul"
-    type    = "CNAME"
-    ttl     = 300
-    depends_on = ["aws_route53_zone.root", "aws_elb.consului"]
-    records = ["${aws_elb.consului.dns_name}"]
+  zone_id    = "${aws_route53_zone.root.zone_id}"
+  name       = "consul"
+  type       = "CNAME"
+  ttl        = 300
+  depends_on = ["aws_route53_zone.root", "aws_elb.consului"]
+  records    = ["${aws_elb.consului.dns_name}"]
 }

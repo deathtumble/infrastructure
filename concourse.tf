@@ -1,37 +1,38 @@
 module "concourse" {
-    source = "./role"
-        
-    role = "concourse"
-    vpc_security_group_ids = [
-        "${aws_security_group.concourse.id}",
-        "${aws_security_group.ssh.id}",
-        "${aws_security_group.consul-client.id}"
-    ]
-    
-    elb_security_group = "${aws_security_group.concourse.id}",
-    elb_instance_port = "8080"
-    elb_port = "80"
-    healthcheck_port = "8080"
-    healthcheck_protocol = "HTTP"
-    healthcheck_path = "/"
-    task_definition = "concourse:${aws_ecs_task_definition.concourse.revision}"
-    desired_count = "1"
-    instance_type= "t2.medium"
-    
-    volume_id = "vol-0cc66dcb2a5b637d2"
+  source = "./role"
 
-    // todo remove need to specify    
-    cidr_block = "${var.concourse_subnet}"
-    private_ip = "${var.concourse_ip}"
+  role = "concourse"
 
-    // globals
-    vpc_id = "${aws_vpc.default.id}"
-    gateway_id = "${aws_internet_gateway.default.id}"
-    availability_zone = "${var.availability_zone}"
-    ami_id = "${var.ecs_ami_id}"
-    ecosystem = "${var.ecosystem}"
-    environment = "${var.environment}"
-    aws_route53_record_zone_id = "${aws_route53_zone.root.zone_id}" 
+  vpc_security_group_ids = [
+    "${aws_security_group.concourse.id}",
+    "${aws_security_group.ssh.id}",
+    "${aws_security_group.consul-client.id}",
+  ]
+
+  elb_security_group   = "${aws_security_group.concourse.id}"
+  elb_instance_port    = "8080"
+  elb_port             = "80"
+  healthcheck_port     = "8080"
+  healthcheck_protocol = "HTTP"
+  healthcheck_path     = "/"
+  task_definition      = "concourse:${aws_ecs_task_definition.concourse.revision}"
+  desired_count        = "1"
+  instance_type        = "t2.medium"
+
+  volume_id = "vol-0cc66dcb2a5b637d2"
+
+  // todo remove need to specify    
+  cidr_block = "${var.concourse_subnet}"
+  private_ip = "${var.concourse_ip}"
+
+  // globals
+  vpc_id                     = "${aws_vpc.default.id}"
+  gateway_id                 = "${aws_internet_gateway.default.id}"
+  availability_zone          = "${var.availability_zone}"
+  ami_id                     = "${var.ecs_ami_id}"
+  ecosystem                  = "${var.ecosystem}"
+  environment                = "${var.environment}"
+  aws_route53_record_zone_id = "${aws_route53_zone.root.zone_id}"
 }
 
 data "template_file" "collectd-concourse" {
@@ -42,28 +43,30 @@ data "template_file" "collectd-concourse" {
   }
 }
 
-
 resource "aws_ecs_task_definition" "concourse" {
-  family = "concourse"
+  family       = "concourse"
   network_mode = "host"
-  volume {
-            name = "postgres_data"
-            host_path = "/opt/mount1/database"
-        }
-        
-  volume {
-            name = "concourse_web_keys"
-            host_path = "/opt/mount1/keys/web"
-        }
 
   volume {
-            name = "concourse_worker_keys"
-            host_path = "/opt/mount1/keys/worker"
-        }
+    name      = "postgres_data"
+    host_path = "/opt/mount1/database"
+  }
+
   volume {
-            name = "consul_config"
-            host_path = "/opt/consul/conf"
-        }
+    name      = "concourse_web_keys"
+    host_path = "/opt/mount1/keys/web"
+  }
+
+  volume {
+    name      = "concourse_worker_keys"
+    host_path = "/opt/mount1/keys/worker"
+  }
+
+  volume {
+    name      = "consul_config"
+    host_path = "/opt/consul/conf"
+  }
+
   container_definitions = <<DEFINITION
     [
         ${data.template_file.consul_agent.rendered},
@@ -191,10 +194,10 @@ resource "aws_ecs_task_definition" "concourse" {
 }
 
 resource "aws_security_group" "concourse" {
-  name        = "concourse"
-  
+  name = "concourse"
+
   description = "concourse security group"
-  vpc_id = "${aws_vpc.default.id}"
+  vpc_id      = "${aws_vpc.default.id}"
 
   ingress {
     from_port   = 80
@@ -202,32 +205,32 @@ resource "aws_security_group" "concourse" {
     protocol    = "tcp"
     cidr_blocks = "${var.admin_cidrs}"
   }
-  
+
   ingress {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}","${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.admin_cidr}", "${var.ecosystem_cidr}"]
   }
-  
+
   ingress {
     from_port   = 8082
     to_port     = 8082
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}","${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.admin_cidr}", "${var.ecosystem_cidr}"]
   }
-  
+
   egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags {
-    Name = "concourse-${var.nameTag}"
-    Ecosystem = "${var.ecosystem}"
+    Name        = "concourse-${var.nameTag}"
+    Ecosystem   = "${var.ecosystem}"
     Environment = "${var.environment}"
-    Layer = "concourse"
+    Layer       = "concourse"
   }
 }

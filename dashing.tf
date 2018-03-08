@@ -1,41 +1,45 @@
 resource "aws_ebs_volume" "dashing" {
-	availability_zone = "${var.availability_zone}"
-    size = 22
-    tags {
-        Name = "dashing"
-    }
+  availability_zone = "${var.availability_zone}"
+  size              = 22
+
+  tags {
+    Name = "dashing"
+  }
 }
 
 resource "aws_volume_attachment" "dashing" {
-  device_name = "/dev/sdh"
-  volume_id   = "${aws_ebs_volume.dashing.id}"
-  instance_id = "${aws_instance.dashing.id}"
+  device_name  = "/dev/sdh"
+  volume_id    = "${aws_ebs_volume.dashing.id}"
+  instance_id  = "${aws_instance.dashing.id}"
   force_detach = true
-  depends_on      = ["aws_ebs_volume.dashing", "aws_instance.dashing"]
+  depends_on   = ["aws_ebs_volume.dashing", "aws_instance.dashing"]
 }
 
 resource "aws_instance" "dashing" {
-	count = "1"
-	ami = "${var.ecs_ami_id}"
-	availability_zone = "${var.availability_zone}"
-	tenancy = "default",
-	ebs_optimized = "false",
-	disable_api_termination = "false",
-    instance_type= "t2.small"
-    key_name = "poc"
-    private_ip = "${var.dashing_ip}"
-    monitoring = "false",
-    vpc_security_group_ids = [
-    	"${aws_security_group.dashing.id}",
-    	"${aws_security_group.ssh.id}",
-    	"${aws_security_group.consul-client.id}"
-    ],
-    subnet_id = "${aws_subnet.dashing.id}",
-    associate_public_ip_address = "true"
-	source_dest_check = "true",
-	iam_instance_profile = "ecsinstancerole",
-	ipv6_address_count = "0",
-	user_data = <<EOF
+  count                   = "1"
+  ami                     = "${var.ecs_ami_id}"
+  availability_zone       = "${var.availability_zone}"
+  tenancy                 = "default"
+  ebs_optimized           = "false"
+  disable_api_termination = "false"
+  instance_type           = "t2.small"
+  key_name                = "poc"
+  private_ip              = "${var.dashing_ip}"
+  monitoring              = "false"
+
+  vpc_security_group_ids = [
+    "${aws_security_group.dashing.id}",
+    "${aws_security_group.ssh.id}",
+    "${aws_security_group.consul-client.id}",
+  ]
+
+  subnet_id                   = "${aws_subnet.dashing.id}"
+  associate_public_ip_address = "true"
+  source_dest_check           = "true"
+  iam_instance_profile        = "ecsinstancerole"
+  ipv6_address_count          = "0"
+
+  user_data = <<EOF
 #!/bin/bash
 mkdir /opt/mount1
 mount /dev/xvdh /opt/mount1
@@ -45,9 +49,9 @@ ECS_CLUSTER=dashing
 EOF
 
   tags {
-    Name = "dashing"
-	Ecosystem = "${var.ecosystem}"
-	Environment = "${var.environment}"
+    Name        = "dashing"
+    Ecosystem   = "${var.ecosystem}"
+    Environment = "${var.environment}"
   }
 }
 
@@ -59,45 +63,54 @@ resource "aws_ecs_service" "dashing" {
   name            = "dashing"
   cluster         = "dashing"
   task_definition = "dashing:${aws_ecs_task_definition.dashing.revision}"
-  depends_on = ["aws_ecs_cluster.dashing", "aws_instance.dashing"]
+  depends_on      = ["aws_ecs_cluster.dashing", "aws_instance.dashing"]
   desired_count   = 1
 }
 
 resource "aws_ecs_task_definition" "dashing" {
-  family = "dashing"
+  family       = "dashing"
   network_mode = "host"
+
   volume {
-			name = "dashboards"
-			host_path = "/opt/smashing/dashboards"
-		}
+    name      = "dashboards"
+    host_path = "/opt/smashing/dashboards"
+  }
+
   volume {
-            name = "assets"
-            host_path = "/opt/smashing/assets"
-        }
+    name      = "assets"
+    host_path = "/opt/smashing/assets"
+  }
+
   volume {
-            name = "config"
-            host_path = "/opt/smashing/config"
-        }
+    name      = "config"
+    host_path = "/opt/smashing/config"
+  }
+
   volume {
-            name = "public"
-            host_path = "/opt/smashing/public"
-        }
+    name      = "public"
+    host_path = "/opt/smashing/public"
+  }
+
   volume {
-            name = "lib"
-            host_path = "/opt/smashing/lib"
-        }
+    name      = "lib"
+    host_path = "/opt/smashing/lib"
+  }
+
   volume {
-            name = "jobs"
-            host_path = "/opt/smashing/jobs"
-        }
+    name      = "jobs"
+    host_path = "/opt/smashing/jobs"
+  }
+
   volume {
-            name = "widgets"
-            host_path = "/opt/smashing/widgets"
-        }
+    name      = "widgets"
+    host_path = "/opt/smashing/widgets"
+  }
+
   volume {
-            name = "consul_config"
-            host_path = "/opt/consul/conf"
-        }
+    name      = "consul_config"
+    host_path = "/opt/consul/conf"
+  }
+
   container_definitions = <<DEFINITION
 	[
         {
@@ -270,15 +283,15 @@ resource "aws_lb_cookie_stickiness_policy" "dashing" {
 resource "aws_elb" "dashing" {
   name            = "dashing"
   security_groups = ["${aws_security_group.dashing.id}"]
-  subnets = ["${aws_subnet.dashing.id}"]
-  depends_on = ["aws_security_group.dashing"]
-  
+  subnets         = ["${aws_subnet.dashing.id}"]
+  depends_on      = ["aws_security_group.dashing"]
+
   listener {
-    instance_port      = 8080
-    instance_protocol  = "http"
-    lb_port            = 80
-    lb_protocol        = "http"
-  }  
+    instance_port     = 8080
+    instance_protocol = "http"
+    lb_port           = 80
+    lb_protocol       = "http"
+  }
 
   health_check {
     healthy_threshold   = 2
@@ -290,45 +303,45 @@ resource "aws_elb" "dashing" {
 }
 
 resource "aws_route53_record" "dashing" {
-	zone_id = "${aws_route53_zone.root.zone_id}"
-	name    = "dashing"
-    type    = "CNAME"
-    ttl     = 300
-    records = ["${aws_elb.dashing.dns_name}"]
-    depends_on = ["aws_route53_zone.root", "aws_elb.dashing"]
+  zone_id    = "${aws_route53_zone.root.zone_id}"
+  name       = "dashing"
+  type       = "CNAME"
+  ttl        = 300
+  records    = ["${aws_elb.dashing.dns_name}"]
+  depends_on = ["aws_route53_zone.root", "aws_elb.dashing"]
 }
 
 resource "aws_elb_attachment" "dashing" {
-  count = "1" 
+  count    = "1"
   elb      = "${aws_elb.dashing.id}"
   instance = "${aws_instance.dashing.id}"
 }
 
 resource "aws_route_table" "dashing" {
-  vpc_id = "${aws_vpc.default.id}"
+  vpc_id     = "${aws_vpc.default.id}"
   depends_on = ["aws_vpc.default"]
 
   tags {
-    Name = "dashing-${var.nameTag}"
-	Ecosystem = "${var.ecosystem}"
-	Environment = "${var.environment}"
-	Layer = "dashing"
+    Name        = "dashing-${var.nameTag}"
+    Ecosystem   = "${var.ecosystem}"
+    Environment = "${var.environment}"
+    Layer       = "dashing"
   }
 }
 
 resource "aws_route" "dashing" {
-  route_table_id = "${aws_route_table.dashing.id}"
+  route_table_id         = "${aws_route_table.dashing.id}"
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id = "${aws_internet_gateway.default.id}"
-  
+  gateway_id             = "${aws_internet_gateway.default.id}"
+
   depends_on = ["aws_route_table.dashing", "aws_internet_gateway.default"]
 }
 
 resource "aws_subnet" "dashing" {
-  vpc_id = "${aws_vpc.default.id}"
-  cidr_block = "${var.dashing_subnet}"
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.dashing_subnet}"
   availability_zone = "${var.availability_zone}"
-  depends_on      = ["aws_vpc.default"]
+  depends_on        = ["aws_vpc.default"]
 
   tags {
     Name = "dashing-${var.nameTag}"
@@ -338,14 +351,14 @@ resource "aws_subnet" "dashing" {
 resource "aws_route_table_association" "dashing" {
   subnet_id      = "${aws_subnet.dashing.id}"
   route_table_id = "${aws_route_table.dashing.id}"
-  depends_on = ["aws_route_table.dashing", "aws_subnet.dashing"]
+  depends_on     = ["aws_route_table.dashing", "aws_subnet.dashing"]
 }
 
 resource "aws_security_group" "dashing" {
-  name        = "dashing"
-  
+  name = "dashing"
+
   description = "dashing security group"
-  vpc_id = "${aws_vpc.default.id}"
+  vpc_id      = "${aws_vpc.default.id}"
 
   ingress {
     from_port   = 80
@@ -353,25 +366,25 @@ resource "aws_security_group" "dashing" {
     protocol    = "tcp"
     cidr_blocks = ["${var.admin_cidr}"]
   }
-  
+
   ingress {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}","${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.admin_cidr}", "${var.ecosystem_cidr}"]
   }
-  
+
   egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags {
-    Name = "dashing-${var.nameTag}"
-	Ecosystem = "${var.ecosystem}"
-	Environment = "${var.environment}"
-	Layer = "dashing"
+    Name        = "dashing-${var.nameTag}"
+    Ecosystem   = "${var.ecosystem}"
+    Environment = "${var.environment}"
+    Layer       = "dashing"
   }
 }

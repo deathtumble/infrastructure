@@ -1,91 +1,91 @@
 variable "region" {
-  type = "string"
+  type    = "string"
   default = "eu-west-1"
 }
 
 variable "availability_zone" {
-  type = "string"
+  type    = "string"
   default = "eu-west-1c"
 }
 
 variable "root_domain_name" {
-  type = "string"
+  type    = "string"
   default = "urbanfortress.uk"
 }
 
 variable "ecosystem" {
-  type = "string"
+  type    = "string"
   default = "poc"
 }
 
 variable "environment" {
-  type = "string"
+  type    = "string"
   default = "poc"
 }
 
 variable "nameTag" {
-	type = "string"
-	default = "poc-poc"
+  type    = "string"
+  default = "poc-poc"
 }
 
 variable "admin_cidr" {
-	type = "string"
-	default = "81.174.166.51/32"
+  type    = "string"
+  default = "81.174.166.51/32"
 }
 
 variable "ecosystem_cidr" {
-	type = "string"
-	default = "10.0.0.0/16"
+  type    = "string"
+  default = "10.0.0.0/16"
 }
 
 variable "dns_ip" {
-    type = "string"
-    default = "10.0.0.2"
+  type    = "string"
+  default = "10.0.0.2"
 }
 
 variable "environment_cidr" {
-	type = "string"
-	default = "10.0.16.0/20"
+  type    = "string"
+  default = "10.0.16.0/20"
 }
 
 variable "weblayer_cidr" {
-	type = "string"
-	default = "10.0.16.0/23"
+  type    = "string"
+  default = "10.0.16.0/23"
 }
 
 variable "consul_subnet" {
-	type = "string"
-	default = "10.0.0.0/27"
+  type    = "string"
+  default = "10.0.0.0/27"
 }
 
 variable "monitoring_subnet" {
-	type = "string"
-	default = "10.0.0.32/27"
+  type    = "string"
+  default = "10.0.0.32/27"
 }
 
 variable "chatops_subnet" {
-	type = "string"
-	default = "10.0.0.64/27"
+  type    = "string"
+  default = "10.0.0.64/27"
 }
 
 variable "concourse_subnet" {
-	type = "string"
-	default = "10.0.0.96/27"
+  type    = "string"
+  default = "10.0.0.96/27"
 }
 
 variable "nexus_subnet" {
-	type = "string"
-	default = "10.0.0.128/28"
+  type    = "string"
+  default = "10.0.0.128/28"
 }
 
 variable "dashing_subnet" {
-    type = "string"
-    default = "10.0.0.144/28"
+  type    = "string"
+  default = "10.0.0.144/28"
 }
 
 variable "consul_leader_ip" {
-	type = "string"
-	default = "10.0.0.4"
+  type    = "string"
+  default = "10.0.0.4"
 }
 
 variable "consul_server_instance_ips" {
@@ -104,26 +104,26 @@ variable "consul_server_instance_ips" {
 }
 
 variable "consul_server_count" {
-	type = "string"
-	default = "2"
+  type    = "string"
+  default = "2"
 }
 
 variable "concourse_ip" {
-	type = "string"
-	default = "10.0.0.100"
+  type    = "string"
+  default = "10.0.0.100"
 }
 
 variable "nexus_ip" {
-	type = "string"
-	default = "10.0.0.132"
+  type    = "string"
+  default = "10.0.0.132"
 }
 
 variable "dashing_ip" {
-    type = "string"
-    default = "10.0.0.148"
+  type    = "string"
+  default = "10.0.0.148"
 }
 
 variable "ecs_ami_id" {
-	type = "string"
-	default = "ami-567b1a2f"
+  type    = "string"
+  default = "ami-567b1a2f"
 }

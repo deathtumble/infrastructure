@@ -1,66 +1,49 @@
-variable "role" {
-}
+variable "role" {}
 
 variable "ami_id" {
-    default = "ami-567b1a2f"
+  default = "ami-567b1a2f"
 }
 
-variable "availability_zone" {
-}
+variable "availability_zone" {}
 
-variable "private_ip" {
-}
+variable "private_ip" {}
 
 variable "instance_type" {
-    default = "t2.small"
+  default = "t2.small"
 }
 
-variable "ecosystem" {
-}
+variable "ecosystem" {}
 
-variable "environment" {
-}
+variable "environment" {}
 
 variable "volume_id" {
-    default = ""
+  default = ""
 }
 
-variable "cidr_block" {
-}
+variable "cidr_block" {}
 
-variable "vpc_id" {
-}
+variable "vpc_id" {}
 
 variable "vpc_security_group_ids" {
-    type    = "list"
+  type = "list"
 }
 
-variable "gateway_id" {
-}
+variable "gateway_id" {}
 
-variable "elb_security_group" {
-}
+variable "elb_security_group" {}
 
-variable "elb_instance_port" {
-}
+variable "elb_instance_port" {}
 
-variable "elb_port" {
-}
+variable "elb_port" {}
 
-variable "healthcheck_path" {
-}
+variable "healthcheck_path" {}
 
-variable "healthcheck_protocol" {
-}
+variable "healthcheck_protocol" {}
 
-variable "healthcheck_port" {
-}
+variable "healthcheck_port" {}
 
-variable "aws_route53_record_zone_id" {
-}
+variable "aws_route53_record_zone_id" {}
 
-variable "task_definition" {
-}
+variable "task_definition" {}
 
-variable "desired_count" {
-}
+variable "desired_count" {}
