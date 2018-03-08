@@ -104,55 +104,23 @@ resource "aws_route_table_association" "this" {
   depends_on = ["aws_route_table.this", "aws_subnet.this"]
 }
 
-resource "aws_elb" "this" {
-  name            = "${var.role}"
-  security_groups = ["${var.elb_security_group}"]
-  subnets = ["${aws_subnet.this.id}"]
-  
-  listener {
-    instance_port      = "${var.elb_instance_port}"
-    instance_protocol  = "http"
-    lb_port            = "${var.elb_port}"
-    lb_protocol        = "http"
-  }  
+module "elb" {
+    source = "../elb"
+        
+    role = "${var.role}"
+    subnets = "${aws_subnet.this.id}"
+    elb_security_group = "${var.elb_security_group}",
+    elb_instance_port = "${var.elb_instance_port}"
+    elb_port = "${var.elb_port}"
+    healthcheck_port = "${var.healthcheck_port}"
+    healthcheck_protocol = "${var.healthcheck_protocol}"
+    healthcheck_path = "${var.healthcheck_path}"
+    aws_instance_id = "${aws_instance.this.id}"
+    aws_route53_record_zone_id = "${var.aws_route53_record_zone_id}"
 
-  health_check {
-    healthy_threshold   = 2
-    unhealthy_threshold = 2
-    timeout             = 3
-    target              = "${var.healthcheck_protocol}:${var.healthcheck_port}${var.healthcheck_path}"
-    interval            = 5
-  }
-  tags {
-    Name = "${var.role}"
-    Ecosystem = "${var.ecosystem}"
-    Environment = "${var.environment}"
-    Port = "${var.elb_port}"
-    Path = "${var.healthcheck_path}"
-    Protocol = "${var.healthcheck_protocol}"
-  }
-}
-
-resource "aws_lb_cookie_stickiness_policy" "this" {
-  name                     = "${var.role}"
-  load_balancer            = "${aws_elb.this.id}"
-  lb_port                  = 80
-  cookie_expiration_period = 600
-}
-
-resource "aws_route53_record" "this" {
-    zone_id = "${var.aws_route53_record_zone_id}"
-    name    = "${var.role}"
-    type    = "CNAME"
-    ttl     = 300
-    records = ["${aws_elb.this.dns_name}"]
-}
-
-resource "aws_elb_attachment" "this" {
-  count = "1" 
-  elb      = "${aws_elb.this.id}"
-  instance = "${aws_instance.this.id}"
-}
+    ecosystem = "${var.ecosystem}"
+    environment = "${var.environment}"
+}    
 
 resource "aws_ecs_cluster" "this" {
     name    = "${var.role}"
