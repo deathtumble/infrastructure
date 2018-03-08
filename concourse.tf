@@ -11,7 +11,9 @@ module "concourse" {
     elb_security_group = "${aws_security_group.concourse.id}",
     elb_instance_port = "8080"
     elb_port = "80"
-    healthcheck_target = "HTTP:8080/"
+    healthcheck_port = "8080"
+    healthcheck_protocol = "HTTP"
+    healthcheck_path = "/"
     task_definition = "concourse:${aws_ecs_task_definition.concourse.revision}"
     desired_count = "1"
     instance_type= "t2.medium"

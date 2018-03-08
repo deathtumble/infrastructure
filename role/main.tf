@@ -106,8 +106,16 @@ resource "aws_elb" "this" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 3
-    target              = "${var.healthcheck_target}"
+    target              = "${var.healthcheck_protocol}:${var.healthcheck_port}${var.healthcheck_path}"
     interval            = 5
+  }
+  tags {
+    Name = "${var.role}"
+    Ecosystem = "${var.ecosystem}"
+    Environment = "${var.environment}"
+    Port = "${var.elb_port}"
+    Path = "${var.healthcheck_path}"
+    Protocol = "${var.healthcheck_protocol}"
   }
 }
 

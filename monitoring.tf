@@ -11,7 +11,9 @@ module "monitoring" {
     elb_security_group = "${aws_security_group.grafana.id}",
     elb_instance_port = "3000"
     elb_port = "80"
-    healthcheck_target = "HTTP:3000/api/health"
+    healthcheck_port = "3000"
+    healthcheck_protocol = "HTTP"
+    healthcheck_path = "/api/health"
     task_definition = "monitoring:${aws_ecs_task_definition.monitoring.revision}"
     desired_count = "1"
     

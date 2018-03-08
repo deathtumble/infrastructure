@@ -46,7 +46,13 @@ variable "elb_instance_port" {
 variable "elb_port" {
 }
 
-variable "healthcheck_target" {
+variable "healthcheck_path" {
+}
+
+variable "healthcheck_protocol" {
+}
+
+variable "healthcheck_port" {
 }
 
 variable "aws_route53_record_zone_id" {

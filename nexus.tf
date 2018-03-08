@@ -11,7 +11,9 @@ module "nexus" {
     elb_security_group = "${aws_security_group.nexus.id}",
     elb_instance_port = "8081"
     elb_port = "80"
-    healthcheck_target = "HTTP:8081/nexus/service/local/status"
+    healthcheck_port = "8081"
+    healthcheck_protocol = "HTTP"
+    healthcheck_path = "/nexus/service/local/status"
     task_definition = "nexus:${aws_ecs_task_definition.nexus.revision}"
     desired_count = "1"
     
