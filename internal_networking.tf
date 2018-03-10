@@ -1,78 +1,51 @@
-resource "aws_route_table" "consul" {
-  vpc_id     = "${var.aws_vpc_id}"
-  depends_on = ["aws_vpc.default"]
+variable "vpc_cidr" {
+  type    = "string"
+  default = "10.0.0.0/16"
+}
 
-  tags {
-    Name        = "consul-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
-    Layer       = "consul"
+variable "dns_ip" {
+  type    = "string"
+  default = "10.0.0.2"
+}
+
+variable "environment_cidr" {
+  type    = "string"
+  default = "10.0.16.0/20"
+}
+
+variable "consul_leader_ip" {
+  type    = "string"
+  default = "10.0.0.4"
+}
+
+variable "consul_server_instance_ips" {
+  default = {
+    "0" = "10.0.0.5"
+    "1" = "10.0.0.6"
+    "2" = "10.0.0.7"
+    "3" = "10.0.0.8"
+    "4" = "10.0.0.9"
+    "5" = "10.0.0.10"
+    "6" = "10.0.0.11"
+    "7" = "10.0.0.12"
+    "8" = "10.0.0.13"
+    "9" = "10.0.0.14"
   }
 }
 
-resource "aws_route" "consul" {
-  route_table_id         = "${aws_route_table.consul.id}"
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = "${aws_internet_gateway.default.id}"
-
-  depends_on = ["aws_route_table.consul", "aws_internet_gateway.default"]
+variable "concourse_ip" {
+  type    = "string"
+  default = "10.0.0.100"
 }
 
-resource "aws_subnet" "consul" {
-  vpc_id            = "${var.aws_vpc_id}"
-  cidr_block        = "${var.consul_subnet}"
-  availability_zone = "${var.availability_zone}"
-  depends_on        = ["aws_vpc.default", "aws_route_table.consul"]
-
-  tags {
-    Name    = "consul-${var.product}-${var.environment}"
-    Service = "consul"
-  }
+variable "nexus_ip" {
+  type    = "string"
+  default = "10.0.0.132"
 }
 
-resource "aws_route_table_association" "consul" {
-  subnet_id      = "${aws_subnet.consul.id}"
-  route_table_id = "${aws_route_table.consul.id}"
-  depends_on     = ["aws_route_table.consul", "aws_subnet.consul"]
-}
-
-resource "aws_route_table" "weblayer" {
-  vpc_id     = "${var.aws_vpc_id}"
-  depends_on = ["aws_vpc.default"]
-
-  tags {
-    Name        = "weblayer-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
-    Layer       = "weblayer"
-  }
-}
-
-resource "aws_route" "weblayer" {
-  route_table_id         = "${aws_route_table.weblayer.id}"
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = "${aws_internet_gateway.default.id}"
-  depends_on             = ["aws_route_table.weblayer", "aws_internet_gateway.default"]
-}
-
-resource "aws_subnet" "weblayer" {
-  vpc_id            = "${var.aws_vpc_id}"
-  cidr_block        = "${var.weblayer_cidr}"
-  availability_zone = "${var.availability_zone}"
-  depends_on        = ["aws_subnet.weblayer", "aws_route_table.weblayer"]
-
-  tags {
-    Name        = "weblayer-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
-    Layer       = "weblayer"
-  }
-}
-
-resource "aws_route_table_association" "weblayer" {
-  subnet_id      = "${aws_subnet.weblayer.id}"
-  route_table_id = "${aws_route_table.weblayer.id}"
-  depends_on     = ["aws_subnet.weblayer", "aws_route_table.weblayer"]
+variable "dashing_ip" {
+  type    = "string"
+  default = "10.0.0.148"
 }
 
 /*
@@ -82,34 +55,6 @@ resource "aws_route_table_association" "weblayer" {
  *    |___/\___|\___|\__,_|_|  |_|\__|\__, |  \__, |_|  \___/ \__,_| .__/|___/
  *                                    |___/   |___/                |_|        
  */
-
-resource "aws_security_group" "consului" {
-  name = "consului"
-
-  description = "consului security group"
-  vpc_id      = "${var.aws_vpc_id}"
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = "${var.admin_cidrs}"
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags {
-    Name        = "consului-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
-    Layer       = "consul"
-  }
-}
 
 resource "aws_security_group" "ssh" {
   name = "ssh-${var.product}-${var.environment}"
@@ -133,157 +78,6 @@ resource "aws_security_group" "ssh" {
 
   tags {
     Name        = "ssh-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
-  }
-}
-
-resource "aws_security_group" "consul-server" {
-  name = "consul-server-${var.product}-${var.environment}"
-
-  vpc_id     = "${var.aws_vpc_id}"
-  depends_on = ["aws_vpc.default"]
-
-  ingress {
-    from_port   = 8301
-    to_port     = 8301
-    protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  ingress {
-    from_port   = 8301
-    to_port     = 8301
-    protocol    = "udp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  ingress {
-    from_port   = 8300
-    to_port     = 8300
-    protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  ingress {
-    from_port   = 8302
-    to_port     = 8302
-    protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  ingress {
-    from_port   = 8302
-    to_port     = 8302
-    protocol    = "udp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  ingress {
-    from_port   = 8500
-    to_port     = 8500
-    protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
-  }
-
-  tags {
-    Name        = "consul-server-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
-  }
-}
-
-resource "aws_security_group" "consul-client" {
-  name = "consul-client-${var.product}-${var.environment}"
-
-  vpc_id     = "${var.aws_vpc_id}"
-  depends_on = ["aws_vpc.default"]
-
-  ingress {
-    from_port   = 8301
-    to_port     = 8301
-    protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  ingress {
-    from_port   = 8301
-    to_port     = 8301
-    protocol    = "udp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  ingress {
-    from_port   = 8500
-    to_port     = 8500
-    protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  ingress {
-    from_port   = 8600
-    to_port     = 8600
-    protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  ingress {
-    from_port   = 8600
-    to_port     = 8600
-    protocol    = "udp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  tags {
-    Name        = "consul-client-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
-  }
-}
-
-resource "aws_security_group" "weblayer" {
-  name = "weblayer-${var.product}-${var.environment}"
-
-  vpc_id     = "${var.aws_vpc_id}"
-  depends_on = ["aws_vpc.default"]
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
-  }
-
-  ingress {
-    from_port   = 8081
-    to_port     = 8081
-    protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
-  }
-
-  ingress {
-    from_port   = 8181
-    to_port     = 8181
-    protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags {
-    Name        = "weblayer-${var.product}-${var.environment}"
     Product     = "${var.product}"
     Environment = "${var.environment}"
   }

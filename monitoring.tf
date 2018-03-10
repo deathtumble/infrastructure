@@ -1,3 +1,8 @@
+variable "monitoring_subnet" {
+  type    = "string"
+  default = "10.0.0.32/27"
+}
+
 module "monitoring" {
   source = "./role"
 

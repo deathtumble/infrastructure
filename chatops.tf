@@ -1,3 +1,8 @@
+variable "chatops_subnet" {
+  type    = "string"
+  default = "10.0.0.64/27"
+}
+
 resource "aws_instance" "chatops" {
   count                   = "1"
   ami                     = "${var.ecs_ami_id}"

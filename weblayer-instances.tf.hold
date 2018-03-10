@@ -31,3 +31,88 @@ EOF
   }
 }
 
+resource "aws_route_table" "weblayer" {
+  vpc_id     = "${var.aws_vpc_id}"
+  depends_on = ["aws_vpc.default"]
+
+  tags {
+    Name        = "weblayer-${var.product}-${var.environment}"
+    Product     = "${var.product}"
+    Environment = "${var.environment}"
+    Layer       = "weblayer"
+  }
+}
+
+resource "aws_route" "weblayer" {
+  route_table_id         = "${aws_route_table.weblayer.id}"
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = "${aws_internet_gateway.default.id}"
+  depends_on             = ["aws_route_table.weblayer", "aws_internet_gateway.default"]
+}
+
+resource "aws_subnet" "weblayer" {
+  vpc_id            = "${var.aws_vpc_id}"
+  cidr_block        = "${var.weblayer_cidr}"
+  availability_zone = "${var.availability_zone}"
+  depends_on        = ["aws_subnet.weblayer", "aws_route_table.weblayer"]
+
+  tags {
+    Name        = "weblayer-${var.product}-${var.environment}"
+    Product     = "${var.product}"
+    Environment = "${var.environment}"
+    Layer       = "weblayer"
+  }
+}
+
+resource "aws_route_table_association" "weblayer" {
+  subnet_id      = "${aws_subnet.weblayer.id}"
+  route_table_id = "${aws_route_table.weblayer.id}"
+  depends_on     = ["aws_subnet.weblayer", "aws_route_table.weblayer"]
+}
+
+resource "aws_security_group" "weblayer" {
+  name = "weblayer-${var.product}-${var.environment}"
+
+  vpc_id     = "${var.aws_vpc_id}"
+  depends_on = ["aws_vpc.default"]
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8081
+    to_port     = 8081
+    protocol    = "tcp"
+    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8181
+    to_port     = 8181
+    protocol    = "tcp"
+    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags {
+    Name        = "weblayer-${var.product}-${var.environment}"
+    Product     = "${var.product}"
+    Environment = "${var.environment}"
+  }
+}
+
+variable "weblayer_cidr" {
+  type    = "string"
+  default = "10.0.16.0/23"
+}
+

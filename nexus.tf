@@ -1,3 +1,8 @@
+variable "nexus_subnet" {
+  type    = "string"
+  default = "10.0.0.128/28"
+}
+
 module "nexus" {
   source = "./role"
 

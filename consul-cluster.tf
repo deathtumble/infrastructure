@@ -1,3 +1,74 @@
+variable "consul_server_count" {
+  type    = "string"
+  default = "2"
+}
+
+resource "aws_route_table" "consul" {
+  vpc_id     = "${var.aws_vpc_id}"
+  depends_on = ["aws_vpc.default"]
+
+  tags {
+    Name        = "consul-${var.product}-${var.environment}"
+    Product     = "${var.product}"
+    Environment = "${var.environment}"
+    Layer       = "consul"
+  }
+}
+
+resource "aws_route" "consul" {
+  route_table_id         = "${aws_route_table.consul.id}"
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = "${aws_internet_gateway.default.id}"
+
+  depends_on = ["aws_route_table.consul", "aws_internet_gateway.default"]
+}
+
+resource "aws_subnet" "consul" {
+  vpc_id            = "${var.aws_vpc_id}"
+  cidr_block        = "${var.consul_subnet}"
+  availability_zone = "${var.availability_zone}"
+  depends_on        = ["aws_vpc.default", "aws_route_table.consul"]
+
+  tags {
+    Name    = "consul-${var.product}-${var.environment}"
+    Service = "consul"
+  }
+}
+
+resource "aws_route_table_association" "consul" {
+  subnet_id      = "${aws_subnet.consul.id}"
+  route_table_id = "${aws_route_table.consul.id}"
+  depends_on     = ["aws_route_table.consul", "aws_subnet.consul"]
+}
+
+resource "aws_security_group" "consului" {
+  name = "consului"
+
+  description = "consului security group"
+  vpc_id      = "${var.aws_vpc_id}"
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = "${var.admin_cidrs}"
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags {
+    Name        = "consului-${var.product}-${var.environment}"
+    Product     = "${var.product}"
+    Environment = "${var.environment}"
+    Layer       = "consul"
+  }
+}
+
 resource "aws_ecs_cluster" "consul-leader" {
   name = "consul-leader"
 }
@@ -232,4 +303,119 @@ resource "aws_ecs_task_definition" "consul-server" {
       	}
 	]
     DEFINITION
+}
+
+resource "aws_security_group" "consul-server" {
+  name = "consul-server-${var.product}-${var.environment}"
+
+  vpc_id     = "${var.aws_vpc_id}"
+  depends_on = ["aws_vpc.default"]
+
+  ingress {
+    from_port   = 8301
+    to_port     = 8301
+    protocol    = "tcp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8301
+    to_port     = 8301
+    protocol    = "udp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8300
+    to_port     = 8300
+    protocol    = "tcp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8302
+    to_port     = 8302
+    protocol    = "tcp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8302
+    to_port     = 8302
+    protocol    = "udp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8500
+    to_port     = 8500
+    protocol    = "tcp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
+  }
+
+  tags {
+    Name        = "consul-server-${var.product}-${var.environment}"
+    Product     = "${var.product}"
+    Environment = "${var.environment}"
+  }
+}
+
+resource "aws_security_group" "consul-client" {
+  name = "consul-client-${var.product}-${var.environment}"
+
+  vpc_id     = "${var.aws_vpc_id}"
+  depends_on = ["aws_vpc.default"]
+
+  ingress {
+    from_port   = 8301
+    to_port     = 8301
+    protocol    = "tcp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8301
+    to_port     = 8301
+    protocol    = "udp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8500
+    to_port     = 8500
+    protocol    = "tcp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8600
+    to_port     = 8600
+    protocol    = "tcp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8600
+    to_port     = 8600
+    protocol    = "udp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
+  tags {
+    Name        = "consul-client-${var.product}-${var.environment}"
+    Product     = "${var.product}"
+    Environment = "${var.environment}"
+  }
+}
+
+variable "consul_subnet" {
+  type    = "string"
+  default = "10.0.0.0/27"
 }

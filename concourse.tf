@@ -1,3 +1,8 @@
+variable "concourse_subnet" {
+  type    = "string"
+  default = "10.0.0.96/27"
+}
+
 module "concourse" {
   source = "./role"
 

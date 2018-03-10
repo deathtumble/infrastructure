@@ -1,3 +1,8 @@
+variable "dashing_subnet" {
+  type    = "string"
+  default = "10.0.0.144/28"
+}
+
 resource "aws_ebs_volume" "dashing" {
   availability_zone = "${var.availability_zone}"
   size              = 22
