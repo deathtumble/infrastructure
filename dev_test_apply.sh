@@ -2,5 +2,6 @@
 
 set -e
 
-terraform $@ -var 'ecs_ami_id=ami-eac98593' -var 'aws_vpc_id=vpc-3515f853'   
+# terraform $@ -var 'aws_vpc_id=vpc-b0833ed6' -var 'product=poc' -var 'environment=murray' -state=poc-murray.tfstate 
 
+terraform $@ -var 'aws_vpc_id=vpc-3515f853' -var 'product=poc' -var 'environment=poc' -state=terraform.tfstate 

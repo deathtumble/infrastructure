@@ -303,12 +303,11 @@ resource "aws_elb" "dashing" {
 }
 
 resource "aws_route53_record" "dashing" {
-  zone_id    = "${aws_route53_zone.root.zone_id}"
+  zone_id    = "${var.aws_route53_zone_id}"
   name       = "dashing"
   type       = "CNAME"
   ttl        = 300
   records    = ["${aws_elb.dashing.dns_name}"]
-  depends_on = ["aws_route53_zone.root", "aws_elb.dashing"]
 }
 
 resource "aws_elb_attachment" "dashing" {

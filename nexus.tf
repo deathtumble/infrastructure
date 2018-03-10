@@ -31,7 +31,7 @@ module "nexus" {
   ami_id                     = "${var.ecs_ami_id}"
   product                  = "${var.product}"
   environment                = "${var.environment}"
-  aws_route53_record_zone_id = "${aws_route53_zone.root.zone_id}"
+  aws_route53_record_zone_id = "${var.aws_route53_zone_id}"
 }
 
 data "template_file" "nexus" {

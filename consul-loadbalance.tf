@@ -28,10 +28,9 @@ resource "aws_elb" "consului" {
 }
 
 resource "aws_route53_record" "consul" {
-  zone_id    = "${aws_route53_zone.root.zone_id}"
+  zone_id    = "${var.aws_route53_zone_id}"
   name       = "consul"
   type       = "CNAME"
   ttl        = 300
-  depends_on = ["aws_route53_zone.root", "aws_elb.consului"]
   records    = ["${aws_elb.consului.dns_name}"]
 }

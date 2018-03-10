@@ -131,3 +131,8 @@ variable "ecs_ami_id" {
   type    = "string"
   default = "ami-eac98593"
 }
+
+variable "aws_route53_zone_id" {
+  type    = "string"
+  default = "ZHWSM6HESLWEO"
+} 

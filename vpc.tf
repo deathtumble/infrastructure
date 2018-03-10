@@ -86,7 +86,3 @@ resource "aws_main_route_table_association" "default" {
   route_table_id = "${aws_route_table.main.id}"
   depends_on     = ["aws_vpc.default", "aws_route_table.main"]
 }
-
-resource "aws_route53_zone" "root" {
-  name = "${var.root_domain_name}."
-}
