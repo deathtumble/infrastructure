@@ -14,7 +14,7 @@ resource "aws_instance" "consul-leader" {
   ebs_optimized           = "false"
   disable_api_termination = "false"
   instance_type           = "t2.small"
-  key_name                = "poc"
+  key_name                    = "${var.key_name}"
   private_ip              = "${var.consul_leader_ip}"
   monitoring              = "false"
 
@@ -58,7 +58,7 @@ resource "aws_instance" "consul-server" {
   ebs_optimized           = "false"
   disable_api_termination = "false"
   instance_type           = "t2.small"
-  key_name                = "poc"
+  key_name                    = "${var.key_name}"
   private_ip              = "${lookup(var.consul_server_instance_ips, count.index)}"
   monitoring              = "false"
 

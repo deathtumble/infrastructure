@@ -25,6 +25,7 @@ module "nexus" {
   private_ip = "${var.nexus_ip}"
 
   // globals
+  key_name                   = "${var.key_name}"
   vpc_id                     = "${var.aws_vpc_id}"
   gateway_id                 = "${aws_internet_gateway.default.id}"
   availability_zone          = "${var.availability_zone}"

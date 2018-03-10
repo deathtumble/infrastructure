@@ -23,7 +23,7 @@ resource "aws_instance" "dashing" {
   ebs_optimized           = "false"
   disable_api_termination = "false"
   instance_type           = "t2.small"
-  key_name                = "poc"
+  key_name                    = "${var.key_name}"
   private_ip              = "${var.dashing_ip}"
   monitoring              = "false"
 

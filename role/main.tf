@@ -32,7 +32,7 @@ resource "aws_instance" "this" {
   ebs_optimized               = "false"
   disable_api_termination     = "false"
   instance_type               = "${var.instance_type}"
-  key_name                    = "poc"
+  key_name                    = "${var.key_name}"
   private_ip                  = "${var.private_ip}"
   monitoring                  = "false"
   vpc_security_group_ids      = ["${var.vpc_security_group_ids}"]

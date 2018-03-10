@@ -150,4 +150,9 @@ variable "monitoring_volume_id" {
 variable "concourse_volume_id" {
    type = "string" 
    default = "vol-0cc66dcb2a5b637d2"
+}
+
+variable "key_name" {
+   type = "string"
+   default = "poc" 
 } 
