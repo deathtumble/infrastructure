@@ -18,7 +18,7 @@ module "monitoring" {
   task_definition      = "monitoring:${aws_ecs_task_definition.monitoring.revision}"
   desired_count        = "1"
 
-  volume_id = "vol-0a53b71d35611d427"
+  volume_id = "${var.monitoring_volume_id}"
 
   // todo remove need to specify    
   cidr_block = "${var.monitoring_subnet}"

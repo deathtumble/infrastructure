@@ -19,7 +19,7 @@ module "concourse" {
   desired_count        = "1"
   instance_type        = "t2.medium"
 
-  volume_id = "vol-0cc66dcb2a5b637d2"
+  volume_id = "${var.concourse_volume_id}"
 
   // todo remove need to specify    
   cidr_block = "${var.concourse_subnet}"

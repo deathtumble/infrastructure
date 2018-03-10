@@ -18,7 +18,7 @@ module "nexus" {
   task_definition      = "nexus:${aws_ecs_task_definition.nexus.revision}"
   desired_count        = "1"
 
-  volume_id = "vol-0c80683f4a8142d69"
+  volume_id = "${var.nexus_volume_id}"
 
   // todo remove need to specify    
   cidr_block = "${var.nexus_subnet}"
