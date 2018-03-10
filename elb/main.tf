@@ -21,7 +21,7 @@ resource "aws_elb" "this" {
 
   tags {
     Name        = "${var.role}"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
     Port        = "${var.elb_port}"
     Path        = "${var.healthcheck_path}"

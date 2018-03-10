@@ -28,9 +28,9 @@ resource "aws_elb" "consului" {
 }
 
 resource "aws_route53_record" "consul" {
-  zone_id    = "${var.aws_route53_zone_id}"
-  name       = "consul"
-  type       = "CNAME"
-  ttl        = 300
-  records    = ["${aws_elb.consului.dns_name}"]
+  zone_id = "${var.aws_route53_zone_id}"
+  name    = "consul"
+  type    = "CNAME"
+  ttl     = 300
+  records = ["${aws_elb.consului.dns_name}"]
 }

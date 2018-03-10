@@ -4,7 +4,7 @@ resource "aws_route_table" "consul" {
 
   tags {
     Name        = "consul-${var.product}-${var.environment}"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
     Layer       = "consul"
   }
@@ -42,7 +42,7 @@ resource "aws_route_table" "weblayer" {
 
   tags {
     Name        = "weblayer-${var.product}-${var.environment}"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
     Layer       = "weblayer"
   }
@@ -63,7 +63,7 @@ resource "aws_subnet" "weblayer" {
 
   tags {
     Name        = "weblayer-${var.product}-${var.environment}"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
     Layer       = "weblayer"
   }
@@ -105,7 +105,7 @@ resource "aws_security_group" "consului" {
 
   tags {
     Name        = "consului-${var.product}-${var.environment}"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
     Layer       = "consul"
   }
@@ -133,7 +133,7 @@ resource "aws_security_group" "ssh" {
 
   tags {
     Name        = "ssh-${var.product}-${var.environment}"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
   }
 }
@@ -195,7 +195,7 @@ resource "aws_security_group" "consul-server" {
 
   tags {
     Name        = "consul-server-${var.product}-${var.environment}"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
   }
 }
@@ -243,7 +243,7 @@ resource "aws_security_group" "consul-client" {
 
   tags {
     Name        = "consul-client-${var.product}-${var.environment}"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
   }
 }
@@ -284,7 +284,7 @@ resource "aws_security_group" "weblayer" {
 
   tags {
     Name        = "weblayer-${var.product}-${var.environment}"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
   }
 }

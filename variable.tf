@@ -9,7 +9,7 @@ variable "availability_zone" {
 }
 
 variable "aws_vpc_id" {
-  type    = "string"
+  type = "string"
 }
 
 variable "admin_cidr" {
@@ -113,37 +113,37 @@ variable "ecs_ami_id" {
 }
 
 variable "aws_route53_zone_id" {
-  type    = "string"
-} 
+  type = "string"
+}
 
 variable "nexus_volume_id" {
-   type = "string" 
-} 
+  type = "string"
+}
 
 variable "monitoring_volume_id" {
-   type = "string" 
-} 
+  type = "string"
+}
 
 variable "concourse_volume_id" {
-   type = "string" 
+  type = "string"
 }
 
 variable "key_name" {
-   type = "string"
-} 
+  type = "string"
+}
 
 variable "root_domain_name" {
-  type    = "string"
+  type = "string"
 }
 
 variable "product" {
-  type    = "string"
+  type = "string"
 }
 
 variable "environment" {
-  type    = "string"
+  type = "string"
 }
 
 variable "nameTag" {
-  type    = "string"
+  type = "string"
 }

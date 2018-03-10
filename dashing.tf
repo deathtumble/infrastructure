@@ -23,7 +23,7 @@ resource "aws_instance" "dashing" {
   ebs_optimized           = "false"
   disable_api_termination = "false"
   instance_type           = "t2.small"
-  key_name                    = "${var.key_name}"
+  key_name                = "${var.key_name}"
   private_ip              = "${var.dashing_ip}"
   monitoring              = "false"
 
@@ -50,7 +50,7 @@ EOF
 
   tags {
     Name        = "dashing"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
   }
 }
@@ -303,11 +303,11 @@ resource "aws_elb" "dashing" {
 }
 
 resource "aws_route53_record" "dashing" {
-  zone_id    = "${var.aws_route53_zone_id}"
-  name       = "dashing"
-  type       = "CNAME"
-  ttl        = 300
-  records    = ["${aws_elb.dashing.dns_name}"]
+  zone_id = "${var.aws_route53_zone_id}"
+  name    = "dashing"
+  type    = "CNAME"
+  ttl     = 300
+  records = ["${aws_elb.dashing.dns_name}"]
 }
 
 resource "aws_elb_attachment" "dashing" {
@@ -322,7 +322,7 @@ resource "aws_route_table" "dashing" {
 
   tags {
     Name        = "dashing-${var.product}-${var.environment}"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
     Layer       = "dashing"
   }
@@ -382,7 +382,7 @@ resource "aws_security_group" "dashing" {
 
   tags {
     Name        = "dashing-${var.product}-${var.environment}"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
     Layer       = "dashing"
   }

@@ -51,7 +51,7 @@ EOF
 
   tags {
     Name        = "chatops"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
   }
 }
@@ -231,7 +231,7 @@ resource "aws_route_table" "chatops" {
 
   tags {
     Name        = "chatops-${var.product}-${var.environment}"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
     Layer       = "chatops"
   }
@@ -291,7 +291,7 @@ resource "aws_security_group" "chatops" {
 
   tags {
     Name        = "graphite-${var.product}-${var.environment}"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
   }
 }

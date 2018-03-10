@@ -14,7 +14,7 @@ resource "aws_instance" "consul-leader" {
   ebs_optimized           = "false"
   disable_api_termination = "false"
   instance_type           = "t2.small"
-  key_name                    = "${var.key_name}"
+  key_name                = "${var.key_name}"
   private_ip              = "${var.consul_leader_ip}"
   monitoring              = "false"
 
@@ -39,7 +39,7 @@ EOF
 
   tags {
     Name          = "consul-0"
-    Product   = "${var.product}"
+    Product       = "${var.product}"
     Environment   = "${var.environment}"
     ConsulCluster = "${var.product}-${var.environment}"
   }
@@ -58,7 +58,7 @@ resource "aws_instance" "consul-server" {
   ebs_optimized           = "false"
   disable_api_termination = "false"
   instance_type           = "t2.small"
-  key_name                    = "${var.key_name}"
+  key_name                = "${var.key_name}"
   private_ip              = "${lookup(var.consul_server_instance_ips, count.index)}"
   monitoring              = "false"
 
@@ -83,7 +83,7 @@ EOF
 
   tags {
     Name          = "consul-${lookup(var.consul_server_instance_names, count.index)}"
-    Product   = "${var.product}"
+    Product       = "${var.product}"
     Environment   = "${var.environment}"
     ConsulCluster = "${var.product}-${var.environment}"
   }

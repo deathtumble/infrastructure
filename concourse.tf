@@ -31,7 +31,7 @@ module "concourse" {
   gateway_id                 = "${aws_internet_gateway.default.id}"
   availability_zone          = "${var.availability_zone}"
   ami_id                     = "${var.ecs_ami_id}"
-  product                  = "${var.product}"
+  product                    = "${var.product}"
   environment                = "${var.environment}"
   aws_route53_record_zone_id = "${var.aws_route53_zone_id}"
 }
@@ -230,7 +230,7 @@ resource "aws_security_group" "concourse" {
 
   tags {
     Name        = "concourse-${var.product}-${var.environment}"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
     Layer       = "concourse"
   }

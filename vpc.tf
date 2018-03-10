@@ -16,7 +16,7 @@ resource "aws_vpc" "default" {
 
   tags {
     Name        = "${var.product}-${var.environment}"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
   }
 }
@@ -26,7 +26,7 @@ resource "aws_internet_gateway" "default" {
 
   tags {
     Name        = "${var.product}-${var.environment}"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
   }
 
@@ -56,7 +56,7 @@ resource "aws_network_acl" "default" {
 
   tags {
     Name        = "${var.product}-${var.environment}"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
   }
 
@@ -68,13 +68,13 @@ resource "aws_route_table" "main" {
 
   tags {
     Name        = "main-${var.product}-${var.environment}"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
   }
 
   tags {
     Name        = "${var.product}-${var.environment}"
-    Product   = "${var.product}"
+    Product     = "${var.product}"
     Environment = "${var.environment}"
   }
 

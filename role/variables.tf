@@ -49,5 +49,5 @@ variable "task_definition" {}
 variable "desired_count" {}
 
 variable "key_name" {
-   type = "string"
-} 
+  type = "string"
+}

@@ -1,8 +1,8 @@
 variable "role" {}
 
 variable "elb" {
-    type = "string"
-    default = true
+  type    = "string"
+  default = true
 }
 
 variable "elb_security_group" {}
