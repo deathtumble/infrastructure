@@ -64,7 +64,7 @@ EOF
 
   tags {
     Name          = "${var.role}"
-    Ecosystem     = "${var.ecosystem}"
+    Product     = "${var.product}"
     Environment   = "${var.environment}"
     ConsulCluster = "${var.role}"
     Goss          = "true"
@@ -76,7 +76,7 @@ resource "aws_route_table" "this" {
 
   tags {
     Name        = "${var.role}"
-    Ecosystem   = "${var.ecosystem}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
   }
 }
@@ -94,7 +94,7 @@ resource "aws_subnet" "this" {
 
   tags {
     Name        = "${var.role}"
-    Ecosystem   = "${var.ecosystem}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
   }
 }
@@ -119,7 +119,7 @@ module "elb" {
   aws_instance_id            = "${aws_instance.this.id}"
   aws_route53_record_zone_id = "${var.aws_route53_record_zone_id}"
 
-  ecosystem   = "${var.ecosystem}"
+  product   = "${var.product}"
   environment = "${var.environment}"
 }
 

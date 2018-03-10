@@ -12,7 +12,7 @@ variable "instance_type" {
   default = "t2.small"
 }
 
-variable "ecosystem" {}
+variable "product" {}
 
 variable "environment" {}
 

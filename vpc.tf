@@ -7,7 +7,7 @@ provider "template" {
 }
 
 resource "aws_vpc" "default" {
-  cidr_block                       = "${var.ecosystem_cidr}"
+  cidr_block                       = "${var.vpc_cidr}"
   instance_tenancy                 = "default"
   enable_dns_support               = true
   enable_dns_hostnames             = true
@@ -15,8 +15,8 @@ resource "aws_vpc" "default" {
   assign_generated_ipv6_cidr_block = false
 
   tags {
-    Name        = "${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
   }
 }
@@ -25,8 +25,8 @@ resource "aws_internet_gateway" "default" {
   vpc_id = "${var.aws_vpc_id}"
 
   tags {
-    Name        = "${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
   }
 
@@ -55,8 +55,8 @@ resource "aws_network_acl" "default" {
   }
 
   tags {
-    Name        = "${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
   }
 
@@ -67,14 +67,14 @@ resource "aws_route_table" "main" {
   vpc_id = "${var.aws_vpc_id}"
 
   tags {
-    Name        = "main-${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "main-${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
   }
 
   tags {
-    Name        = "${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
   }
 

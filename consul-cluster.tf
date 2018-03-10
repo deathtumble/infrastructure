@@ -33,7 +33,7 @@ resource "aws_ecs_task_definition" "consul-leader" {
 		    	}, 
 		    	{
 		    		"Name": "GRAPHITE_PREFIX",
-		    		"Value": "${var.ecosystem}.${var.environment}.consul."
+		    		"Value": "${var.product}.${var.environment}.consul."
 		    	}
 		    ]
 		},
@@ -46,7 +46,7 @@ resource "aws_ecs_task_definition" "consul-leader" {
 		    "environment": [
 		    	{
 		    		"Name": "CONSUL_LOCAL_CONFIG",
-		    		"Value": "{\"skip_leave_on_interrupt\": true, \"telemetry\": {\"metrics_prefix\":\"${var.ecosystem}.${var.environment}.consul.server\", \"statsd_address\":\"10.0.0.36:8125\"}}"
+		    		"Value": "{\"skip_leave_on_interrupt\": true, \"telemetry\": {\"metrics_prefix\":\"${var.product}.${var.environment}.consul.server\", \"statsd_address\":\"10.0.0.36:8125\"}}"
 		    	},
 		    	{
 		    		"Name": "CONSUL_BIND_INTERFACE",
@@ -68,7 +68,7 @@ resource "aws_ecs_task_definition" "consul-leader" {
                 "-recursor=${var.dns_ip}",
         		"-bootstrap",
         		"-retry-join",
-        		"provider=aws tag_key=ConsulCluster tag_value=${var.nameTag}",
+        		"provider=aws tag_key=ConsulCluster tag_value=${var.product}-${var.environment}",
         		"-ui"
       		],
 		    "portMappings": [
@@ -150,7 +150,7 @@ resource "aws_ecs_task_definition" "consul-server" {
 		    	}, 
 		    	{
 		    		"Name": "GRAPHITE_PREFIX",
-		    		"Value": "${var.ecosystem}.${var.environment}.consul."
+		    		"Value": "${var.product}.${var.environment}.consul."
 		    	}
 		    ]
 		},
@@ -163,7 +163,7 @@ resource "aws_ecs_task_definition" "consul-server" {
 		    "environment": [
 		    	{
 		    		"Name": "CONSUL_LOCAL_CONFIG",
-		    		"Value": "{\"skip_leave_on_interrupt\": true, \"telemetry\": {\"metrics_prefix\":\"${var.ecosystem}.${var.environment}.consul.server\", \"statsd_address\":\"10.0.0.36:8125\"}}"
+		    		"Value": "{\"skip_leave_on_interrupt\": true, \"telemetry\": {\"metrics_prefix\":\"${var.product}.${var.environment}.consul.server\", \"statsd_address\":\"10.0.0.36:8125\"}}"
 		    	},
 		    	{
 		    		"Name": "CONSUL_BIND_INTERFACE",
@@ -184,7 +184,7 @@ resource "aws_ecs_task_definition" "consul-server" {
                 "-dns-port=53",
                 "-recursor=${var.dns_ip}",
         		"-retry-join",
-        		"provider=aws tag_key=ConsulCluster tag_value=${var.nameTag}",
+        		"provider=aws tag_key=ConsulCluster tag_value=${var.product}-${var.environment}",
         		"-ui"
       		],
 		    "portMappings": [

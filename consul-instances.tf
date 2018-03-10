@@ -34,14 +34,14 @@ resource "aws_instance" "consul-leader" {
 #!/bin/bash
 cat <<'EOF' >> /etc/ecs/ecs.config
 ECS_CLUSTER=consul-leader
-HOSTNAME=consul-${var.nameTag}-leader
+HOSTNAME=consul-${var.product}-${var.environment}-leader
 EOF
 
   tags {
     Name          = "consul-0"
-    Ecosystem     = "${var.ecosystem}"
+    Product   = "${var.product}"
     Environment   = "${var.environment}"
-    ConsulCluster = "${var.nameTag}"
+    ConsulCluster = "${var.product}-${var.environment}"
   }
 }
 
@@ -78,14 +78,14 @@ resource "aws_instance" "consul-server" {
 #!/bin/bash
 cat <<'EOF' >> /etc/ecs/ecs.config
 ECS_CLUSTER=consul-server
-HOST_NAME=consul-${var.nameTag}-${lookup(var.consul_server_instance_names, count.index)}
+HOST_NAME=consul-${var.product}-${var.environment}-${lookup(var.consul_server_instance_names, count.index)}
 EOF
 
   tags {
     Name          = "consul-${lookup(var.consul_server_instance_names, count.index)}"
-    Ecosystem     = "${var.ecosystem}"
+    Product   = "${var.product}"
     Environment   = "${var.environment}"
-    ConsulCluster = "${var.nameTag}"
+    ConsulCluster = "${var.product}-${var.environment}"
   }
 }
 

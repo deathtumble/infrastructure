@@ -2,6 +2,6 @@ data "template_file" "consul_agent" {
   template = "${file("files/consul-agent.tpl")}"
 
   vars {
-    nameTag = "${var.nameTag}"
+    nameTag = "${var.product}-${var.environment}"
   }
 }

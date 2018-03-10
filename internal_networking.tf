@@ -3,8 +3,8 @@ resource "aws_route_table" "consul" {
   depends_on = ["aws_vpc.default"]
 
   tags {
-    Name        = "consul-${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "consul-${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
     Layer       = "consul"
   }
@@ -25,7 +25,7 @@ resource "aws_subnet" "consul" {
   depends_on        = ["aws_vpc.default", "aws_route_table.consul"]
 
   tags {
-    Name    = "consul-${var.nameTag}"
+    Name    = "consul-${var.product}-${var.environment}"
     Service = "consul"
   }
 }
@@ -41,8 +41,8 @@ resource "aws_route_table" "weblayer" {
   depends_on = ["aws_vpc.default"]
 
   tags {
-    Name        = "weblayer-${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "weblayer-${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
     Layer       = "weblayer"
   }
@@ -62,8 +62,8 @@ resource "aws_subnet" "weblayer" {
   depends_on        = ["aws_subnet.weblayer", "aws_route_table.weblayer"]
 
   tags {
-    Name        = "weblayer-${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "weblayer-${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
     Layer       = "weblayer"
   }
@@ -104,15 +104,15 @@ resource "aws_security_group" "consului" {
   }
 
   tags {
-    Name        = "consului-${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "consului-${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
     Layer       = "consul"
   }
 }
 
 resource "aws_security_group" "ssh" {
-  name = "ssh-${var.nameTag}"
+  name = "ssh-${var.product}-${var.environment}"
 
   vpc_id     = "${var.aws_vpc_id}"
   depends_on = ["aws_vpc.default"]
@@ -121,7 +121,7 @@ resource "aws_security_group" "ssh" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}", "${var.admin_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
   }
 
   egress {
@@ -132,14 +132,14 @@ resource "aws_security_group" "ssh" {
   }
 
   tags {
-    Name        = "ssh-${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "ssh-${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
   }
 }
 
 resource "aws_security_group" "consul-server" {
-  name = "consul-server-${var.nameTag}"
+  name = "consul-server-${var.product}-${var.environment}"
 
   vpc_id     = "${var.aws_vpc_id}"
   depends_on = ["aws_vpc.default"]
@@ -148,60 +148,60 @@ resource "aws_security_group" "consul-server" {
     from_port   = 8301
     to_port     = 8301
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}"]
   }
 
   ingress {
     from_port   = 8301
     to_port     = 8301
     protocol    = "udp"
-    cidr_blocks = ["${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}"]
   }
 
   ingress {
     from_port   = 8300
     to_port     = 8300
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}"]
   }
 
   ingress {
     from_port   = 8302
     to_port     = 8302
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}"]
   }
 
   ingress {
     from_port   = 8302
     to_port     = 8302
     protocol    = "udp"
-    cidr_blocks = ["${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}"]
   }
 
   ingress {
     from_port   = 8500
     to_port     = 8500
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}"]
   }
 
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}", "${var.admin_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
   }
 
   tags {
-    Name        = "consul-server-${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "consul-server-${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
   }
 }
 
 resource "aws_security_group" "consul-client" {
-  name = "consul-client-${var.nameTag}"
+  name = "consul-client-${var.product}-${var.environment}"
 
   vpc_id     = "${var.aws_vpc_id}"
   depends_on = ["aws_vpc.default"]
@@ -210,46 +210,46 @@ resource "aws_security_group" "consul-client" {
     from_port   = 8301
     to_port     = 8301
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}"]
   }
 
   ingress {
     from_port   = 8301
     to_port     = 8301
     protocol    = "udp"
-    cidr_blocks = ["${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}"]
   }
 
   ingress {
     from_port   = 8500
     to_port     = 8500
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}"]
   }
 
   ingress {
     from_port   = 8600
     to_port     = 8600
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}"]
   }
 
   ingress {
     from_port   = 8600
     to_port     = 8600
     protocol    = "udp"
-    cidr_blocks = ["${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}"]
   }
 
   tags {
-    Name        = "consul-client-${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "consul-client-${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
   }
 }
 
 resource "aws_security_group" "weblayer" {
-  name = "weblayer-${var.nameTag}"
+  name = "weblayer-${var.product}-${var.environment}"
 
   vpc_id     = "${var.aws_vpc_id}"
   depends_on = ["aws_vpc.default"]
@@ -258,21 +258,21 @@ resource "aws_security_group" "weblayer" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}", "${var.admin_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
   }
 
   ingress {
     from_port   = 8081
     to_port     = 8081
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}", "${var.admin_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
   }
 
   ingress {
     from_port   = 8181
     to_port     = 8181
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}", "${var.admin_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
   }
 
   egress {
@@ -283,8 +283,8 @@ resource "aws_security_group" "weblayer" {
   }
 
   tags {
-    Name        = "weblayer-${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "weblayer-${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
   }
 }

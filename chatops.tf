@@ -51,7 +51,7 @@ EOF
 
   tags {
     Name        = "chatops"
-    Ecosystem   = "${var.ecosystem}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
   }
 }
@@ -108,7 +108,7 @@ resource "aws_ecs_task_definition" "chatops" {
                 "-dns-port=53",
                 "-recursor=10.0.0.2",
                 "-retry-join",
-                "provider=aws tag_key=ConsulCluster tag_value=${var.nameTag}"
+                "provider=aws tag_key=ConsulCluster tag_value=${var.product}-${var.environment}"
             ],
             "mountPoints": [
                 {
@@ -173,7 +173,7 @@ resource "aws_ecs_task_definition" "chatops" {
 		    	}, 
 		    	{
 		    		"Name": "GRAPHITE_PREFIX",
-		    		"Value": "${var.ecosystem}.${var.environment}.chatops."
+		    		"Value": "${var.product}.${var.environment}.chatops."
 		    	}
 		    ]
 		},
@@ -230,8 +230,8 @@ resource "aws_route_table" "chatops" {
   depends_on = ["aws_vpc.default"]
 
   tags {
-    Name        = "chatops-${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "chatops-${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
     Layer       = "chatops"
   }
@@ -252,7 +252,7 @@ resource "aws_subnet" "chatops" {
   depends_on        = ["aws_vpc.default"]
 
   tags {
-    Name = "chatops-${var.nameTag}"
+    Name = "chatops-${var.product}-${var.environment}"
   }
 }
 
@@ -263,7 +263,7 @@ resource "aws_route_table_association" "chatops" {
 }
 
 resource "aws_security_group" "chatops" {
-  name = "chatops-${var.nameTag}"
+  name = "chatops-${var.product}-${var.environment}"
 
   vpc_id     = "${var.aws_vpc_id}"
   depends_on = ["aws_vpc.default"]
@@ -272,26 +272,26 @@ resource "aws_security_group" "chatops" {
     from_port   = 2003
     to_port     = 2003
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}"]
   }
 
   ingress {
     from_port   = 3000
     to_port     = 3000
     protocol    = "udp"
-    cidr_blocks = ["${var.ecosystem_cidr}", "${var.admin_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
   }
 
   ingress {
     from_port   = 3000
     to_port     = 3000
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}", "${var.admin_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
   }
 
   tags {
-    Name        = "graphite-${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "graphite-${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
   }
 }

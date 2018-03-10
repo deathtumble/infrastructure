@@ -50,7 +50,7 @@ EOF
 
   tags {
     Name        = "dashing"
-    Ecosystem   = "${var.ecosystem}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
   }
 }
@@ -142,7 +142,7 @@ resource "aws_ecs_task_definition" "dashing" {
                 "-dns-port=53",
                 "-recursor=10.0.0.2",
                 "-retry-join",
-                "provider=aws tag_key=ConsulCluster tag_value=${var.nameTag}"
+                "provider=aws tag_key=ConsulCluster tag_value=${var.product}-${var.environment}"
             ],
             "mountPoints": [
                 {
@@ -208,7 +208,7 @@ resource "aws_ecs_task_definition" "dashing" {
 		    	}, 
 		    	{
 		    		"Name": "GRAPHITE_PREFIX",
-		    		"Value": "${var.ecosystem}.${var.environment}.dashing."
+		    		"Value": "${var.product}.${var.environment}.dashing."
 		    	}
 		    ]
 		},
@@ -322,8 +322,8 @@ resource "aws_route_table" "dashing" {
   depends_on = ["aws_vpc.default"]
 
   tags {
-    Name        = "dashing-${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "dashing-${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
     Layer       = "dashing"
   }
@@ -344,7 +344,7 @@ resource "aws_subnet" "dashing" {
   depends_on        = ["aws_vpc.default"]
 
   tags {
-    Name = "dashing-${var.nameTag}"
+    Name = "dashing-${var.product}-${var.environment}"
   }
 }
 
@@ -371,7 +371,7 @@ resource "aws_security_group" "dashing" {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}", "${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.admin_cidr}", "${var.vpc_cidr}"]
   }
 
   egress {
@@ -382,8 +382,8 @@ resource "aws_security_group" "dashing" {
   }
 
   tags {
-    Name        = "dashing-${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "dashing-${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
     Layer       = "dashing"
   }

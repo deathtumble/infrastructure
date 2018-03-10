@@ -17,7 +17,7 @@ variable "root_domain_name" {
   default = "urbanfortress.uk"
 }
 
-variable "ecosystem" {
+variable "product" {
   type    = "string"
   default = "poc"
 }
@@ -37,7 +37,7 @@ variable "admin_cidr" {
   default = "81.174.166.51/32"
 }
 
-variable "ecosystem_cidr" {
+variable "vpc_cidr" {
   type    = "string"
   default = "10.0.0.0/16"
 }

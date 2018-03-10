@@ -23,6 +23,6 @@ variable "aws_instance_id" {}
 
 variable "subnets" {}
 
-variable "ecosystem" {}
+variable "product" {}
 
 variable "environment" {}

@@ -29,7 +29,7 @@ module "nexus" {
   gateway_id                 = "${aws_internet_gateway.default.id}"
   availability_zone          = "${var.availability_zone}"
   ami_id                     = "${var.ecs_ami_id}"
-  ecosystem                  = "${var.ecosystem}"
+  product                  = "${var.product}"
   environment                = "${var.environment}"
   aws_route53_record_zone_id = "${aws_route53_zone.root.zone_id}"
 }
@@ -42,7 +42,7 @@ data "template_file" "collectd-nexus" {
   template = "${file("files/collectd.tpl")}"
 
   vars {
-    graphite_prefix = "${var.ecosystem}.${var.environment}.nexus."
+    graphite_prefix = "${var.product}.${var.environment}.nexus."
   }
 }
 
@@ -86,14 +86,14 @@ resource "aws_security_group" "nexus" {
     from_port   = 8081
     to_port     = 8081
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}", "${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.admin_cidr}", "${var.vpc_cidr}"]
   }
 
   ingress {
     from_port   = 8082
     to_port     = 8082
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}", "${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.admin_cidr}", "${var.vpc_cidr}"]
   }
 
   egress {
@@ -104,8 +104,8 @@ resource "aws_security_group" "nexus" {
   }
 
   tags {
-    Name        = "nexus-${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "nexus-${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
     Layer       = "nexus"
   }

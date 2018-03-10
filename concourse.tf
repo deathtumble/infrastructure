@@ -30,7 +30,7 @@ module "concourse" {
   gateway_id                 = "${aws_internet_gateway.default.id}"
   availability_zone          = "${var.availability_zone}"
   ami_id                     = "${var.ecs_ami_id}"
-  ecosystem                  = "${var.ecosystem}"
+  product                  = "${var.product}"
   environment                = "${var.environment}"
   aws_route53_record_zone_id = "${aws_route53_zone.root.zone_id}"
 }
@@ -39,7 +39,7 @@ data "template_file" "collectd-concourse" {
   template = "${file("files/collectd.tpl")}"
 
   vars {
-    graphite_prefix = "${var.ecosystem}.${var.environment}.concourse."
+    graphite_prefix = "${var.product}.${var.environment}.concourse."
   }
 }
 
@@ -210,14 +210,14 @@ resource "aws_security_group" "concourse" {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}", "${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.admin_cidr}", "${var.vpc_cidr}"]
   }
 
   ingress {
     from_port   = 8082
     to_port     = 8082
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}", "${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.admin_cidr}", "${var.vpc_cidr}"]
   }
 
   egress {
@@ -228,8 +228,8 @@ resource "aws_security_group" "concourse" {
   }
 
   tags {
-    Name        = "concourse-${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "concourse-${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
     Layer       = "concourse"
   }

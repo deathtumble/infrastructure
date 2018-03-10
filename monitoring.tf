@@ -29,7 +29,7 @@ module "monitoring" {
   gateway_id                 = "${aws_internet_gateway.default.id}"
   availability_zone          = "${var.availability_zone}"
   ami_id                     = "${var.ecs_ami_id}"
-  ecosystem                  = "${var.ecosystem}"
+  product                  = "${var.product}"
   environment                = "${var.environment}"
   aws_route53_record_zone_id = "${aws_route53_zone.root.zone_id}"
 }
@@ -38,7 +38,7 @@ data "template_file" "collectd-monitoring" {
   template = "${file("files/collectd.tpl")}"
 
   vars {
-    graphite_prefix = "${var.ecosystem}.${var.environment}.monitoring."
+    graphite_prefix = "${var.product}.${var.environment}.monitoring."
   }
 }
 
@@ -217,7 +217,7 @@ resource "aws_ecs_task_definition" "monitoring" {
 }
 
 resource "aws_security_group" "graphite" {
-  name = "graphite-${var.nameTag}"
+  name = "graphite-${var.product}-${var.environment}"
 
   vpc_id     = "${var.aws_vpc_id}"
   depends_on = ["aws_vpc.default"]
@@ -226,33 +226,33 @@ resource "aws_security_group" "graphite" {
     from_port   = 2003
     to_port     = 2003
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}"]
   }
 
   ingress {
     from_port   = 3000
     to_port     = 3000
     protocol    = "udp"
-    cidr_blocks = ["${var.ecosystem_cidr}", "${var.admin_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
   }
 
   ingress {
     from_port   = 3000
     to_port     = 3000
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}", "${var.admin_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
   }
 
   ingress {
     from_port   = 8082
     to_port     = 8082
     protocol    = "tcp"
-    cidr_blocks = ["${var.ecosystem_cidr}", "${var.admin_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
   }
 
   tags {
-    Name        = "graphite-${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "graphite-${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
   }
 }
@@ -278,8 +278,8 @@ resource "aws_security_group" "grafana" {
   }
 
   tags {
-    Name        = "grafana-${var.nameTag}"
-    Ecosystem   = "${var.ecosystem}"
+    Name        = "grafana-${var.product}-${var.environment}"
+    Product   = "${var.product}"
     Environment = "${var.environment}"
     Layer       = "grafana"
   }
