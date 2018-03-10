@@ -13,5 +13,5 @@ terraform $@ \
 -var 'nameTag=poc-poc' \
 -var 'root_domain_name=urbanfortress.uk' \
 -var 'aws_route53_zone_id=ZHWSM6HESLWEO' \
--var 'key_name=poc' 
-
+-var 'key_name=poc' \
+-var 'admin_cidr=81.174.166.51/32' 

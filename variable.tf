@@ -14,7 +14,6 @@ variable "aws_vpc_id" {
 
 variable "admin_cidr" {
   type    = "string"
-  default = "81.174.166.51/32"
 }
 
 variable "vpc_cidr" {
