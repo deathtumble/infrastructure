@@ -1,5 +1,5 @@
 resource "aws_elb" "this" {
-  count           = "${var.elb_security_group == "" ? 0 : 1}"
+  count           = "${var.elb ? 1 : 0}"
   name            = "${var.role}"
   security_groups = ["${var.elb_security_group}"]
   subnets         = ["${var.subnets}"]
@@ -30,7 +30,7 @@ resource "aws_elb" "this" {
 }
 
 resource "aws_lb_cookie_stickiness_policy" "this" {
-  count                    = "${var.elb_security_group == "" ? 0 : 1}"
+  count                    = "${var.elb ? 1 : 0}"
   name                     = "${var.role}"
   load_balancer            = "${aws_elb.this.id}"
   lb_port                  = 80
@@ -38,7 +38,7 @@ resource "aws_lb_cookie_stickiness_policy" "this" {
 }
 
 resource "aws_route53_record" "this" {
-  count   = "${var.elb_security_group == "" ? 0 : 1}"
+  count   = "${var.elb ? 1 : 0}"
   zone_id = "${var.aws_route53_record_zone_id}"
   name    = "${var.role}"
   type    = "CNAME"
@@ -47,7 +47,7 @@ resource "aws_route53_record" "this" {
 }
 
 resource "aws_elb_attachment" "this" {
-  count    = "${var.elb_security_group == "" ? 0 : 1}"
+  count    = "${var.elb ? 1 : 0}"
   elb      = "${aws_elb.this.id}"
   instance = "${var.aws_instance_id}"
 }

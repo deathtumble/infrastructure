@@ -25,7 +25,7 @@ module "monitoring" {
   private_ip = "10.0.0.36"
 
   // globals
-  vpc_id                     = "${aws_vpc.default.id}"
+  vpc_id                     = "${var.aws_vpc_id}"
   gateway_id                 = "${aws_internet_gateway.default.id}"
   availability_zone          = "${var.availability_zone}"
   ami_id                     = "${var.ecs_ami_id}"
@@ -219,7 +219,7 @@ resource "aws_ecs_task_definition" "monitoring" {
 resource "aws_security_group" "graphite" {
   name = "graphite-${var.nameTag}"
 
-  vpc_id     = "${aws_vpc.default.id}"
+  vpc_id     = "${var.aws_vpc_id}"
   depends_on = ["aws_vpc.default"]
 
   ingress {
@@ -261,7 +261,7 @@ resource "aws_security_group" "grafana" {
   name = "grafana"
 
   description = "grafana security group"
-  vpc_id      = "${aws_vpc.default.id}"
+  vpc_id      = "${var.aws_vpc_id}"
 
   ingress {
     from_port   = 80

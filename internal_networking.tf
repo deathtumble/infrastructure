@@ -1,5 +1,5 @@
 resource "aws_route_table" "consul" {
-  vpc_id     = "${aws_vpc.default.id}"
+  vpc_id     = "${var.aws_vpc_id}"
   depends_on = ["aws_vpc.default"]
 
   tags {
@@ -19,7 +19,7 @@ resource "aws_route" "consul" {
 }
 
 resource "aws_subnet" "consul" {
-  vpc_id            = "${aws_vpc.default.id}"
+  vpc_id            = "${var.aws_vpc_id}"
   cidr_block        = "${var.consul_subnet}"
   availability_zone = "${var.availability_zone}"
   depends_on        = ["aws_vpc.default", "aws_route_table.consul"]
@@ -37,7 +37,7 @@ resource "aws_route_table_association" "consul" {
 }
 
 resource "aws_route_table" "weblayer" {
-  vpc_id     = "${aws_vpc.default.id}"
+  vpc_id     = "${var.aws_vpc_id}"
   depends_on = ["aws_vpc.default"]
 
   tags {
@@ -56,7 +56,7 @@ resource "aws_route" "weblayer" {
 }
 
 resource "aws_subnet" "weblayer" {
-  vpc_id            = "${aws_vpc.default.id}"
+  vpc_id            = "${var.aws_vpc_id}"
   cidr_block        = "${var.weblayer_cidr}"
   availability_zone = "${var.availability_zone}"
   depends_on        = ["aws_subnet.weblayer", "aws_route_table.weblayer"]
@@ -87,7 +87,7 @@ resource "aws_security_group" "consului" {
   name = "consului"
 
   description = "consului security group"
-  vpc_id      = "${aws_vpc.default.id}"
+  vpc_id      = "${var.aws_vpc_id}"
 
   ingress {
     from_port   = 80
@@ -114,7 +114,7 @@ resource "aws_security_group" "consului" {
 resource "aws_security_group" "ssh" {
   name = "ssh-${var.nameTag}"
 
-  vpc_id     = "${aws_vpc.default.id}"
+  vpc_id     = "${var.aws_vpc_id}"
   depends_on = ["aws_vpc.default"]
 
   ingress {
@@ -141,7 +141,7 @@ resource "aws_security_group" "ssh" {
 resource "aws_security_group" "consul-server" {
   name = "consul-server-${var.nameTag}"
 
-  vpc_id     = "${aws_vpc.default.id}"
+  vpc_id     = "${var.aws_vpc_id}"
   depends_on = ["aws_vpc.default"]
 
   ingress {
@@ -203,7 +203,7 @@ resource "aws_security_group" "consul-server" {
 resource "aws_security_group" "consul-client" {
   name = "consul-client-${var.nameTag}"
 
-  vpc_id     = "${aws_vpc.default.id}"
+  vpc_id     = "${var.aws_vpc_id}"
   depends_on = ["aws_vpc.default"]
 
   ingress {
@@ -251,7 +251,7 @@ resource "aws_security_group" "consul-client" {
 resource "aws_security_group" "weblayer" {
   name = "weblayer-${var.nameTag}"
 
-  vpc_id     = "${aws_vpc.default.id}"
+  vpc_id     = "${var.aws_vpc_id}"
   depends_on = ["aws_vpc.default"]
 
   ingress {

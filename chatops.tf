@@ -226,7 +226,7 @@ resource "aws_ecs_task_definition" "chatops" {
 }
 
 resource "aws_route_table" "chatops" {
-  vpc_id     = "${aws_vpc.default.id}"
+  vpc_id     = "${var.aws_vpc_id}"
   depends_on = ["aws_vpc.default"]
 
   tags {
@@ -246,7 +246,7 @@ resource "aws_route" "chatops" {
 }
 
 resource "aws_subnet" "chatops" {
-  vpc_id            = "${aws_vpc.default.id}"
+  vpc_id            = "${var.aws_vpc_id}"
   cidr_block        = "${var.chatops_subnet}"
   availability_zone = "${var.availability_zone}"
   depends_on        = ["aws_vpc.default"]
@@ -265,7 +265,7 @@ resource "aws_route_table_association" "chatops" {
 resource "aws_security_group" "chatops" {
   name = "chatops-${var.nameTag}"
 
-  vpc_id     = "${aws_vpc.default.id}"
+  vpc_id     = "${var.aws_vpc_id}"
   depends_on = ["aws_vpc.default"]
 
   ingress {

@@ -1,5 +1,10 @@
 variable "role" {}
 
+variable "elb" {
+    type = "string"
+    default = true
+}
+
 variable "elb_security_group" {}
 
 variable "elb_instance_port" {}

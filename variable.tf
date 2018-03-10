@@ -8,6 +8,10 @@ variable "availability_zone" {
   default = "eu-west-1c"
 }
 
+variable "aws_vpc_id" {
+  type    = "string"
+}
+
 variable "root_domain_name" {
   type    = "string"
   default = "urbanfortress.uk"

@@ -26,7 +26,7 @@ module "concourse" {
   private_ip = "${var.concourse_ip}"
 
   // globals
-  vpc_id                     = "${aws_vpc.default.id}"
+  vpc_id                     = "${var.aws_vpc_id}"
   gateway_id                 = "${aws_internet_gateway.default.id}"
   availability_zone          = "${var.availability_zone}"
   ami_id                     = "${var.ecs_ami_id}"
@@ -197,7 +197,7 @@ resource "aws_security_group" "concourse" {
   name = "concourse"
 
   description = "concourse security group"
-  vpc_id      = "${aws_vpc.default.id}"
+  vpc_id      = "${var.aws_vpc_id}"
 
   ingress {
     from_port   = 80
