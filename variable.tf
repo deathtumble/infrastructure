@@ -12,26 +12,6 @@ variable "aws_vpc_id" {
   type    = "string"
 }
 
-variable "root_domain_name" {
-  type    = "string"
-  default = "urbanfortress.uk"
-}
-
-variable "product" {
-  type    = "string"
-  default = "poc"
-}
-
-variable "environment" {
-  type    = "string"
-  default = "poc"
-}
-
-variable "nameTag" {
-  type    = "string"
-  default = "poc-poc"
-}
-
 variable "admin_cidr" {
   type    = "string"
   default = "81.174.166.51/32"
@@ -134,25 +114,36 @@ variable "ecs_ami_id" {
 
 variable "aws_route53_zone_id" {
   type    = "string"
-  default = "ZHWSM6HESLWEO"
 } 
 
 variable "nexus_volume_id" {
    type = "string" 
-   default = "vol-0c80683f4a8142d69"
 } 
 
 variable "monitoring_volume_id" {
    type = "string" 
-   default = "vol-0a53b71d35611d427"
 } 
 
 variable "concourse_volume_id" {
    type = "string" 
-   default = "vol-0cc66dcb2a5b637d2"
 }
 
 variable "key_name" {
    type = "string"
-   default = "poc" 
 } 
+
+variable "root_domain_name" {
+  type    = "string"
+}
+
+variable "product" {
+  type    = "string"
+}
+
+variable "environment" {
+  type    = "string"
+}
+
+variable "nameTag" {
+  type    = "string"
+}
