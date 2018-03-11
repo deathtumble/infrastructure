@@ -1,0 +1,16 @@
+terraform destroy -force ^
+-target=aws_instance.consul-leader ^
+-target=aws_instance.consul-server ^
+-target=aws_instance.chatops ^
+-target=aws_instance.dashing ^
+-target=module.concourse.aws_instance.this ^
+-target=module.nexus.aws_instance.this ^
+-target=module.monitoring.aws_instance.this ^
+-target=aws_ecs_service.consul-leader ^
+-target=aws_ecs_service.consul-server ^
+-target=aws_ecs_service.chatops ^
+-target=aws_ecs_service.dashing ^
+-target=module.concourse.aws_ecs_service.this ^
+-target=module.nexus.aws_ecs_service.this ^
+-target=module.monitoring.aws_ecs_service.this ^
+ -var-file=dev_config.vartf

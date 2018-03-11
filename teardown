@@ -20,4 +20,5 @@ terraform destroy -force \
 -target=aws_ecs_service.dashing \
 -target=module.concourse.aws_ecs_service.this \
 -target=module.nexus.aws_ecs_service.this \
--target=module.monitoring.aws_ecs_service.this
+-target=module.monitoring.aws_ecs_service.this \
+ -var-file=dev_config.vartf
