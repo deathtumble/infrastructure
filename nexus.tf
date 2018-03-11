@@ -85,7 +85,7 @@ resource "aws_security_group" "nexus" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = "${var.admin_cidrs}"
+    cidr_blocks = "${concat(var.monitoring_cidrs, list(var.admin_cidr))}"
   }
 
   ingress {

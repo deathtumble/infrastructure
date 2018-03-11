@@ -1,4 +1,4 @@
-variable "admin_cidrs" {
+variable "monitoring_cidrs" {
   type = "list"
 
   default = [
@@ -46,7 +46,6 @@ variable "admin_cidrs" {
     "165.227.83.148/32",
     "128.199.195.156/32",
     "138.197.150.151/32",
-    "34.233.66.117/32",
     "81.174.166.51/32",
   ]
 }
