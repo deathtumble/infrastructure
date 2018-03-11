@@ -76,7 +76,7 @@ resource "aws_ecs_task_definition" "concourse" {
   container_definitions = <<DEFINITION
     [
         ${data.template_file.consul_agent.rendered},
-        ${data.template_file.collectd-nexus.rendered},
+        ${data.template_file.collectd-concourse.rendered},
         {
             "name": "concourse-db",
             "cpu": 0,
@@ -153,7 +153,7 @@ resource "aws_ecs_task_definition" "concourse" {
                 }, 
                 {
                     "Name": "CONCOURSE_EXTERNAL_URL",
-                    "Value": "http://concourse.${var.root_domain_name}"
+                    "Value": "http://concourse.${data.aws_route53_zone.selected.name}"
                 }, 
                 {
                     "Name": "CONCOURSE_POSTGRES_HOST",
@@ -209,7 +209,7 @@ resource "aws_security_group" "concourse" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = "${var.admin_cidrs}"
+    cidr_blocks = "${concat(var.monitoring_cidrs, list(var.admin_cidr))}"
   }
 
   ingress {
