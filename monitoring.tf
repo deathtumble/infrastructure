@@ -31,7 +31,7 @@ module "monitoring" {
 
   // globals
   key_name                   = "${var.key_name}"
-  vpc_id                     = "${var.aws_vpc_id}"
+  vpc_id                     = "${aws_vpc.default.id}"
   gateway_id                 = "${aws_internet_gateway.default.id}"
   availability_zone          = "${var.availability_zone}"
   ami_id                     = "${var.ecs_ami_id}"
@@ -225,8 +225,7 @@ resource "aws_ecs_task_definition" "monitoring" {
 resource "aws_security_group" "graphite" {
   name = "graphite-${var.product}-${var.environment}"
 
-  vpc_id     = "${var.aws_vpc_id}"
-  depends_on = ["aws_vpc.default"]
+  vpc_id = "${aws_vpc.default.id}"
 
   ingress {
     from_port   = 2003
@@ -267,7 +266,7 @@ resource "aws_security_group" "grafana" {
   name = "grafana"
 
   description = "grafana security group"
-  vpc_id      = "${var.aws_vpc_id}"
+  vpc_id      = "${aws_vpc.default.id}"
 
   ingress {
     from_port   = 80

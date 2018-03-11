@@ -4,8 +4,7 @@ variable "consul_server_count" {
 }
 
 resource "aws_route_table" "consul" {
-  vpc_id     = "${var.aws_vpc_id}"
-  depends_on = ["aws_vpc.default"]
+  vpc_id = "${aws_vpc.default.id}"
 
   tags {
     Name        = "consul-${var.product}-${var.environment}"
@@ -24,10 +23,9 @@ resource "aws_route" "consul" {
 }
 
 resource "aws_subnet" "consul" {
-  vpc_id            = "${var.aws_vpc_id}"
+  vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.consul_subnet}"
   availability_zone = "${var.availability_zone}"
-  depends_on        = ["aws_vpc.default", "aws_route_table.consul"]
 
   tags {
     Name    = "consul-${var.product}-${var.environment}"
@@ -45,7 +43,7 @@ resource "aws_security_group" "consului" {
   name = "consului"
 
   description = "consului security group"
-  vpc_id      = "${var.aws_vpc_id}"
+  vpc_id      = "${aws_vpc.default.id}"
 
   ingress {
     from_port   = 80
@@ -308,8 +306,7 @@ resource "aws_ecs_task_definition" "consul-server" {
 resource "aws_security_group" "consul-server" {
   name = "consul-server-${var.product}-${var.environment}"
 
-  vpc_id     = "${var.aws_vpc_id}"
-  depends_on = ["aws_vpc.default"]
+  vpc_id = "${aws_vpc.default.id}"
 
   ingress {
     from_port   = 8301
@@ -370,8 +367,7 @@ resource "aws_security_group" "consul-server" {
 resource "aws_security_group" "consul-client" {
   name = "consul-client-${var.product}-${var.environment}"
 
-  vpc_id     = "${var.aws_vpc_id}"
-  depends_on = ["aws_vpc.default"]
+  vpc_id = "${aws_vpc.default.id}"
 
   ingress {
     from_port   = 8301

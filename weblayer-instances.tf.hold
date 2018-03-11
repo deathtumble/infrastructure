@@ -32,8 +32,7 @@ EOF
 }
 
 resource "aws_route_table" "weblayer" {
-  vpc_id     = "${var.aws_vpc_id}"
-  depends_on = ["aws_vpc.default"]
+  vpc_id     = "${aws_vpc.default.id}"
 
   tags {
     Name        = "weblayer-${var.product}-${var.environment}"
@@ -51,7 +50,7 @@ resource "aws_route" "weblayer" {
 }
 
 resource "aws_subnet" "weblayer" {
-  vpc_id            = "${var.aws_vpc_id}"
+  vpc_id     = "${aws_vpc.default.id}"
   cidr_block        = "${var.weblayer_cidr}"
   availability_zone = "${var.availability_zone}"
   depends_on        = ["aws_subnet.weblayer", "aws_route_table.weblayer"]
@@ -73,8 +72,7 @@ resource "aws_route_table_association" "weblayer" {
 resource "aws_security_group" "weblayer" {
   name = "weblayer-${var.product}-${var.environment}"
 
-  vpc_id     = "${var.aws_vpc_id}"
-  depends_on = ["aws_vpc.default"]
+  vpc_id     = "${aws_vpc.default.id}"
 
   ingress {
     from_port   = 80

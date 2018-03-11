@@ -2,7 +2,7 @@ resource "aws_security_group" "weblayerui" {
   name        = "weblayerui"
   
   description = "weblayerui security group"
-  vpc_id = "${aws_vpc.default.id}"
+  vpc_id     = "${aws_vpc.default.id}"
 
   ingress {
     from_port   = 80

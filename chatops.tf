@@ -231,8 +231,7 @@ resource "aws_ecs_task_definition" "chatops" {
 }
 
 resource "aws_route_table" "chatops" {
-  vpc_id     = "${var.aws_vpc_id}"
-  depends_on = ["aws_vpc.default"]
+  vpc_id = "${aws_vpc.default.id}"
 
   tags {
     Name        = "chatops-${var.product}-${var.environment}"
@@ -251,10 +250,9 @@ resource "aws_route" "chatops" {
 }
 
 resource "aws_subnet" "chatops" {
-  vpc_id            = "${var.aws_vpc_id}"
+  vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.chatops_subnet}"
   availability_zone = "${var.availability_zone}"
-  depends_on        = ["aws_vpc.default"]
 
   tags {
     Name = "chatops-${var.product}-${var.environment}"
@@ -270,8 +268,7 @@ resource "aws_route_table_association" "chatops" {
 resource "aws_security_group" "chatops" {
   name = "chatops-${var.product}-${var.environment}"
 
-  vpc_id     = "${var.aws_vpc_id}"
-  depends_on = ["aws_vpc.default"]
+  vpc_id = "${aws_vpc.default.id}"
 
   ingress {
     from_port   = 2003

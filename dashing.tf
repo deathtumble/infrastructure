@@ -322,8 +322,7 @@ resource "aws_elb_attachment" "dashing" {
 }
 
 resource "aws_route_table" "dashing" {
-  vpc_id     = "${var.aws_vpc_id}"
-  depends_on = ["aws_vpc.default"]
+  vpc_id = "${aws_vpc.default.id}"
 
   tags {
     Name        = "dashing-${var.product}-${var.environment}"
@@ -342,10 +341,9 @@ resource "aws_route" "dashing" {
 }
 
 resource "aws_subnet" "dashing" {
-  vpc_id            = "${var.aws_vpc_id}"
+  vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.dashing_subnet}"
   availability_zone = "${var.availability_zone}"
-  depends_on        = ["aws_vpc.default"]
 
   tags {
     Name = "dashing-${var.product}-${var.environment}"
@@ -362,7 +360,7 @@ resource "aws_security_group" "dashing" {
   name = "dashing"
 
   description = "dashing security group"
-  vpc_id      = "${var.aws_vpc_id}"
+  vpc_id      = "${aws_vpc.default.id}"
 
   ingress {
     from_port   = 80

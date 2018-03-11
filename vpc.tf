@@ -22,19 +22,17 @@ resource "aws_vpc" "default" {
 }
 
 resource "aws_internet_gateway" "default" {
-  vpc_id = "${var.aws_vpc_id}"
+  vpc_id = "${aws_vpc.default.id}"
 
   tags {
     Name        = "${var.product}-${var.environment}"
     Product     = "${var.product}"
     Environment = "${var.environment}"
   }
-
-  depends_on = ["aws_vpc.default"]
 }
 
 resource "aws_network_acl" "default" {
-  vpc_id = "${var.aws_vpc_id}"
+  vpc_id = "${aws_vpc.default.id}"
 
   egress {
     protocol   = "-1"
@@ -59,12 +57,10 @@ resource "aws_network_acl" "default" {
     Product     = "${var.product}"
     Environment = "${var.environment}"
   }
-
-  depends_on = ["aws_vpc.default"]
 }
 
 resource "aws_route_table" "main" {
-  vpc_id = "${var.aws_vpc_id}"
+  vpc_id = "${aws_vpc.default.id}"
 
   tags {
     Name        = "main-${var.product}-${var.environment}"
@@ -77,12 +73,9 @@ resource "aws_route_table" "main" {
     Product     = "${var.product}"
     Environment = "${var.environment}"
   }
-
-  depends_on = ["aws_vpc.default"]
 }
 
 resource "aws_main_route_table_association" "default" {
-  vpc_id         = "${var.aws_vpc_id}"
+  vpc_id         = "${aws_vpc.default.id}"
   route_table_id = "${aws_route_table.main.id}"
-  depends_on     = ["aws_vpc.default", "aws_route_table.main"]
 }

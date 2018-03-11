@@ -59,8 +59,7 @@ variable "dashing_ip" {
 resource "aws_security_group" "ssh" {
   name = "ssh-${var.product}-${var.environment}"
 
-  vpc_id     = "${var.aws_vpc_id}"
-  depends_on = ["aws_vpc.default"]
+  vpc_id = "${aws_vpc.default.id}"
 
   ingress {
     from_port   = 22
