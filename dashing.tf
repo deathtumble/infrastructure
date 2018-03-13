@@ -77,41 +77,6 @@ resource "aws_ecs_task_definition" "dashing" {
   network_mode = "host"
 
   volume {
-    name      = "dashboards"
-    host_path = "/opt/smashing/dashboards"
-  }
-
-  volume {
-    name      = "assets"
-    host_path = "/opt/smashing/assets"
-  }
-
-  volume {
-    name      = "config"
-    host_path = "/opt/smashing/config"
-  }
-
-  volume {
-    name      = "public"
-    host_path = "/opt/smashing/public"
-  }
-
-  volume {
-    name      = "lib"
-    host_path = "/opt/smashing/lib"
-  }
-
-  volume {
-    name      = "jobs"
-    host_path = "/opt/smashing/jobs"
-  }
-
-  volume {
-    name      = "widgets"
-    host_path = "/opt/smashing/widgets"
-  }
-
-  volume {
     name      = "consul_config"
     host_path = "/opt/consul/conf"
   }
@@ -221,56 +186,47 @@ resource "aws_ecs_task_definition" "dashing" {
 			"name": "dashing",
 			"cpu": 0,
 		    "essential": true,
-		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/smashing:e9cbf47b9e36",
-		    "memory": 500,
+		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/smashing:latest",
+		    "memory": 200,
             "environment": [
                 {
                     "Name": "PORT",
-                    "Value": "8080"
+                    "Value": "80"
                 }
              ], 
 		    "portMappings": [
 		        {
-		          "hostPort": 8080,
-		          "containerPort": 8080,
+		          "hostPort": 80,
+		          "containerPort": 80,
 		          "protocol": "tcp"
 		        }
-		    ],
-		    "mountPoints": [
+		    ]
+		},
+		{
+		    "name": "aws-proxy",
+		    "cpu": 0,
+            "essential": true,
+            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/aws_proxy:0.1.0-SNAPSHOT",
+            "memory": 200,
+            "environment": [
                 {
-                  "sourceVolume": "assets",
-                  "containerPath": "/assets",
-                  "readOnly": false
+                    "Name": "AWS_ACCESS_KEY_ID",
+                    "Value": "${var.aws-proxy_access_id}"
                 },
                 {
-                  "sourceVolume": "dashboards",
-                  "containerPath": "/dashboards",
-                  "readOnly": false
+                    "Name": "AWS_SECRET_ACCESS_KEY",
+                    "Value": "${var.aws-proxy_secret_access_key}"
                 },
                 {
-                  "sourceVolume": "jobs",
-                  "containerPath": "/jobs",
-                  "readOnly": false
-                },
+                    "Name": "aws.region",
+                    "Value": "${var.region}"
+                }
+             ], 
+            "portMappings": [
                 {
-                  "sourceVolume": "lib",
-                  "containerPath": "/lib-smashing",
-                  "readOnly": false
-                },
-                {
-                  "sourceVolume": "public",
-                  "containerPath": "/public",
-                  "readOnly": false
-                },
-                {
-                  "sourceVolume": "widgets",
-                  "containerPath": "/widgets",
-                  "readOnly": false
-                },
-                {
-                  "sourceVolume": "config",
-                  "containerPath": "/config",
-                  "readOnly": false
+                  "hostPort": 8080,
+                  "containerPort": 8080,
+                  "protocol": "tcp"
                 }
             ]
 		}
@@ -292,7 +248,7 @@ resource "aws_elb" "dashing" {
   depends_on      = ["aws_security_group.dashing"]
 
   listener {
-    instance_port     = 8080
+    instance_port     = 80
     instance_protocol = "http"
     lb_port           = 80
     lb_protocol       = "http"
@@ -302,7 +258,7 @@ resource "aws_elb" "dashing" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 3
-    target              = "HTTP:8080/sample"
+    target              = "HTTP:80/sample"
     interval            = 30
   }
 }
@@ -366,7 +322,7 @@ resource "aws_security_group" "dashing" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}"]
+    cidr_blocks = ["${var.admin_cidr}", "${var.vpc_cidr}"]
   }
 
   ingress {
