@@ -85,3 +85,22 @@ resource "aws_security_group" "ssh" {
     Environment = "${var.environment}"
   }
 }
+
+resource "aws_security_group" "goss" {
+  name = "goss-${var.product}-${var.environment}"
+
+  vpc_id = "${aws_vpc.default.id}"
+
+  ingress {
+    from_port   = 8082
+    to_port     = 8082
+    protocol    = "tcp"
+    cidr_blocks = ["${var.admin_cidr}", "${var.vpc_cidr}"]
+  }
+
+  tags {
+    Name        = "ssh-${var.product}-${var.environment}"
+    Product     = "${var.product}"
+    Environment = "${var.environment}"
+  }
+}

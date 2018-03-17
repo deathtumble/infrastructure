@@ -12,6 +12,7 @@ module "nexus" {
     "${aws_security_group.nexus.id}",
     "${aws_security_group.ssh.id}",
     "${aws_security_group.consul-client.id}",
+    "${aws_security_group.goss.id}"
   ]
 
   elb_security_group   = "${aws_security_group.nexus.id}"
@@ -91,13 +92,6 @@ resource "aws_security_group" "nexus" {
   ingress {
     from_port   = 8081
     to_port     = 8081
-    protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}", "${var.vpc_cidr}"]
-  }
-
-  ingress {
-    from_port   = 8082
-    to_port     = 8082
     protocol    = "tcp"
     cidr_blocks = ["${var.admin_cidr}", "${var.vpc_cidr}"]
   }
