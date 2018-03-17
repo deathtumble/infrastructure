@@ -6,7 +6,9 @@ variable "ami_id" {
 
 variable "availability_zone" {}
 
-variable "private_ip" {}
+variable "private_ip" {
+  default = ""  
+}
 
 variable "instance_type" {
   default = "t2.small"
