@@ -176,6 +176,7 @@ resource "aws_ecs_task_definition" "concourse" {
         {
             "name": "concourse-worker",
             "cpu": 0,
+            "hostname": "concourse-worker",
             "essential": false,
             "privileged": true,
             "image": "concourse/concourse",
@@ -192,6 +193,14 @@ resource "aws_ecs_task_definition" "concourse" {
                 {
                     "Name": "CONCOURSE_TSA_HOST",
                     "Value": "172.17.0.1"
+                },
+                {
+                    "Name": "CONCOURSE_GARDEN_DNS_SERVER",
+                    "Value": "10.0.0.2"
+                },
+                {
+                    "Name": "CONCOURSE_GARDEN_DNS_PROXY_ENABLE",
+                    "Value": "false"
                 }
             ]
          } 
