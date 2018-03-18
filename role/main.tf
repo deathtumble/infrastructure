@@ -6,7 +6,6 @@ variable "mount-cloud-config" {
  - sleep 18
  - sudo mount /dev/xvdh /opt/mount1
  - sudo echo /dev/xvdh  /opt/mount1 ext4 defaults,nofail 0 2 >> /etc/fstab
- - chmod 644 /opt/consul/conf/consul.json
  - sudo mount -a
 EOF
 }
@@ -48,18 +47,19 @@ hostname: ${var.role}
 write_files:
  - content: ECS_CLUSTER=${var.role}
    path: /etc/ecs/ecs.config   
-   permissions: 644
+   permissions: '0644'
  - content: ${base64encode(file("files/${var.role}_consul.json"))}
    path: /opt/consul/conf/consul.json
    encoding: b64
-   permissions: 644
+   permissions: '0644'
  - content: ${base64encode(file("files/${var.role}_goss.yml"))}
    path: /etc/goss/goss.yaml
    encoding: b64
-   permissions: 644
+   permissions: '0644'
 runcmd:
 ${var.volume_id == "" ? var.no-mount-cloud-config : var.mount-cloud-config}    
  - service goss start
+ - chmod 644 /opt/consul/conf/consul.json
 EOF
 
   tags {
