@@ -32,6 +32,6 @@ process:
   sshd:
     running: true
 http:
-  http://localhost:80/view/health.html:
+  http://localhost:80/views/health.html:
     status: 200
   
