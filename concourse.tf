@@ -21,7 +21,7 @@ module "concourse" {
   healthcheck_protocol = "HTTP"
   healthcheck_path     = "/"
   task_definition      = "concourse:${aws_ecs_task_definition.concourse.revision}"
-  desired_count        = "1"
+  desired_count        = "${var.concourse_desired_count}"
   instance_type        = "t2.medium"
 
   volume_id = "${var.concourse_volume_id}"

@@ -13,6 +13,11 @@ variable "ecs_ami_id" {
   default = "ami-eac98593"
 }
 
+variable "concourse_desired_count" {
+  type = "string"
+  default = "1"
+}
+
 variable "aws_route53_zone_id" {
   type = "string"
 }
@@ -52,3 +57,4 @@ variable "nameTag" {
 variable "admin_cidr" {
   type = "string"
 }
+
