@@ -10,7 +10,7 @@ variable "availability_zone" {
 
 variable "ecs_ami_id" {
   type    = "string"
-  default = "ami-eac98593"
+  default = "ami-8ba0eaf2"
 }
 
 variable "concourse_desired_count" {
