@@ -16,13 +16,14 @@ module "concourse" {
 
   elb_security_group   = "${aws_security_group.concourse.id}"
   elb_instance_port    = "8080"
-  elb_port             = "80"
+  elb_port             = "8080"
   healthcheck_port     = "8080"
   healthcheck_protocol = "HTTP"
   healthcheck_path     = "/"
   task_definition      = "concourse:${aws_ecs_task_definition.concourse.revision}"
   desired_count        = "${var.concourse_desired_count}"
   instance_type        = "t2.medium"
+  elb_protocol         = "http"
 
   volume_id = "${var.concourse_volume_id}"
 
@@ -153,7 +154,7 @@ resource "aws_ecs_task_definition" "concourse" {
                 }, 
                 {
                     "Name": "CONCOURSE_EXTERNAL_URL",
-                    "Value": "http://concourse.${data.aws_route53_zone.selected.name}"
+                    "Value": "http://concourse.${var.root_domain_name}:8080"
                 }, 
                 {
                     "Name": "CONCOURSE_POSTGRES_HOST",
@@ -176,7 +177,6 @@ resource "aws_ecs_task_definition" "concourse" {
         {
             "name": "concourse-worker",
             "cpu": 0,
-            "hostname": "concourse-worker",
             "essential": false,
             "privileged": true,
             "image": "concourse/concourse",
@@ -215,17 +215,10 @@ resource "aws_security_group" "concourse" {
   vpc_id      = "${aws_vpc.default.id}"
 
   ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = "${concat(var.monitoring_cidrs, list(var.admin_cidr))}"
-  }
-
-  ingress {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}", "${var.vpc_cidr}"]
+    cidr_blocks = "${concat(var.monitoring_cidrs, list(var.admin_cidr))}"
   }
 
   ingress {
