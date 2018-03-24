@@ -118,6 +118,7 @@ module "elb" {
   healthcheck_path           = "${var.healthcheck_path}"
   aws_instance_id            = "${aws_instance.this.id}"
   aws_route53_record_zone_id = "${var.aws_route53_record_zone_id}"
+  protocol                   = "${var.elb_protocol}"
 
   product     = "${var.product}"
   environment = "${var.environment}"

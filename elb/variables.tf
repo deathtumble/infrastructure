@@ -11,6 +11,11 @@ variable "elb_instance_port" {}
 
 variable "elb_port" {}
 
+variable "protocol" {
+    type = "string"
+    default = "http"
+}
+
 variable "healthcheck_path" {}
 
 variable "healthcheck_protocol" {}

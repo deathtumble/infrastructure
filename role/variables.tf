@@ -22,6 +22,11 @@ variable "volume_id" {
   default = ""
 }
 
+variable "elb_protocol" {
+    type = "string"
+    default = "http"
+}
+
 variable "cidr_block" {}
 
 variable "vpc_id" {}

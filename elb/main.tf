@@ -6,9 +6,9 @@ resource "aws_elb" "this" {
 
   listener {
     instance_port     = "${var.elb_instance_port}"
-    instance_protocol = "http"
+    instance_protocol = "${var.protocol}"
     lb_port           = "${var.elb_port}"
-    lb_protocol       = "http"
+    lb_protocol       = "${var.protocol}"
   }
 
   health_check {
@@ -33,7 +33,7 @@ resource "aws_lb_cookie_stickiness_policy" "this" {
   count                    = "${var.elb ? 1 : 0}"
   name                     = "${var.role}"
   load_balancer            = "${aws_elb.this.id}"
-  lb_port                  = 80
+  lb_port                  = "${var.elb_port}"
   cookie_expiration_period = 600
 }
 
