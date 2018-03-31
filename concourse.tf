@@ -76,8 +76,6 @@ resource "aws_ecs_task_definition" "concourse" {
 
   container_definitions = <<DEFINITION
     [
-        ${data.template_file.consul_agent.rendered},
-        ${data.template_file.collectd-concourse.rendered},
         {
             "name": "concourse-db",
             "cpu": 0,
@@ -121,7 +119,7 @@ resource "aws_ecs_task_definition" "concourse" {
             "name": "concourse-web",
             "cpu": 0,
             "essential": true,
-            "image": "concourse/concourse",
+            "image": "concourse/concourse:3.9.2",
             "command": ["web"],
             "memory": 500,
             "portMappings": [
@@ -179,9 +177,21 @@ resource "aws_ecs_task_definition" "concourse" {
             "cpu": 0,
             "essential": false,
             "privileged": true,
-            "image": "concourse/concourse",
+            "image": "concourse/concourse:3.9.2",
             "command": ["worker"],
             "memory": 500,
+            "portMappings": [
+                {
+                  "hostPort": 7777,
+                  "containerPort": 7777,
+                  "protocol": "tcp"
+                },
+                {
+                  "hostPort": 7788,
+                  "containerPort": 7788,
+                  "protocol": "tcp"
+                }
+            ],
             "mountPoints": [
                 {
                   "sourceVolume": "concourse_worker_keys",
@@ -200,7 +210,7 @@ resource "aws_ecs_task_definition" "concourse" {
                 },
                 {
                     "Name": "CONCOURSE_GARDEN_DNS_PROXY_ENABLE",
-                    "Value": "false"
+                    "Value": "true"
                 }
             ]
          } 
@@ -218,7 +228,7 @@ resource "aws_security_group" "concourse" {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = "${concat(var.monitoring_cidrs, list(var.admin_cidr))}"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
