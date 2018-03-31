@@ -1,8 +1,3 @@
-variable "monitoring_subnet" {
-  type    = "string"
-  default = "10.0.0.32/27"
-}
-
 module "monitoring" {
   source = "./role"
 
@@ -14,30 +9,28 @@ module "monitoring" {
     "${aws_security_group.consul-client.id}",
   ]
 
-  elb_security_group   = "${aws_security_group.grafana.id}"
+  listener_arn         = "${aws_alb_listener.3000.arn}"
   elb_instance_port    = "3000"
-  elb_port             = "80"
-  healthcheck_port     = "3000"
   healthcheck_protocol = "HTTP"
   healthcheck_path     = "/api/health"
   task_definition      = "monitoring:${aws_ecs_task_definition.monitoring.revision}"
   desired_count        = "1"
+  alb_priority         = "98"
 
   volume_id = "${var.monitoring_volume_id}"
 
-  // todo remove need to specify    
-  cidr_block = "${var.monitoring_subnet}"
-  private_ip = "10.0.0.36"
-
   // globals
-  key_name                   = "${var.key_name}"
-  vpc_id                     = "${aws_vpc.default.id}"
-  gateway_id                 = "${aws_internet_gateway.default.id}"
-  availability_zone          = "${var.availability_zone}"
-  ami_id                     = "${var.ecs_ami_id}"
-  product                    = "${var.product}"
-  environment                = "${var.environment}"
-  aws_route53_record_zone_id = "${var.aws_route53_zone_id}"
+  key_name                 = "${var.key_name}"
+  aws_subnet_id            = "${aws_subnet.av1.id}"
+  vpc_id                   = "${aws_vpc.default.id}"
+  gateway_id               = "${aws_internet_gateway.default.id}"
+  availability_zone        = "${var.availability_zone_1}"
+  ami_id                   = "${var.ecs_ami_id}"
+  product                  = "${var.product}"
+  environment              = "${var.environment}"
+  aws_route53_zone_id      = "${var.aws_route53_zone_id}"
+  aws_alb_default_dns_name = "${aws_alb.default.dns_name}"
+  root_domain_name         = "${var.root_domain_name}"
 }
 
 data "template_file" "collectd-monitoring" {

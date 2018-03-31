@@ -3,9 +3,14 @@ variable "region" {
   default = "eu-west-1"
 }
 
-variable "availability_zone" {
+variable "availability_zone_1" {
   type    = "string"
   default = "eu-west-1c"
+}
+
+variable "availability_zone_2" {
+  type    = "string"
+  default = "eu-west-1b"
 }
 
 variable "ecs_ami_id" {
@@ -14,7 +19,7 @@ variable "ecs_ami_id" {
 }
 
 variable "concourse_desired_count" {
-  type = "string"
+  type    = "string"
   default = "1"
 }
 
@@ -57,4 +62,3 @@ variable "nameTag" {
 variable "admin_cidr" {
   type = "string"
 }
-

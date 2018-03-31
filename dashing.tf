@@ -1,8 +1,3 @@
-variable "dashing_subnet" {
-  type    = "string"
-  default = "10.0.0.144/28"
-}
-
 module "dashing" {
   source = "./role"
 
@@ -14,29 +9,29 @@ module "dashing" {
     "${aws_security_group.consul-client.id}",
   ]
 
-  elb_security_group   = "${aws_security_group.dashing.id}"
+  listener_arn         = "${aws_alb_listener.80.arn}"
   elb_instance_port    = "80"
-  elb_port             = "80"
-  healthcheck_port     = "80"
   healthcheck_protocol = "HTTP"
   healthcheck_path     = "/sample"
   task_definition      = "dashing:${aws_ecs_task_definition.dashing.revision}"
   desired_count        = "1"
 
+  alb_priority = "97"
+
   volume_id = ""
 
-  // todo remove need to specify    
-  cidr_block = "${var.dashing_subnet}"
-
   // globals
-  key_name                   = "${var.key_name}"
-  vpc_id                     = "${aws_vpc.default.id}"
-  gateway_id                 = "${aws_internet_gateway.default.id}"
-  availability_zone          = "${var.availability_zone}"
-  ami_id                     = "${var.ecs_ami_id}"
-  product                    = "${var.product}"
-  environment                = "${var.environment}"
-  aws_route53_record_zone_id = "${var.aws_route53_zone_id}"
+  key_name                 = "${var.key_name}"
+  aws_subnet_id            = "${aws_subnet.av1.id}"
+  vpc_id                   = "${aws_vpc.default.id}"
+  gateway_id               = "${aws_internet_gateway.default.id}"
+  availability_zone        = "${var.availability_zone_1}"
+  ami_id                   = "${var.ecs_ami_id}"
+  product                  = "${var.product}"
+  environment              = "${var.environment}"
+  aws_route53_zone_id      = "${var.aws_route53_zone_id}"
+  aws_alb_default_dns_name = "${aws_alb.default.dns_name}"
+  root_domain_name         = "${var.root_domain_name}"
 }
 
 data "template_file" "collectd-dashing" {

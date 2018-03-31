@@ -6,7 +6,7 @@ variable "chatops_subnet" {
 resource "aws_instance" "chatops" {
   count                   = "1"
   ami                     = "${var.ecs_ami_id}"
-  availability_zone       = "${var.availability_zone}"
+  availability_zone       = "${var.availability_zone_1}"
   tenancy                 = "default"
   ebs_optimized           = "false"
   disable_api_termination = "false"
@@ -21,12 +21,11 @@ resource "aws_instance" "chatops" {
     "${aws_security_group.consul-client.id}",
   ]
 
-  subnet_id                   = "${aws_subnet.chatops.id}"
+  subnet_id                   = "${aws_subnet.av1.id}"
   associate_public_ip_address = "true"
   source_dest_check           = "true"
   iam_instance_profile        = "ecsinstancerole"
   ipv6_address_count          = "0"
-  depends_on                  = ["aws_security_group.chatops", "aws_security_group.ssh", "aws_security_group.consul-client", "aws_subnet.consul"]
 
   user_data = <<EOF
 #!/bin/bash
@@ -228,41 +227,6 @@ resource "aws_ecs_task_definition" "chatops" {
       	}
 	]
     DEFINITION
-}
-
-resource "aws_route_table" "chatops" {
-  vpc_id = "${aws_vpc.default.id}"
-
-  tags {
-    Name        = "chatops-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
-    Layer       = "chatops"
-  }
-}
-
-resource "aws_route" "chatops" {
-  route_table_id         = "${aws_route_table.chatops.id}"
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = "${aws_internet_gateway.default.id}"
-
-  depends_on = ["aws_route_table.chatops", "aws_internet_gateway.default"]
-}
-
-resource "aws_subnet" "chatops" {
-  vpc_id            = "${aws_vpc.default.id}"
-  cidr_block        = "${var.chatops_subnet}"
-  availability_zone = "${var.availability_zone}"
-
-  tags {
-    Name = "chatops-${var.product}-${var.environment}"
-  }
-}
-
-resource "aws_route_table_association" "chatops" {
-  subnet_id      = "${aws_subnet.chatops.id}"
-  route_table_id = "${aws_route_table.chatops.id}"
-  depends_on     = ["aws_route_table.chatops", "aws_subnet.chatops"]
 }
 
 resource "aws_security_group" "chatops" {

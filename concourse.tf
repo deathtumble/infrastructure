@@ -1,8 +1,3 @@
-variable "concourse_subnet" {
-  type    = "string"
-  default = "10.0.0.96/27"
-}
-
 module "concourse" {
   source = "./role"
 
@@ -14,32 +9,30 @@ module "concourse" {
     "${aws_security_group.consul-client.id}",
   ]
 
-  elb_security_group   = "${aws_security_group.concourse.id}"
+  listener_arn         = "${aws_alb_listener.8080.arn}"
   elb_instance_port    = "8080"
-  elb_port             = "8080"
-  healthcheck_port     = "8080"
   healthcheck_protocol = "HTTP"
   healthcheck_path     = "/"
   task_definition      = "concourse:${aws_ecs_task_definition.concourse.revision}"
   desired_count        = "${var.concourse_desired_count}"
   instance_type        = "t2.medium"
   elb_protocol         = "http"
+  alb_priority         = "99"
 
   volume_id = "${var.concourse_volume_id}"
 
-  // todo remove need to specify    
-  cidr_block = "${var.concourse_subnet}"
-  private_ip = "${var.concourse_ip}"
-
   // globals
-  key_name                   = "${var.key_name}"
-  vpc_id                     = "${aws_vpc.default.id}"
-  gateway_id                 = "${aws_internet_gateway.default.id}"
-  availability_zone          = "${var.availability_zone}"
-  ami_id                     = "${var.ecs_ami_id}"
-  product                    = "${var.product}"
-  environment                = "${var.environment}"
-  aws_route53_record_zone_id = "${var.aws_route53_zone_id}"
+  key_name                 = "${var.key_name}"
+  aws_subnet_id            = "${aws_subnet.av1.id}"
+  vpc_id                   = "${aws_vpc.default.id}"
+  gateway_id               = "${aws_internet_gateway.default.id}"
+  availability_zone        = "${var.availability_zone_1}"
+  ami_id                   = "${var.ecs_ami_id}"
+  product                  = "${var.product}"
+  environment              = "${var.environment}"
+  aws_route53_zone_id      = "${var.aws_route53_zone_id}"
+  aws_alb_default_dns_name = "${aws_alb.default.dns_name}"
+  root_domain_name         = "${var.root_domain_name}"
 }
 
 data "template_file" "collectd-concourse" {
@@ -152,7 +145,7 @@ resource "aws_ecs_task_definition" "concourse" {
                 }, 
                 {
                     "Name": "CONCOURSE_EXTERNAL_URL",
-                    "Value": "http://concourse.${var.root_domain_name}:8080"
+                    "Value": "http://concourse-poc-poc.${var.root_domain_name}:8080"
                 }, 
                 {
                     "Name": "CONCOURSE_POSTGRES_HOST",

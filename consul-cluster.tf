@@ -3,42 +3,6 @@ variable "consul_server_count" {
   default = "2"
 }
 
-resource "aws_route_table" "consul" {
-  vpc_id = "${aws_vpc.default.id}"
-
-  tags {
-    Name        = "consul-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
-    Layer       = "consul"
-  }
-}
-
-resource "aws_route" "consul" {
-  route_table_id         = "${aws_route_table.consul.id}"
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = "${aws_internet_gateway.default.id}"
-
-  depends_on = ["aws_route_table.consul", "aws_internet_gateway.default"]
-}
-
-resource "aws_subnet" "consul" {
-  vpc_id            = "${aws_vpc.default.id}"
-  cidr_block        = "${var.consul_subnet}"
-  availability_zone = "${var.availability_zone}"
-
-  tags {
-    Name    = "consul-${var.product}-${var.environment}"
-    Service = "consul"
-  }
-}
-
-resource "aws_route_table_association" "consul" {
-  subnet_id      = "${aws_subnet.consul.id}"
-  route_table_id = "${aws_route_table.consul.id}"
-  depends_on     = ["aws_route_table.consul", "aws_subnet.consul"]
-}
-
 resource "aws_security_group" "consului" {
   name = "consului"
 
@@ -409,9 +373,4 @@ resource "aws_security_group" "consul-client" {
     Product     = "${var.product}"
     Environment = "${var.environment}"
   }
-}
-
-variable "consul_subnet" {
-  type    = "string"
-  default = "10.0.0.0/27"
 }

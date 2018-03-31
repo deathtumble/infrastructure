@@ -8,7 +8,7 @@ resource "aws_lb_cookie_stickiness_policy" "consului" {
 resource "aws_elb" "consului" {
   name            = "consului"
   security_groups = ["${aws_security_group.consului.id}"]
-  subnets         = ["${aws_subnet.consul.id}"]
+  subnets         = ["${aws_subnet.av1.id}"]
   depends_on      = ["aws_security_group.consului"]
 
   listener {

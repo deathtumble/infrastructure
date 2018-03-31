@@ -35,7 +35,7 @@ resource "aws_instance" "this" {
   private_ip                  = "${var.private_ip}"
   monitoring                  = "false"
   vpc_security_group_ids      = ["${var.vpc_security_group_ids}"]
-  subnet_id                   = "${aws_subnet.this.id}"
+  subnet_id                   = "${var.aws_subnet_id}"
   associate_public_ip_address = "true"
   source_dest_check           = "true"
   iam_instance_profile        = "ecsinstancerole"
@@ -71,54 +71,22 @@ EOF
   }
 }
 
-resource "aws_route_table" "this" {
-  vpc_id = "${var.vpc_id}"
-
-  tags {
-    Name        = "${var.role}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
-  }
-}
-
-resource "aws_route" "this" {
-  route_table_id         = "${aws_route_table.this.id}"
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = "${var.gateway_id}"
-}
-
-resource "aws_subnet" "this" {
-  vpc_id            = "${var.vpc_id}"
-  cidr_block        = "${var.cidr_block}"
-  availability_zone = "${var.availability_zone}"
-
-  tags {
-    Name        = "${var.role}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
-  }
-}
-
-resource "aws_route_table_association" "this" {
-  subnet_id      = "${aws_subnet.this.id}"
-  route_table_id = "${aws_route_table.this.id}"
-  depends_on     = ["aws_route_table.this", "aws_subnet.this"]
-}
-
 module "elb" {
   source = "../elb"
 
-  role                       = "${var.role}"
-  subnets                    = "${aws_subnet.this.id}"
-  elb_security_group         = "${var.elb_security_group}"
-  elb_instance_port          = "${var.elb_instance_port}"
-  elb_port                   = "${var.elb_port}"
-  healthcheck_port           = "${var.healthcheck_port}"
-  healthcheck_protocol       = "${var.healthcheck_protocol}"
-  healthcheck_path           = "${var.healthcheck_path}"
-  aws_instance_id            = "${aws_instance.this.id}"
-  aws_route53_record_zone_id = "${var.aws_route53_record_zone_id}"
-  protocol                   = "${var.elb_protocol}"
+  role                     = "${var.role}"
+  subnets                  = "${var.aws_subnet_id}"
+  elb_instance_port        = "${var.elb_instance_port}"
+  healthcheck_protocol     = "${var.healthcheck_protocol}"
+  healthcheck_path         = "${var.healthcheck_path}"
+  aws_instance_id          = "${aws_instance.this.id}"
+  protocol                 = "${var.elb_protocol}"
+  vpc_id                   = "${var.vpc_id}"
+  listener_arn             = "${var.listener_arn}"
+  alb_priority             = "${var.alb_priority}"
+  aws_route53_zone_id      = "${var.aws_route53_zone_id}"
+  aws_alb_default_dns_name = "${var.aws_alb_default_dns_name}"
+  root_domain_name         = "${var.root_domain_name}"
 
   product     = "${var.product}"
   environment = "${var.environment}"

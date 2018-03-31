@@ -7,7 +7,7 @@ variable "ami_id" {
 variable "availability_zone" {}
 
 variable "private_ip" {
-  default = ""  
+  default = ""
 }
 
 variable "instance_type" {
@@ -23,11 +23,9 @@ variable "volume_id" {
 }
 
 variable "elb_protocol" {
-    type = "string"
-    default = "http"
+  type    = "string"
+  default = "http"
 }
-
-variable "cidr_block" {}
 
 variable "vpc_id" {}
 
@@ -35,21 +33,35 @@ variable "vpc_security_group_ids" {
   type = "list"
 }
 
+variable "listener_arn" {
+  type = "string"
+}
+
+variable "aws_alb_default_dns_name" {
+  type = "string"
+}
+
+variable "aws_route53_zone_id" {
+  type = "string"
+}
+
 variable "gateway_id" {}
 
-variable "elb_security_group" {}
+variable "alb_priority" {
+  type = "string"
+}
+
+variable "root_domain_name" {
+  type = "string"
+}
 
 variable "elb_instance_port" {}
-
-variable "elb_port" {}
 
 variable "healthcheck_path" {}
 
 variable "healthcheck_protocol" {}
 
-variable "healthcheck_port" {}
-
-variable "aws_route53_record_zone_id" {}
+variable "aws_subnet_id" {}
 
 variable "task_definition" {}
 

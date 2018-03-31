@@ -9,7 +9,7 @@ variable "consul_server_instance_names" {
 resource "aws_instance" "consul-leader" {
   count                   = "1"
   ami                     = "${var.ecs_ami_id}"
-  availability_zone       = "${var.availability_zone}"
+  availability_zone       = "${var.availability_zone_1}"
   tenancy                 = "default"
   ebs_optimized           = "false"
   disable_api_termination = "false"
@@ -23,12 +23,11 @@ resource "aws_instance" "consul-leader" {
     "${aws_security_group.consul-server.id}",
   ]
 
-  subnet_id                   = "${aws_subnet.consul.id}"
+  subnet_id                   = "${aws_subnet.av1.id}"
   associate_public_ip_address = "true"
   source_dest_check           = "true"
   iam_instance_profile        = "ecsinstancerole"
   ipv6_address_count          = "0"
-  depends_on                  = ["aws_security_group.consul-server", "aws_security_group.ssh", "aws_subnet.consul"]
 
   user_data = <<EOF
 #!/bin/bash
@@ -53,7 +52,7 @@ resource "aws_elb_attachment" "consul-leader" {
 resource "aws_instance" "consul-server" {
   count                   = "${var.consul_server_count}"
   ami                     = "${var.ecs_ami_id}"
-  availability_zone       = "${var.availability_zone}"
+  availability_zone       = "${var.availability_zone_1}"
   tenancy                 = "default"
   ebs_optimized           = "false"
   disable_api_termination = "false"
@@ -67,12 +66,11 @@ resource "aws_instance" "consul-server" {
     "${aws_security_group.consul-server.id}",
   ]
 
-  subnet_id                   = "${aws_subnet.consul.id}"
+  subnet_id                   = "${aws_subnet.av1.id}"
   associate_public_ip_address = "true"
   source_dest_check           = "true"
   iam_instance_profile        = "ecsinstancerole"
   ipv6_address_count          = "0"
-  depends_on                  = ["aws_security_group.consul-server", "aws_security_group.ssh", "aws_subnet.consul"]
 
   user_data = <<EOF
 #!/bin/bash
