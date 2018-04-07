@@ -32,7 +32,6 @@ resource "aws_instance" "this" {
   disable_api_termination     = "false"
   instance_type               = "${var.instance_type}"
   key_name                    = "${var.key_name}"
-  private_ip                  = "${var.private_ip}"
   monitoring                  = "false"
   vpc_security_group_ids      = ["${var.vpc_security_group_ids}"]
   subnet_id                   = "${var.aws_subnet_id}"
@@ -69,27 +68,6 @@ EOF
     ConsulCluster = "${var.role}"
     Goss          = "true"
   }
-}
-
-module "elb" {
-  source = "../elb"
-
-  role                     = "${var.role}"
-  subnets                  = "${var.aws_subnet_id}"
-  elb_instance_port        = "${var.elb_instance_port}"
-  healthcheck_protocol     = "${var.healthcheck_protocol}"
-  healthcheck_path         = "${var.healthcheck_path}"
-  aws_instance_id          = "${aws_instance.this.id}"
-  protocol                 = "${var.elb_protocol}"
-  vpc_id                   = "${var.vpc_id}"
-  listener_arn             = "${var.listener_arn}"
-  alb_priority             = "${var.alb_priority}"
-  aws_route53_zone_id      = "${var.aws_route53_zone_id}"
-  aws_alb_default_dns_name = "${var.aws_alb_default_dns_name}"
-  root_domain_name         = "${var.root_domain_name}"
-
-  product     = "${var.product}"
-  environment = "${var.environment}"
 }
 
 resource "aws_ecs_cluster" "this" {

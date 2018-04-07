@@ -32,7 +32,7 @@ resource "aws_alb_target_group" "this" {
 
 resource "aws_alb_target_group_attachment" "this" {
   target_group_arn = "${aws_alb_target_group.this.arn}"
-  target_id        = "${var.aws_instance_id}"
+  target_id        = "${aws_instance.this.id}"
   port             = "${var.elb_instance_port}"
 }
 

@@ -1,22 +1,26 @@
-variable "role" {}
-
-variable "ami_id" {
-  default = "ami-567b1a2f"
+variable "role" {
+  type = "string"
 }
 
-variable "availability_zone" {}
+variable "ami_id" {
+  type = "string"
+}
 
-variable "private_ip" {
-  default = ""
+variable "availability_zone" {
+  type = "string"
 }
 
 variable "instance_type" {
   default = "t2.small"
 }
 
-variable "product" {}
+variable "product" {
+  type = "string"
+}
 
-variable "environment" {}
+variable "environment" {
+  type = "string"
+}
 
 variable "volume_id" {
   default = ""
@@ -27,7 +31,9 @@ variable "elb_protocol" {
   default = "http"
 }
 
-variable "vpc_id" {}
+variable "vpc_id" {
+  type = "string"
+}
 
 variable "vpc_security_group_ids" {
   type = "list"
@@ -45,7 +51,9 @@ variable "aws_route53_zone_id" {
   type = "string"
 }
 
-variable "gateway_id" {}
+variable "gateway_id" {
+  type = "string"
+}
 
 variable "alb_priority" {
   type = "string"
@@ -55,17 +63,29 @@ variable "root_domain_name" {
   type = "string"
 }
 
-variable "elb_instance_port" {}
+variable "elb_instance_port" {
+  type = "string"
+}
 
-variable "healthcheck_path" {}
+variable "healthcheck_path" {
+  type = "string"
+}
 
-variable "healthcheck_protocol" {}
+variable "healthcheck_protocol" {
+  type = "string"
+}
 
-variable "aws_subnet_id" {}
+variable "aws_subnet_id" {
+  type = "string"
+}
 
-variable "task_definition" {}
+variable "task_definition" {
+  type = "string"
+}
 
-variable "desired_count" {}
+variable "desired_count" {
+  type = "string"
+}
 
 variable "key_name" {
   type = "string"
