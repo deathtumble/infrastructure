@@ -13,7 +13,7 @@ module "monitoring" {
   healthcheck_protocol = "HTTP"
   healthcheck_path     = "/api/health"
   task_definition      = "monitoring:${aws_ecs_task_definition.monitoring.revision}"
-  desired_count        = "1"
+  task_status          = "${var.monitoring_task_status}"
 
   volume_id = "${var.monitoring_volume_id}"
 

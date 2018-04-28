@@ -75,8 +75,18 @@ variable "task_definition" {
   type = "string"
 }
 
-variable "desired_count" {
+variable "task_status" {
   type = "string"
+}
+
+variable "desired_task_count" {
+  type = "string"
+  default = "1"
+}
+
+variable "desired_instance_count" {
+  type = "string"
+  default = "1"
 }
 
 variable "key_name" {

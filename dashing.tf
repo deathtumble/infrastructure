@@ -13,7 +13,7 @@ module "dashing" {
   healthcheck_protocol = "HTTP"
   healthcheck_path     = "/favicon.ico"
   task_definition      = "dashing:${aws_ecs_task_definition.dashing.revision}"
-  desired_count        = "1"
+  task_status          = "${var.dashing_task_status}"
   instance_type        = "t2.medium"
 
   volume_id = ""

@@ -14,7 +14,7 @@ module "nexus" {
   healthcheck_protocol = "HTTP"
   healthcheck_path     = "/service/metrics/healthcheck"
   task_definition      = "nexus:${aws_ecs_task_definition.nexus.revision}"
-  desired_count        = "1"
+  task_status          = "${var.nexus_task_status}"
   instance_type        = "t2.medium"
 
   volume_id = "${var.nexus_volume_id}"
@@ -69,7 +69,7 @@ resource "aws_ecs_task_definition" "nexus" {
             "cpu": 0,
             "essential": true,
             "image": "sonatype/nexus3:3.10.0",
-            "memory": 1000,
+            "memory": 2000,
             "portMappings": [
                 {
                   "hostPort": 8081,

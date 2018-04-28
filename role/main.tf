@@ -24,7 +24,7 @@ resource "aws_volume_attachment" "this" {
 }
 
 resource "aws_instance" "this" {
-  count                       = "1"
+  count                       = "${var.desired_instance_count}"
   ami                         = "${var.ami_id}"
   availability_zone           = "${var.availability_zone}"
   tenancy                     = "default"
@@ -78,5 +78,5 @@ resource "aws_ecs_service" "this" {
   name            = "${var.role}"
   cluster         = "${var.role}"
   task_definition = "${var.task_definition}"
-  desired_count   = "${var.desired_count}"
+  desired_count   = "${var.task_status == "down" ? 0 : var.desired_task_count}"
 }

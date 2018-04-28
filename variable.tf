@@ -1,6 +1,6 @@
 variable "dashing_docker_tag" {
   type    = "string"
-  default = "239a393"
+  default = "294dcdb"
 }
 
 variable "region" {
@@ -23,9 +23,24 @@ variable "ecs_ami_id" {
   default = "ami-99fea6e0"
 }
 
-variable "concourse_desired_count" {
+variable "concourse_task_status" {
   type    = "string"
-  default = "1"
+  default = "up"
+}
+
+variable "nexus_task_status" {
+  type    = "string"
+  default = "up"
+}
+
+variable "dashing_task_status" {
+  type    = "string"
+  default = "up"
+}
+
+variable "monitoring_task_status" {
+  type    = "string"
+  default = "up"
 }
 
 variable "aws_route53_zone_id" {
