@@ -9,17 +9,16 @@ module "monitoring" {
     "${aws_security_group.consul-client.id}",
   ]
 
-  listener_arn         = "${aws_alb_listener.3000.arn}"
   elb_instance_port    = "3000"
   healthcheck_protocol = "HTTP"
   healthcheck_path     = "/api/health"
   task_definition      = "monitoring:${aws_ecs_task_definition.monitoring.revision}"
   desired_count        = "1"
-  alb_priority         = "98"
 
   volume_id = "${var.monitoring_volume_id}"
 
   // globals
+  aws_alb_arn              = "${aws_alb.default.arn}"
   key_name                 = "${var.key_name}"
   aws_subnet_id            = "${aws_subnet.av1.id}"
   vpc_id                   = "${aws_vpc.default.id}"
@@ -103,7 +102,7 @@ resource "aws_ecs_task_definition" "monitoring" {
 		    "name": "graphite-statsd",
 		    "cpu": 0,
 		    "essential": true,
-		    "image": "graphiteapp/graphite-statsd:latest",
+		    "image": "graphiteapp/graphite-statsd:1.1.3",
 		    "memory": 400,
 		    "portMappings": [
 		        {
@@ -184,7 +183,7 @@ resource "aws_ecs_task_definition" "monitoring" {
 		    "name": "grafana",
 		    "cpu": 0,
 		    "essential": true,
-		    "image": "grafana/grafana",
+		    "image": "grafana/grafana:5.1.0",
 		    "memory": 500,
 		    "portMappings": [
 		        {

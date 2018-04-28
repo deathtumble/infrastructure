@@ -4,7 +4,7 @@
             "dnsServers": ["127.0.0.1"],
             "essential": false,
             "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/collectd-write-graphite:0.1.1",
-            "memory": 500,
+            "memory": 50,
             "environment": [
                 {
                     "Name": "GRAPHITE_HOST",

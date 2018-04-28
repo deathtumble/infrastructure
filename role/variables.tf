@@ -39,10 +39,6 @@ variable "vpc_security_group_ids" {
   type = "list"
 }
 
-variable "listener_arn" {
-  type = "string"
-}
-
 variable "aws_alb_default_dns_name" {
   type = "string"
 }
@@ -52,10 +48,6 @@ variable "aws_route53_zone_id" {
 }
 
 variable "gateway_id" {
-  type = "string"
-}
-
-variable "alb_priority" {
   type = "string"
 }
 
@@ -88,5 +80,9 @@ variable "desired_count" {
 }
 
 variable "key_name" {
+  type = "string"
+}
+
+variable "aws_alb_arn" {
   type = "string"
 }

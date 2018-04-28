@@ -1,3 +1,8 @@
+variable "dashing_docker_tag" {
+  type    = "string"
+  default = "239a393"
+}
+
 variable "region" {
   type    = "string"
   default = "eu-west-1"
@@ -15,7 +20,7 @@ variable "availability_zone_2" {
 
 variable "ecs_ami_id" {
   type    = "string"
-  default = "ami-8ba0eaf2"
+  default = "ami-99fea6e0"
 }
 
 variable "concourse_desired_count" {

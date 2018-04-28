@@ -8,7 +8,7 @@ file:
     contains: []
   /opt/mount1/nexus:
     exists: true
-    mode: "0755"
+    mode: "0777"
     size: 4096
     filetype: directory
     contains: []
@@ -38,6 +38,6 @@ process:
   sshd:
     running: true
 http:
-  http://localhost:8081/nexus/service/local/status:
+  http://localhost:8081/service/metrics/healthcheck:
     status: 200
   

@@ -15,7 +15,6 @@ resource "aws_instance" "consul-leader" {
   disable_api_termination = "false"
   instance_type           = "t2.small"
   key_name                = "${var.key_name}"
-  private_ip              = "${var.consul_leader_ip}"
   monitoring              = "false"
 
   vpc_security_group_ids = [
@@ -58,7 +57,6 @@ resource "aws_instance" "consul-server" {
   disable_api_termination = "false"
   instance_type           = "t2.small"
   key_name                = "${var.key_name}"
-  private_ip              = "${lookup(var.consul_server_instance_ips, count.index)}"
   monitoring              = "false"
 
   vpc_security_group_ids = [

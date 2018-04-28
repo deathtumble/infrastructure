@@ -10,17 +10,17 @@ module "nexus" {
     "${aws_security_group.goss.id}",
   ]
 
-  listener_arn         = "${aws_alb_listener.8081.arn}"
   elb_instance_port    = "8081"
   healthcheck_protocol = "HTTP"
-  healthcheck_path     = "/nexus/service/local/status"
+  healthcheck_path     = "/service/metrics/healthcheck"
   task_definition      = "nexus:${aws_ecs_task_definition.nexus.revision}"
   desired_count        = "1"
-  alb_priority         = "96"
+  instance_type        = "t2.medium"
 
   volume_id = "${var.nexus_volume_id}"
 
   // globals
+  aws_alb_arn              = "${aws_alb.default.arn}"
   key_name                 = "${var.key_name}"
   aws_subnet_id            = "${aws_subnet.av1.id}"
   vpc_id                   = "${aws_vpc.default.id}"
@@ -64,7 +64,34 @@ resource "aws_ecs_task_definition" "nexus" {
 	[
         ${data.template_file.consul_agent.rendered},
         ${data.template_file.collectd-nexus.rendered},
-        ${data.template_file.nexus.rendered}
+        {
+            "name": "nexus",
+            "cpu": 0,
+            "essential": true,
+            "image": "sonatype/nexus3:3.10.0",
+            "memory": 1000,
+            "portMappings": [
+                {
+                  "hostPort": 8081,
+                  "containerPort": 8081,
+                  "protocol": "tcp"
+                }
+            ],
+            "portMappings": [
+                {
+                  "hostPort": 8082,
+                  "containerPort": 8082,
+                  "protocol": "tcp"
+                }
+            ],
+            "mountPoints": [
+                {
+                  "sourceVolume": "nexus-data",
+                  "containerPath": "/nexus-data",
+                  "readOnly": false
+                }
+            ]
+        }
 	]
     DEFINITION
 }
@@ -86,7 +113,7 @@ resource "aws_security_group" "nexus" {
     from_port   = 8081
     to_port     = 8081
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}", "${var.vpc_cidr}"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {

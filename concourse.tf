@@ -9,19 +9,18 @@ module "concourse" {
     "${aws_security_group.consul-client.id}",
   ]
 
-  listener_arn         = "${aws_alb_listener.8080.arn}"
   elb_instance_port    = "8080"
   healthcheck_protocol = "HTTP"
-  healthcheck_path     = "/"
+  healthcheck_path     = "/public/images/favicon.png"
   task_definition      = "concourse:${aws_ecs_task_definition.concourse.revision}"
   desired_count        = "${var.concourse_desired_count}"
   instance_type        = "t2.medium"
   elb_protocol         = "http"
-  alb_priority         = "99"
 
   volume_id = "${var.concourse_volume_id}"
 
   // globals
+  aws_alb_arn              = "${aws_alb.default.arn}"
   key_name                 = "${var.key_name}"
   aws_subnet_id            = "${aws_subnet.av1.id}"
   vpc_id                   = "${aws_vpc.default.id}"

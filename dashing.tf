@@ -9,18 +9,17 @@ module "dashing" {
     "${aws_security_group.consul-client.id}",
   ]
 
-  listener_arn         = "${aws_alb_listener.80.arn}"
   elb_instance_port    = "80"
   healthcheck_protocol = "HTTP"
-  healthcheck_path     = "/sample"
+  healthcheck_path     = "/favicon.ico"
   task_definition      = "dashing:${aws_ecs_task_definition.dashing.revision}"
   desired_count        = "1"
-
-  alb_priority = "97"
+  instance_type        = "t2.medium"
 
   volume_id = ""
 
   // globals
+  aws_alb_arn              = "${aws_alb.default.arn}"
   key_name                 = "${var.key_name}"
   aws_subnet_id            = "${aws_subnet.av1.id}"
   vpc_id                   = "${aws_vpc.default.id}"
@@ -59,7 +58,7 @@ resource "aws_ecs_task_definition" "dashing" {
             "name": "dashing",
             "cpu": 0,
             "essential": true,
-            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/smashing:latest",
+            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/smashing:${var.dashing_docker_tag}",
             "memory": 200,
             "environment": [
                 {
@@ -78,9 +77,9 @@ resource "aws_ecs_task_definition" "dashing" {
         {
             "name": "aws-proxy",
             "cpu": 0,
-            "essential": true,
+            "essential": false,
             "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/aws_proxy:0.1.0-SNAPSHOT",
-            "memory": 200,
+            "memory": 500,
             "environment": [
                 {
                     "Name": "AWS_ACCESS_KEY_ID",

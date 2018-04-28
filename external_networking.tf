@@ -45,64 +45,24 @@ resource "aws_alb" "default" {
   internal        = false
   security_groups = ["${aws_security_group.alb.id}"]
   subnets         = ["${aws_subnet.av1.id}", "${aws_subnet.av2.id}"]
+  idle_timeout    = 4000
 
-  enable_deletion_protection = true
+  enable_deletion_protection = false
 
   tags {
     Environment = "production"
   }
 }
 
-resource "aws_alb_listener" "80" {
-  load_balancer_arn = "${aws_alb.default.arn}"
-  port              = "80"
-  protocol          = "HTTP"
-
-  default_action {
-    target_group_arn = "${aws_alb_target_group.default.arn}"
-    type             = "forward"
-  }
+resource "aws_route53_record" "environment" {
+  count   = "1"
+  zone_id = "${var.aws_route53_zone_id}"
+  name    = "${var.product}-${var.environment}"
+  type    = "CNAME"
+  ttl     = 300
+  records = ["${aws_alb.default.dns_name}"]
 }
 
-resource "aws_alb_listener" "8081" {
-  load_balancer_arn = "${aws_alb.default.arn}"
-  port              = "8081"
-  protocol          = "HTTP"
-
-  default_action {
-    target_group_arn = "${aws_alb_target_group.default.arn}"
-    type             = "forward"
-  }
-}
-
-resource "aws_alb_listener" "8080" {
-  load_balancer_arn = "${aws_alb.default.arn}"
-  port              = "8080"
-  protocol          = "HTTP"
-
-  default_action {
-    target_group_arn = "${aws_alb_target_group.default.arn}"
-    type             = "forward"
-  }
-}
-
-resource "aws_alb_listener" "3000" {
-  load_balancer_arn = "${aws_alb.default.arn}"
-  port              = "3000"
-  protocol          = "HTTP"
-
-  default_action {
-    target_group_arn = "${aws_alb_target_group.default.arn}"
-    type             = "forward"
-  }
-}
-
-resource "aws_alb_target_group" "default" {
-  name     = "default"
-  port     = "80"
-  protocol = "HTTP"
-  vpc_id   = "${aws_vpc.default.id}"
-}
 
 resource "aws_security_group" "alb" {
   name = "alb"
