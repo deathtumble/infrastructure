@@ -59,7 +59,7 @@ resource "aws_route53_record" "environment" {
   zone_id = "${var.aws_route53_zone_id}"
   name    = "${var.product}-${var.environment}"
   type    = "CNAME"
-  ttl     = 300
+  ttl     = 60
   records = ["${aws_alb.default.dns_name}"]
 }
 
