@@ -78,7 +78,7 @@ resource "aws_ecs_task_definition" "dashing" {
             "name": "aws-proxy",
             "cpu": 0,
             "essential": false,
-            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/aws_proxy:0.1.0-SNAPSHOT",
+            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/aws_proxy:${var.aws_proxy_docker_tag}",
             "memory": 500,
             "environment": [
                 {

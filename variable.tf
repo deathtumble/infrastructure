@@ -1,6 +1,11 @@
+variable "aws_proxy_docker_tag" {
+  type    = "string"
+  default = "2959b2e"
+}
+
 variable "dashing_docker_tag" {
   type    = "string"
-  default = "294dcdb"
+  default = "5c6e1d3"
 }
 
 variable "region" {
