@@ -13,6 +13,12 @@ resource "aws_alb_target_group" "this" {
     port                = "${var.elb_instance_port}"
     interval            = 5
   }
+
+  tags {
+    Name          = "${var.role}"
+    Product       = "${var.product}"
+    Environment   = "${var.environment}"
+  }
 }
 
 resource "aws_alb_listener" "this" {
