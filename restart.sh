@@ -26,7 +26,10 @@ done
 
 sleep 90
 
-terraform apply -auto-approve -target=module.nexus.aws_ecs_service.this -state=terraform.tfstate -var-file=dev_config.vartf
-terraform apply -auto-approve -target=module.concourse.aws_ecs_service.this -state=terraform.tfstate -var-file=dev_config.vartf
-terraform apply -auto-approve -target=module.dashing.aws_ecs_service.this -state=terraform.tfstate -var-file=dev_config.vartf
-terraform apply -auto-approve -target=module.monitoring.aws_ecs_service.this -state=terraform.tfstate -var-file=dev_config.vartf
+terraform apply -auto-approve \
+  -target=module.nexus.aws_ecs_service.this \
+  -target=module.concourse.aws_ecs_service.this \
+  -target=module.dashing.aws_ecs_service.this \
+  -target=module.monitoring.aws_ecs_service.this \
+  -state=terraform.tfstate \
+  -var-file=dev_config.vartf
