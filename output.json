@@ -1,0 +1,27 @@
+{
+    "concourse_task_count": {
+        "sensitive": false,
+        "type": "string",
+        "value": "1"
+    },
+    "dashing_task_count": {
+        "sensitive": false,
+        "type": "string",
+        "value": "1"
+    },
+    "monitoring_task_count": {
+        "sensitive": false,
+        "type": "string",
+        "value": "1"
+    },
+    "nexus_task_count": {
+        "sensitive": false,
+        "type": "string",
+        "value": "1"
+    },
+    "postgres_db_address": {
+        "sensitive": false,
+        "type": "string",
+        "value": "terraform-004081a0be58fb2435b4ffb774.c5vfdrfo2n5k.eu-west-1.rds.amazonaws.com"
+    }
+}
