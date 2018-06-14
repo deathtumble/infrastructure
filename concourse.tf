@@ -44,6 +44,11 @@ resource "aws_ecs_task_definition" "concourse" {
   family       = "concourse"
   network_mode = "host"
 
+  volume {
+    name      = "consul_config"
+    host_path = "/opt/consul/conf"
+  }
+
   container_definitions = <<DEFINITION
     [
         ${data.template_file.consul_agent.rendered},
