@@ -17,8 +17,6 @@ module "concourse" {
   instance_type        = "t2.medium"
   elb_protocol         = "http"
 
-  volume_id = "${var.concourse_volume_id}"
-
   // globals
   aws_alb_arn              = "${aws_alb.default.arn}"
   key_name                 = "${var.key_name}"
@@ -46,74 +44,18 @@ resource "aws_ecs_task_definition" "concourse" {
   family       = "concourse"
   network_mode = "host"
 
-  volume {
-    name      = "postgres_data"
-    host_path = "/opt/mount1/database"
-  }
-
-  volume {
-    name      = "concourse_web_keys"
-    host_path = "/opt/mount1/keys/web"
-  }
-
-  volume {
-    name      = "concourse_worker_keys"
-    host_path = "/opt/mount1/keys/worker"
-  }
-
-  volume {
-    name      = "consul_config"
-    host_path = "/opt/consul/conf"
-  }
-
   container_definitions = <<DEFINITION
     [
-        {
-            "name": "concourse-db",
-            "cpu": 0,
-            "essential": true,
-            "image": "postgres:9.6",
-            "memory": 490,
-            "environment": [
-                {
-                    "Name": "POSTGRES_DB",
-                    "Value": "concourse"
-                }, 
-                {
-                    "Name": "POSTGRES_USER",
-                    "Value": "concourse"
-                }, 
-                {
-                    "Name": "POSTGRES_PASSWORD",
-                    "Value": "${var.concourse_postgres_password}"
-                }, 
-                {
-                    "Name": "PGDATA",
-                    "Value": "/database"
-                }
-            ],
-            "mountPoints": [
-                {
-                    "sourceVolume": "postgres_data",
-                    "containerPath": "/database",
-                    "readOnly": false
-                }
-            ],
-            "portMappings": [
-                {
-                  "hostPort": 5432,
-                  "containerPort": 5432,
-                  "protocol": "tcp"
-                }
-            ]
-        },
+        ${data.template_file.consul_agent.rendered},
+        ${data.template_file.collectd-dashing.rendered},
         {
             "name": "concourse-web",
             "cpu": 0,
             "essential": true,
-            "image": "concourse/concourse:3.9.2",
+            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/concourse:2ff922a",
             "command": ["web"],
             "memory": 500,
+            "dnsServers": ["127.0.0.1"],
             "portMappings": [
                 {
                   "hostPort": 8080,
@@ -124,13 +66,6 @@ resource "aws_ecs_task_definition" "concourse" {
                   "hostPort": 2222,
                   "containerPort": 2222,
                   "protocol": "tcp"
-                }
-            ],
-            "mountPoints": [
-                {
-                  "sourceVolume": "concourse_web_keys",
-                  "containerPath": "/concourse-keys",
-                  "readOnly": false
                 }
             ],
             "environment": [
@@ -144,11 +79,11 @@ resource "aws_ecs_task_definition" "concourse" {
                 }, 
                 {
                     "Name": "CONCOURSE_EXTERNAL_URL",
-                    "Value": "http://concourse-poc-poc.${var.root_domain_name}:8080"
+                    "Value": "http://${var.environment}-${var.product}.${var.root_domain_name}:8080"
                 }, 
                 {
                     "Name": "CONCOURSE_POSTGRES_HOST",
-                    "Value": "172.17.0.1"
+                    "Value": "postgres.service.consul"
                 }, 
                 {
                     "Name": "CONCOURSE_POSTGRES_USER",
@@ -167,45 +102,18 @@ resource "aws_ecs_task_definition" "concourse" {
         {
             "name": "concourse-worker",
             "cpu": 0,
-            "essential": false,
-            "privileged": true,
-            "image": "concourse/concourse:3.9.2",
+            "essential": true,
+            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/concourse:2ff922a",
             "command": ["worker"],
             "memory": 500,
-            "portMappings": [
-                {
-                  "hostPort": 7777,
-                  "containerPort": 7777,
-                  "protocol": "tcp"
-                },
-                {
-                  "hostPort": 7788,
-                  "containerPort": 7788,
-                  "protocol": "tcp"
-                }
-            ],
-            "mountPoints": [
-                {
-                  "sourceVolume": "concourse_worker_keys",
-                  "containerPath": "/concourse-keys",
-                  "readOnly": false
-                }
-            ],
+            "dnsServers": ["127.0.0.1"],
             "environment": [
                 {
                     "Name": "CONCOURSE_TSA_HOST",
-                    "Value": "172.17.0.1"
-                },
-                {
-                    "Name": "CONCOURSE_GARDEN_DNS_SERVER",
-                    "Value": "10.0.0.2"
-                },
-                {
-                    "Name": "CONCOURSE_GARDEN_DNS_PROXY_ENABLE",
-                    "Value": "true"
-                }
+                    "Value": "tsa_host.service.consul"
+                } 
             ]
-         } 
+        }
     ]
     DEFINITION
 }

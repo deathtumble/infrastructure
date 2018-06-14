@@ -6,26 +6,6 @@ file:
     group: root
     filetype: file
     contains: []
-  /opt/mount1/database:
-    exists: true
-    mode: "0700"
-    size: 4096
-    filetype: directory
-    contains: []
-  /opt/mount1/keys/web:
-    exists: true
-    mode: "0755"
-    size: 4096
-    filetype: directory
-    contains: []
-  /opt/mount1/keys/web:
-    exists: true
-    mode: "0755"
-    size: 4096
-    owner: root
-    group: root
-    filetype: directory
-    contains: []
 package:
   file:
     installed: true
@@ -37,6 +17,11 @@ port:
     ip:
     - 0.0.0.0
   tcp6:22:
+    listening: true
+    ip:
+    - '::'
+port:
+  tcp6:2222:
     listening: true
     ip:
     - '::'
@@ -54,4 +39,3 @@ process:
 http:
   http://localhost:8080/:
     status: 200
-    
