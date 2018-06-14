@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+
+terraform apply -auto-approve -state=terraform.tfstate -var-file=poc_poc_config.vartf
+
+terraform output -json > output.json
+
+address=$(jq ".postgres_db_address.value" output.json)
+
+curl http://consul.urbanfortress.uk:80/v1/catalog/register -X PUT --data-binary @- <<BODY
+{
+    "Datacenter": "dc1", 
+    "Node": "rds", 
+    "Address": ${address}, 
+    "Service": {
+            "Service": "postgres", 
+            "Port": 5432
+    }
+}' 
+BODY
+
