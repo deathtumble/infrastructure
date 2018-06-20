@@ -8,6 +8,11 @@ terraform output -json > output.json
 
 address=$(jq ".postgres_db_address.value" output.json)
 
+until $(curl --output /dev/null --silent --fail http://consul.urbanfortress.uk/v1/agent/checks); do
+    printf '.'
+    sleep 5
+done
+
 curl http://consul.urbanfortress.uk:80/v1/catalog/register -X PUT --data-binary @- <<BODY
 {
     "Datacenter": "dc1", 
