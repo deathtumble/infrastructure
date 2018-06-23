@@ -1,3 +1,4 @@
 /*.tfstate*
 /secrets.tf
 /.terraform
+/output.json
