@@ -43,5 +43,6 @@ resource "aws_db_instance" "concourse" {
   password             = "${var.concourse_postgres_password}"
   parameter_group_name = "default.postgres9.6"
   vpc_security_group_ids = ["${aws_security_group.postgres.id}"]
+  skip_final_snapshot = true
 }
 
