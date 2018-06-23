@@ -25,7 +25,7 @@ variable "availability_zone_2" {
 
 variable "ecs_ami_id" {
   type    = "string"
-  default = "ami-99fea6e0"
+  default = "ami-3fdad5d5"
 }
 
 variable "concourse_task_status" {
