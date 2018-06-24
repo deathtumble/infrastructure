@@ -2,7 +2,7 @@
             "name": "consul-agent",
             "cpu": 0,
             "essential": false,
-            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/consul:${var.consul_docker_tag}",
+            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/consul:${consul_docker_tag}",
             "memory": 50,
             "environment": [
                 {
