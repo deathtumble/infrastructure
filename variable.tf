@@ -8,6 +8,16 @@ variable "dashing_docker_tag" {
   default = "8d371cf"
 }
 
+variable "consul_docker_tag" {
+  type    = "string"
+  default = "26fe3cc"
+}
+
+variable "concourse_docker_tag" {
+  type    = "string"
+  default = "fb947a1"
+}
+
 variable "region" {
   type    = "string"
   default = "eu-west-1"
@@ -25,7 +35,7 @@ variable "availability_zone_2" {
 
 variable "ecs_ami_id" {
   type    = "string"
-  default = "ami-3fdad5d5"
+  default = "ami-1f4749f5"
 }
 
 variable "concourse_task_status" {

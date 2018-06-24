@@ -49,6 +49,11 @@ resource "aws_ecs_task_definition" "concourse" {
     host_path = "/opt/consul/conf"
   }
 
+  volume {
+    name      = "goss_config"
+    host_path = "/etc/goss"
+  }
+
   container_definitions = <<DEFINITION
     [
         ${data.template_file.consul_agent.rendered},
@@ -57,8 +62,7 @@ resource "aws_ecs_task_definition" "concourse" {
             "name": "concourse-web",
             "cpu": 0,
             "essential": true,
-            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/concourse:2ff922a",
-            "command": ["web"],
+            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/concourse-web:${var.concourse_docker_tag}",
             "memory": 500,
             "dnsServers": ["127.0.0.1"],
             "portMappings": [
@@ -70,6 +74,7 @@ resource "aws_ecs_task_definition" "concourse" {
                 {
                   "hostPort": 2222,
                   "containerPort": 2222,
+                  
                   "protocol": "tcp"
                 }
             ],
@@ -102,22 +107,19 @@ resource "aws_ecs_task_definition" "concourse" {
                     "Name": "CONCOURSE_POSTGRES_DATABASE",
                     "Value": "concourse"
                 }
-            ]
-        },
-        {
-            "name": "concourse-worker",
-            "cpu": 0,
-            "essential": true,
-            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/concourse:2ff922a",
-            "command": ["worker"],
-            "memory": 500,
-            "dnsServers": ["127.0.0.1"],
-            "environment": [
+            ],
+            "mountPoints": [
                 {
-                    "Name": "CONCOURSE_TSA_HOST",
-                    "Value": "tsa_host.service.consul"
-                } 
-            ]
+                  "sourceVolume": "consul_config",
+                  "containerPath": "/opt/consul/conf",
+                  "readOnly": false
+                },
+                {
+                  "sourceVolume": "goss_config",
+                  "containerPath": "/etc/goss",
+                  "readOnly": false
+                }
+            ]            
         }
     ]
     DEFINITION

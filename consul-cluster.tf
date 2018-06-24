@@ -60,7 +60,7 @@ resource "aws_ecs_task_definition" "consul-leader" {
 			"name": "collectd",
 			"cpu": 0,
 		    "essential": false,
-		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/collectd-write-graphite:0.1.1",
+		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/collectd-write-graphite:26fe3cc",
 		    "memory": 500,
 		    "environment": [
 		    	{
@@ -81,7 +81,7 @@ resource "aws_ecs_task_definition" "consul-leader" {
 		    "name": "consul-leader",
 		    "cpu": 0,
 		    "essential": true,
-		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/consul:0.1.0",
+		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/consul:${var.consul_docker_tag}",
 		    "memory": 500,
 		    "environment": [
 		    	{
@@ -180,7 +180,7 @@ resource "aws_ecs_task_definition" "consul-server" {
 			"name": "collectd",
 			"cpu": 0,
 		    "essential": true,
-		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/collectd-write-graphite:0.1.1",
+		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/collectd-write-graphite:26fe3cc",
 		    "memory": 500,
             "dnsServers": ["127.0.0.1"],
 		    "environment": [
@@ -198,7 +198,7 @@ resource "aws_ecs_task_definition" "consul-server" {
 		    "name": "consul-server",
 		    "cpu": 0,
 		    "essential": true,
-		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/consul:0.1.0",
+		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/consul:${var.consul_docker_tag}",
 		    "memory": 500,
 		    "environment": [
 		    	{
