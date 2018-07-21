@@ -5,12 +5,17 @@ variable "aws_proxy_docker_tag" {
 
 variable "dashing_docker_tag" {
   type    = "string"
-  default = "8d371cf"
+  default = "6151710"
 }
 
 variable "consul_docker_tag" {
   type    = "string"
   default = "26fe3cc"
+}
+
+variable "collectd_docker_tag" {
+  type    = "string"
+  default = "0.1.1"
 }
 
 variable "concourse_docker_tag" {

@@ -43,6 +43,7 @@ data "template_file" "collectd-nexus" {
 
   vars {
     graphite_prefix = "${var.product}.${var.environment}.nexus."
+    collectd_docker_tag = "${var.collectd_docker_tag}"
   }
 }
 

@@ -38,6 +38,7 @@ data "template_file" "collectd-dashing" {
 
   vars {
     graphite_prefix = "${var.product}.${var.environment}.dashing."
+    collectd_docker_tag = "${var.collectd_docker_tag}"
   }
 }
 
@@ -48,6 +49,11 @@ resource "aws_ecs_task_definition" "dashing" {
   volume {
     name      = "consul_config"
     host_path = "/opt/consul/conf"
+  }
+
+  volume {
+    name      = "goss_config"
+    host_path = "/etc/goss"
   }
 
   container_definitions = <<DEFINITION
@@ -71,6 +77,18 @@ resource "aws_ecs_task_definition" "dashing" {
                   "hostPort": 80,
                   "containerPort": 80,
                   "protocol": "tcp"
+                }
+            ],
+            "mountPoints": [
+                {
+                  "sourceVolume": "consul_config",
+                  "containerPath": "/opt/consul/conf",
+                  "readOnly": false
+                },
+                {
+                  "sourceVolume": "goss_config",
+                  "containerPath": "/etc/goss",
+                  "readOnly": false
                 }
             ]
         },

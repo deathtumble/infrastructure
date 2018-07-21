@@ -37,6 +37,7 @@ data "template_file" "collectd-monitoring" {
 
   vars {
     graphite_prefix = "${var.product}.${var.environment}.monitoring."
+    collectd_docker_tag = "${var.collectd_docker_tag}"
   }
 }
 

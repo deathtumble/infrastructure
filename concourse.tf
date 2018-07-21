@@ -37,6 +37,7 @@ data "template_file" "collectd-concourse" {
 
   vars {
     graphite_prefix = "${var.product}.${var.environment}.concourse."
+    collectd_docker_tag = "${var.collectd_docker_tag}"
   }
 }
 

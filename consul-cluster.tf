@@ -60,7 +60,7 @@ resource "aws_ecs_task_definition" "consul-leader" {
 			"name": "collectd",
 			"cpu": 0,
 		    "essential": false,
-		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/collectd-write-graphite:26fe3cc",
+		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/collectd-write-graphite:${var.collectd_docker_tag}",
 		    "memory": 500,
 		    "environment": [
 		    	{
@@ -180,7 +180,7 @@ resource "aws_ecs_task_definition" "consul-server" {
 			"name": "collectd",
 			"cpu": 0,
 		    "essential": true,
-		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/collectd-write-graphite:26fe3cc",
+		    "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/collectd-write-graphite:${var.collectd_docker_tag}",
 		    "memory": 500,
             "dnsServers": ["127.0.0.1"],
 		    "environment": [
