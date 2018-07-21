@@ -1,3 +1,16 @@
+variable "consul_server_count" {
+  type    = "string"
+  default = "2"
+}
+
+variable "consul_server_instance_names" {
+  default = {
+    "0" = "1"
+    "1" = "2"
+    "2" = "3"
+  }
+}
+
 variable "aws_proxy_docker_tag" {
   type    = "string"
   default = "2959b2e"
