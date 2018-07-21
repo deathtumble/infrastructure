@@ -53,30 +53,22 @@ resource "aws_ecs_service" "consul-server" {
   desired_count   = 2
 }
 
+data "template_file" "collectd-consul-server" {
+  template = "${file("files/collectd.tpl")}"
+
+  vars {
+    graphite_prefix = "${var.product}.${var.environment}.consul."
+    collectd_docker_tag = "${var.collectd_docker_tag}"
+  }
+}
+
 resource "aws_ecs_task_definition" "consul-server" {
   family       = "consul-server"
   network_mode = "host"
 
   container_definitions = <<DEFINITION
     [
-        {
-            "name": "collectd",
-            "cpu": 0,
-            "essential": true,
-            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/collectd-write-graphite:${var.collectd_docker_tag}",
-            "memory": 500,
-            "dnsServers": ["127.0.0.1"],
-            "environment": [
-                {
-                    "Name": "GRAPHITE_HOST",
-                    "Value": "graphite.service.consul"
-                }, 
-                {
-                    "Name": "GRAPHITE_PREFIX",
-                    "Value": "${var.product}.${var.environment}.consul."
-                }
-            ]
-        },
+        ${data.template_file.collectd-consul-server.rendered},
         {
             "name": "consul-server",
             "cpu": 0,

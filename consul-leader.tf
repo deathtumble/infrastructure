@@ -52,33 +52,22 @@ resource "aws_ecs_service" "consul-leader" {
   desired_count   = 1
 }
 
+data "template_file" "collectd-consul-leader" {
+  template = "${file("files/collectd.tpl")}"
+
+  vars {
+    graphite_prefix = "${var.product}.${var.environment}.consul."
+    collectd_docker_tag = "${var.collectd_docker_tag}"
+  }
+}
+
 resource "aws_ecs_task_definition" "consul-leader" {
   family       = "consul-leader"
   network_mode = "host"
 
   container_definitions = <<DEFINITION
     [
-        {
-            "name": "collectd",
-            "cpu": 0,
-            "essential": false,
-            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/collectd-write-graphite:${var.collectd_docker_tag}",
-            "memory": 500,
-            "environment": [
-                {
-                    "Name": "HOST_NAME",
-                    "Value": "consul-leader"
-                },
-                {
-                    "Name": "GRAPHITE_HOST",
-                    "Value": "10.0.0.36"
-                }, 
-                {
-                    "Name": "GRAPHITE_PREFIX",
-                    "Value": "${var.product}.${var.environment}.consul."
-                }
-            ]
-        },
+        ${data.template_file.collectd-consul-leader.rendered},
         {
             "name": "consul-leader",
             "cpu": 0,
