@@ -33,7 +33,7 @@ variable "collectd_docker_tag" {
 
 variable "concourse_docker_tag" {
   type    = "string"
-  default = "fb947a1"
+  default = "88e46cc"
 }
 
 variable "region" {

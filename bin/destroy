@@ -2,11 +2,16 @@
 
 set -e
 
-terraform destroy -force -state=terraform.tfstate -var-file=poc_poc_config.vartf
+if terraform destroy -force -state=terraform.tfstate -var-file=poc_poc_config.vartf ;  then
 
-text="Terraform destroy executed on poc poc"
-escapedText=$(echo $text | sed 's/"/\"/g' | sed "s/'/\'/g" )
+    text="Terraform destroy executed on poc poc"
+    escapedText=$(echo $text | sed 's/"/\"/g' | sed "s/'/\'/g" )
 
-json="{\"channel\": \"#$channel\", \"text\": \"$escapedText\"}"
+    json="{\"channel\": \"#$channel\", \"text\": \"$escapedText\"}"
 
-curl -X POST --data-urlencode "$json" "https://hooks.slack.com/services/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"
+    curl -X POST --data-urlencode "$json" "https://hooks.slack.com/services/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"
+    
+    $directory/slack terraform destroy to poc-poc has succeed
+else 
+    $directory/slack terraform destroy to poc-poc has failed
+fi    

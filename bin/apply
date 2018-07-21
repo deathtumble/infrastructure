@@ -2,8 +2,14 @@
 
 set -e
 
-terraform apply -auto-approve -state=terraform.tfstate -var-file=poc_poc_config.vartf
+if  terraform apply -auto-approve -state=terraform.tfstate -var-file=poc_poc_config.vartf ; then
 
-directory=`dirname $0`
+    directory=`dirname $0`
 
-$directory/configConsul
+    $directory/configConsul
+
+    $directory/slack terraform apply to poc-poc has succeed
+else
+    $directory/slack terraform apply to poc-poc has failed
+fi    
+

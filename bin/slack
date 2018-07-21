@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -e
+
+text=$*
+
+escapedText=$(echo $text | sed 's/"/\"/g' | sed "s/'/\'/g" )
+
+json="{\"channel\": \"#proofofconcept\", \"text\": \"$escapedText\"}"
+
+curl -s -d "payload=$json" "https://hooks.slack.com/services/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"

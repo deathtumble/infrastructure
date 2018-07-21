@@ -10,6 +10,8 @@ $directory/configConsul
 
 vars=""
 
+services=$*
+
 while test $# -gt 0
 do
     case "$1" in
@@ -40,4 +42,5 @@ terraform apply -auto-approve \
   -state=terraform.tfstate \
   -var-file=poc_poc_config.vartf
 
+$directory/slack terraform update $services to poc-poc has succeed
 
