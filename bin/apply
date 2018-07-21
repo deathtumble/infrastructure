@@ -4,24 +4,6 @@ set -e
 
 terraform apply -auto-approve -state=terraform.tfstate -var-file=poc_poc_config.vartf
 
-terraform output -json > output.json
+directory=`dirname $0`
 
-address=$(jq ".postgres_db_address.value" output.json)
-
-until $(curl --output /dev/null --silent --fail http://consul.urbanfortress.uk/v1/agent/checks); do
-    printf '.'
-    sleep 5
-done
-
-curl http://consul.urbanfortress.uk:80/v1/catalog/register -X PUT --data-binary @- <<BODY
-{
-    "Datacenter": "dc1", 
-    "Node": "rds", 
-    "Address": ${address}, 
-    "Service": {
-            "Service": "postgres", 
-            "Port": 5432
-    }
-}' 
-BODY
-
+$directory/configConsul
