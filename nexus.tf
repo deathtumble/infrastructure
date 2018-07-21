@@ -34,10 +34,6 @@ module "nexus" {
   root_domain_name         = "${var.root_domain_name}"
 }
 
-data "template_file" "nexus" {
-  template = "${file("files/nexus_container.tpl")}"
-}
-
 data "template_file" "collectd-nexus" {
   template = "${file("files/collectd.tpl")}"
 
