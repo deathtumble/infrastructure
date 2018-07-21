@@ -146,6 +146,20 @@ resource "aws_security_group" "concourse" {
     cidr_blocks = ["${var.admin_cidr}", "${var.vpc_cidr}"]
   }
 
+  ingress {
+    from_port   = 2222
+    to_port     = 2222
+    protocol    = "tcp"
+    cidr_blocks = ["${var.admin_cidr}", "${var.vpc_cidr}"]
+  }
+
+  ingress {
+    from_port   = 2222
+    to_port     = 2222
+    protocol    = "udp"
+    cidr_blocks = ["${var.admin_cidr}", "${var.vpc_cidr}"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
