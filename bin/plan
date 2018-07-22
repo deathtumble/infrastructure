@@ -1,5 +1,7 @@
 #!/bin/bash
 
 set -e
+directory=`dirname $0`
+source $directory/variablefile
 
-terraform plan -state=terraform.tfstate -var-file=poc_poc_config.vartf
+terraform plan -var-file=${variablefiles}

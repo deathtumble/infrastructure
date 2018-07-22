@@ -1,8 +1,10 @@
 #!/bin/bash
 
 set -e
+directory=`dirname $0`
+source $directory/variablefile
 
-if terraform destroy -force -state=terraform.tfstate -var-file=poc_poc_config.vartf ;  then
+if terraform destroy -force -var-file=${variablefiles} ;  then
 
     text="Terraform destroy executed on poc poc"
     escapedText=$(echo $text | sed 's/"/\"/g' | sed "s/'/\'/g" )
@@ -11,7 +13,7 @@ if terraform destroy -force -state=terraform.tfstate -var-file=poc_poc_config.va
 
     curl -X POST --data-urlencode "$json" "https://hooks.slack.com/services/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"
     
-    $directory/slack terraform destroy to poc-poc has succeed
+    $directory/slack terraform destroy to ${product}-${environment} has succeed
 else 
-    $directory/slack terraform destroy to poc-poc has failed
+    $directory/slack terraform destroy to ${product}-${environment} has failed
 fi    

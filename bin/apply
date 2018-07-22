@@ -1,15 +1,15 @@
 #!/bin/bash
 
 set -e
+directory=`dirname $0`
+source $directory/variablefile
 
-if  terraform apply -auto-approve -state=terraform.tfstate -var-file=poc_poc_config.vartf ; then
-
-    directory=`dirname $0`
+if  terraform apply -auto-approve -var-file=${variablefiles} ; then
 
     $directory/configConsul
 
-    $directory/slack terraform apply to poc-poc has succeed
+    $directory/slack terraform apply to ${product}-${environment} has succeed
 else
-    $directory/slack terraform apply to poc-poc has failed
+    $directory/slack terraform apply to ${product}-${environment} has failed
 fi    
 

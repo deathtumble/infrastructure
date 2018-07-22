@@ -1,8 +1,10 @@
 #!/bin/bash
 
 set -e
+directory=`dirname $0`
+source $directory/variablefile
 
-terraform apply -auto-approve -state=terraform.tfstate -var-file=poc_poc_config.vartf
+terraform apply -auto-approve -var-file=${variablefiles}
 
 directory=`dirname $0`
 
@@ -16,16 +18,16 @@ while test $# -gt 0
 do
     case "$1" in
         nexus) 
-            terraform apply -auto-approve -target=module.nexus.aws_ecs_service.this -state=terraform.tfstate -var-file=poc_poc_config.vartf -var 'nexus_task_status=down'
+            terraform apply -auto-approve -target=module.nexus.aws_ecs_service.this -var-file=${variablefiles} -var 'nexus_task_status=down'
             ;;
         concourse) 
-            terraform apply -auto-approve -target=module.concourse.aws_ecs_service.this -state=terraform.tfstate -var-file=poc_poc_config.vartf -var 'concourse_task_status=down'
+            terraform apply -auto-approve -target=module.concourse.aws_ecs_service.this -var-file=${variablefiles}-var 'concourse_task_status=down'
             ;;
         dashing) 
-            terraform apply -auto-approve -target=module.dashing.aws_ecs_service.this -state=terraform.tfstate -var-file=poc_poc_config.vartf -var 'dashing_task_status=down'
+            terraform apply -auto-approve -target=module.dashing.aws_ecs_service.this -var-file=${variablefiles} 'dashing_task_status=down'
             ;;
         monitoring) 
-            terraform apply -auto-approve -target=module.monitoring.aws_ecs_service.this -state=terraform.tfstate -var-file=poc_poc_config.vartf -var 'monitoring_task_status=down'
+            terraform apply -auto-approve -target=module.monitoring.aws_ecs_service.this -var-file=${variablefiles} -var 'monitoring_task_status=down'
             ;;
     esac
     
@@ -34,13 +36,16 @@ done
 
 sleep 90
 
-terraform apply -auto-approve \
+if terraform apply -auto-approve \
   -target=module.nexus.aws_ecs_service.this \
   -target=module.concourse.aws_ecs_service.this \
   -target=module.dashing.aws_ecs_service.this \
   -target=module.monitoring.aws_ecs_service.this \
-  -state=terraform.tfstate \
-  -var-file=poc_poc_config.vartf
+  -var-file=${variablefiles} ; then
 
-$directory/slack terraform update $services to poc-poc has succeed
+    $directory/slack terraform update $services to poc-poc has succeed
+
+else
+   $directory/slack terraform update $services to poc-poc has failed
+if
 
