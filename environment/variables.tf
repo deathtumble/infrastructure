@@ -64,35 +64,11 @@ variable "collectd_docker_tag" {
   default = "0.1.1"
 }
 
-variable "hubot_slack_token" {
-  type    = "string"
-}
-
 variable "concourse_postgres_password" {
   type    = "string"
 }
 
 variable "concourse_password" {
-  type    = "string"
-}
-
-variable "higgins_grafana_api_key" {
-  type    = "string"
-}
-
-variable "higgins_grafana_s3_access_key_id" {
-  type    = "string"
-}
-
-variable "higgin_grafana_s3_secret_access_key" {
-  type    = "string"
-}
-
-variable "higgin_grafana_s3_prefix" {
-  type    = "string"
-}
-
-variable "higgin_grafana_s3_bucket" {
   type    = "string"
 }
 
