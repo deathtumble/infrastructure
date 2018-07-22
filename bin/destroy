@@ -4,7 +4,7 @@ set -e
 directory=`dirname $0`
 source setenv
 
-if terraform destroy -force -var-file=${variablefiles} ;  then
+if terraform destroy -force -var-file=config.vartf ;  then
 
     text="Terraform destroy executed on poc poc"
     escapedText=$(echo $text | sed 's/"/\"/g' | sed "s/'/\'/g" )
