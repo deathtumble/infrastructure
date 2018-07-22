@@ -23,7 +23,7 @@ resource "aws_instance" "consul-leader" {
   user_data = <<EOF
 #!/bin/bash
 cat <<'EOF' >> /etc/ecs/ecs.config
-ECS_CLUSTER=consul-leader
+ECS_CLUSTER=consul-leader-${var.environment}
 HOSTNAME=consul-${var.product}-${var.environment}-leader
 EOF
 
@@ -41,13 +41,13 @@ resource "aws_elb_attachment" "consul-leader" {
 }
 
 resource "aws_ecs_cluster" "consul-leader" {
-  name = "consul-leader"
+  name = "consul-leader-${var.environment}"
 }
 
 resource "aws_ecs_service" "consul-leader" {
-  name            = "consul-leader"
-  cluster         = "consul-leader"
-  task_definition = "consul-leader:${aws_ecs_task_definition.consul-leader.revision}"
+  name            = "consul-leader-${var.environment}"
+  cluster         = "consul-leader-${var.environment}"
+  task_definition = "consul-leader-${var.environment}:${aws_ecs_task_definition.consul-leader.revision}"
   depends_on      = ["aws_ecs_cluster.consul-leader", "aws_ecs_task_definition.consul-leader"]
   desired_count   = 1
 }
@@ -62,7 +62,7 @@ data "template_file" "collectd-consul-leader" {
 }
 
 resource "aws_ecs_task_definition" "consul-leader" {
-  family       = "consul-leader"
+  family       = "consul-leader-${var.environment}"
   network_mode = "host"
 
   container_definitions = <<DEFINITION

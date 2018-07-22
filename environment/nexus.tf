@@ -13,7 +13,7 @@ module "nexus" {
   elb_instance_port    = "8081"
   healthcheck_protocol = "HTTP"
   healthcheck_path     = "/service/metrics/healthcheck"
-  task_definition      = "nexus:${aws_ecs_task_definition.nexus.revision}"
+  task_definition      = "nexus-${var.environment}:${aws_ecs_task_definition.nexus.revision}"
   task_status          = "${var.nexus_task_status}"
   instance_type        = "t2.medium"
 
@@ -44,7 +44,7 @@ data "template_file" "collectd-nexus" {
 }
 
 resource "aws_ecs_task_definition" "nexus" {
-  family       = "nexus"
+  family       = "nexus-${var.environment}"
   network_mode = "host"
 
   volume {

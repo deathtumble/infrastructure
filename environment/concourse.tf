@@ -12,7 +12,7 @@ module "concourse" {
   elb_instance_port    = "8080"
   healthcheck_protocol = "HTTP"
   healthcheck_path     = "/public/images/favicon.png"
-  task_definition      = "concourse:${aws_ecs_task_definition.concourse.revision}"
+  task_definition      = "concourse-${var.environment}:${aws_ecs_task_definition.concourse.revision}"
   task_status          = "${var.concourse_task_status}"
   instance_type        = "t2.medium"
   elb_protocol         = "http"
@@ -42,7 +42,7 @@ data "template_file" "collectd-concourse" {
 }
 
 resource "aws_ecs_task_definition" "concourse" {
-  family       = "concourse"
+  family       = "concourse-${var.environment}"
   network_mode = "host"
 
   volume {

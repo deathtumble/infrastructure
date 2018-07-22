@@ -12,7 +12,7 @@ module "monitoring" {
   elb_instance_port    = "3000"
   healthcheck_protocol = "HTTP"
   healthcheck_path     = "/api/health"
-  task_definition      = "monitoring:${aws_ecs_task_definition.monitoring.revision}"
+  task_definition      = "monitoring-${var.environment}:${aws_ecs_task_definition.monitoring.revision}"
   task_status          = "${var.monitoring_task_status}"
 
   volume_id = "${var.monitoring_volume_id}"
@@ -42,7 +42,7 @@ data "template_file" "collectd-monitoring" {
 }
 
 resource "aws_ecs_task_definition" "monitoring" {
-  family       = "monitoring"
+  family       = "monitoring-${var.environment}"
   network_mode = "host"
 
   volume {

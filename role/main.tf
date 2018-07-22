@@ -44,7 +44,7 @@ resource "aws_instance" "this" {
 #cloud-config
 hostname: ${var.role}    
 write_files:
- - content: ECS_CLUSTER=${var.role}
+ - content: ECS_CLUSTER=${var.role}-${var.environment}
    path: /etc/ecs/ecs.config   
    permissions: '0644'
 runcmd:
@@ -63,12 +63,12 @@ EOF
 }
 
 resource "aws_ecs_cluster" "this" {
-  name = "${var.role}"
+  name = "${var.role}-${var.environment}"
 }
 
 resource "aws_ecs_service" "this" {
-  name            = "${var.role}"
-  cluster         = "${var.role}"
+  name            = "${var.role}-${var.environment}"
+  cluster         = "${var.role}-${var.environment}"
   task_definition = "${var.task_definition}"
   desired_count   = "${var.task_status == "down" ? 0 : var.desired_task_count}"
 }

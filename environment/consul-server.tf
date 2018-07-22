@@ -23,7 +23,7 @@ resource "aws_instance" "consul-server" {
   user_data = <<EOF
 #!/bin/bash
 cat <<'EOF' >> /etc/ecs/ecs.config
-ECS_CLUSTER=consul-server
+ECS_CLUSTER=consul-server-${var.environment}
 HOST_NAME=consul-${var.product}-${var.environment}-${lookup(var.consul_server_instance_names, count.index)}
 EOF
 
@@ -42,13 +42,13 @@ resource "aws_elb_attachment" "consul-server" {
 }
 
 resource "aws_ecs_cluster" "consul-server" {
-  name = "consul-server"
+  name = "consul-server-${var.environment}"
 }
 
 resource "aws_ecs_service" "consul-server" {
-  name            = "consul-server"
-  cluster         = "consul-server"
-  task_definition = "consul-server:${aws_ecs_task_definition.consul-server.revision}"
+  name            = "consul-server-${var.environment}"
+  cluster         = "consul-server-${var.environment}"
+  task_definition = "consul-server-${var.environment}:${aws_ecs_task_definition.consul-server.revision}"
   depends_on      = ["aws_ecs_cluster.consul-server", "aws_ecs_task_definition.consul-server"]
   desired_count   = 2
 }
@@ -63,7 +63,7 @@ data "template_file" "collectd-consul-server" {
 }
 
 resource "aws_ecs_task_definition" "consul-server" {
-  family       = "consul-server"
+  family       = "consul-server-${var.environment}"
   network_mode = "host"
 
   container_definitions = <<DEFINITION

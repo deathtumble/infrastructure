@@ -12,7 +12,7 @@ module "dashing" {
   elb_instance_port    = "80"
   healthcheck_protocol = "HTTP"
   healthcheck_path     = "/favicon.ico"
-  task_definition      = "dashing:${aws_ecs_task_definition.dashing.revision}"
+  task_definition      = "dashing-${var.environment}:${aws_ecs_task_definition.dashing.revision}"
   task_status          = "${var.dashing_task_status}"
   instance_type        = "t2.medium"
 
@@ -43,7 +43,7 @@ data "template_file" "collectd-dashing" {
 }
 
 resource "aws_ecs_task_definition" "dashing" {
-  family       = "dashing"
+  family       = "dashing-${var.environment}"
   network_mode = "host"
 
   volume {
