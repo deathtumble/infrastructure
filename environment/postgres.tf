@@ -1,10 +1,10 @@
 resource "aws_db_subnet_group" "default" {
-   name = "main"
+   name = "main-${var.environment}"
    subnet_ids = ["${aws_subnet.av1.id}", "${aws_subnet.av2.id}"] 
 }
 
 resource "aws_security_group" "postgres" {
-  name = "postgres"
+  name = "postgres-${var.environment}"
 
   description = "dashing security group"
   vpc_id      = "${aws_vpc.default.id}"
@@ -32,6 +32,7 @@ resource "aws_security_group" "postgres" {
 
 
 resource "aws_db_instance" "concourse" {
+  identifier = "${var.product}-${var.environment}" 
   allocated_storage    = 20
   storage_type         = "gp2"
   engine               = "postgres"
