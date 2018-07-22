@@ -15,7 +15,7 @@ resource "aws_alb_target_group" "consul" {
   }
 
   tags {
-    Name          = "consul-${var.environment}"
+    Name          = "consul-server-${var.environment}"
     Product       = "${var.product}"
     Environment   = "${var.environment}"
   }
@@ -39,8 +39,3 @@ resource "aws_alb_target_group_attachment" "consul-server" {
   port             = "8500"
 }
 
-resource "aws_alb_target_group_attachment" "consul-leader" {
-  target_group_arn = "${aws_alb_target_group.consul.arn}"
-  target_id        = "${aws_instance.consul-leader.id}"
-  port             = "8500"
-}
