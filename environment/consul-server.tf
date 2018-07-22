@@ -35,12 +35,6 @@ EOF
   }
 }
 
-resource "aws_elb_attachment" "consul-server" {
-  count    = "${var.consul_server_count}"
-  elb      = "${aws_elb.consului.id}"
-  instance = "${aws_instance.consul-server.*.id[count.index]}"
-}
-
 resource "aws_ecs_cluster" "consul-server" {
   name = "consul-server-${var.environment}"
 }

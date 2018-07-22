@@ -6,7 +6,7 @@ source setenv
 
 if  terraform apply -auto-approve -var-file=config.vartf ; then
 
-    $directory/configConsul
+    $directory/configConsul ${product} ${environment}
 
     $directory/slack terraform apply to ${product}-${environment} has succeed
 else

@@ -35,11 +35,6 @@ EOF
   }
 }
 
-resource "aws_elb_attachment" "consul-leader" {
-  elb      = "${aws_elb.consului.id}"
-  instance = "${aws_instance.consul-leader.id}"
-}
-
 resource "aws_ecs_cluster" "consul-leader" {
   name = "consul-leader-${var.environment}"
 }

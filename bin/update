@@ -35,7 +35,7 @@ if terraform apply -auto-approve \
   -target=module.monitoring.aws_ecs_service.this \
   -var-file=${variablefiles} ; then
 
-  $directory/configConsul
+  $directory/configConsul ${product} ${environment}
 
   $directory/slack terraform update $services to ${product}-${environment} has succeed
 
