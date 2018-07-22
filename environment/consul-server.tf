@@ -21,17 +21,22 @@ resource "aws_instance" "consul-server" {
   ipv6_address_count          = "0"
 
   user_data = <<EOF
-#!/bin/bash
-cat <<'EOF' >> /etc/ecs/ecs.config
-ECS_CLUSTER=consul-server-${var.environment}
-HOST_NAME=consul-${var.product}-${var.environment}-${lookup(var.consul_server_instance_names, count.index)}
+#cloud-config
+write_files:
+ - content: ECS_CLUSTER=consul-server-${var.environment}
+   path: /etc/ecs/ecs.config   
+   permissions: '0644'
+runcmd:
+ - service goss start
+ - service modd start
 EOF
-
+  
   tags {
     Name          = "consul-${lookup(var.consul_server_instance_names, count.index)}"
     Product       = "${var.product}"
     Environment   = "${var.environment}"
     ConsulCluster = "${var.product}-${var.environment}"
+    Goss          = "true"
   }
 }
 
@@ -147,6 +152,13 @@ resource "aws_security_group" "consul-server" {
   name = "consul-server-${var.product}-${var.environment}"
 
   vpc_id = "${aws_vpc.default.id}"
+
+  ingress {
+    from_port   = 8082
+    to_port     = 8082
+    protocol    = "tcp"
+    cidr_blocks = ["${var.admin_cidr}", "${var.vpc_cidr}"]
+  }
 
   ingress {
     from_port   = 8301

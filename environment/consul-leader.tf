@@ -21,10 +21,14 @@ resource "aws_instance" "consul-leader" {
   ipv6_address_count          = "0"
 
   user_data = <<EOF
-#!/bin/bash
-cat <<'EOF' >> /etc/ecs/ecs.config
-ECS_CLUSTER=consul-leader-${var.environment}
-HOSTNAME=consul-${var.product}-${var.environment}-leader
+#cloud-config
+write_files:
+ - content: ECS_CLUSTER=consul-leader-${var.environment}
+   path: /etc/ecs/ecs.config   
+   permissions: '0644'
+runcmd:
+ - service goss start
+ - service modd start
 EOF
 
   tags {
@@ -32,6 +36,7 @@ EOF
     Product       = "${var.product}"
     Environment   = "${var.environment}"
     ConsulCluster = "${var.product}-${var.environment}"
+    Goss          = "true"
   }
 }
 
