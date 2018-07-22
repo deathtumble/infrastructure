@@ -2,6 +2,7 @@
 
 set -e
 directory=`dirname $0`
-source $directory/variablefile
 
-terraform plan -var-file=${variablefiles}
+source setenv
+
+$directory/_terraform.sh plan

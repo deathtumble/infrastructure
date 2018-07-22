@@ -1,5 +1,5 @@
 module "dashing" {
-  source = "./role"
+  source = "../role"
 
   role = "dashing"
 
@@ -34,7 +34,7 @@ module "dashing" {
 }
 
 data "template_file" "collectd-dashing" {
-  template = "${file("files/collectd.tpl")}"
+  template = "${file("${path.module}/files/collectd.tpl")}"
 
   vars {
     graphite_prefix = "${var.product}.${var.environment}.dashing."

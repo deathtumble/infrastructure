@@ -2,5 +2,5 @@
 
 set -e
 
-terraform $@ -state=terraform.tfstate  -var-file=poc_poc_config.vartf
+terraform $@ -state=terraform.tfstate -var-file=config.vartf
 

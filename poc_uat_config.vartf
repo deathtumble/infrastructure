@@ -1,0 +1,10 @@
+product = "poc" 
+environment = "uat" 
+nameTag = "poc-uat"
+nexus_volume_id = "vol-06c700eb25835d8e6"
+monitoring_volume_id = "vol-0bc8bde659e4e6f55" 
+key_name = "uat"
+
+root_domain_name = "urbanfortress.uk" 
+aws_route53_zone_id = "ZHWSM6HESLWEO" 
+admin_cidr = "81.174.166.51/32" 

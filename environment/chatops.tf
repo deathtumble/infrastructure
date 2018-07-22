@@ -35,11 +35,11 @@ write_files:
  - content: ECS_CLUSTER=graphite
    path: /etc/ecs/ecs.config   
    permissions: 644
- - content: ${base64encode(file("files/chatops_consul.json"))}
+ - content: ${base64encode(file("${path.module}/files/chatops_consul.json"))}
    path: /opt/consul/conf/chatops_consul.json
    encoding: b64
    permissions: 644
- - content: ${base64encode(file("files/chatops_goss.yml"))}
+ - content: ${base64encode(file("${path.module}/files/chatops_goss.yml"))}
    path: /etc/goss/goss.yaml
    encoding: b64
    permissions: 644

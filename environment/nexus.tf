@@ -1,5 +1,5 @@
 module "nexus" {
-  source = "./role"
+  source = "../role"
 
   role = "nexus"
 
@@ -35,7 +35,7 @@ module "nexus" {
 }
 
 data "template_file" "collectd-nexus" {
-  template = "${file("files/collectd.tpl")}"
+  template = "${file("${path.module}/files/collectd.tpl")}"
 
   vars {
     graphite_prefix = "${var.product}.${var.environment}.nexus."

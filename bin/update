@@ -2,15 +2,7 @@
 
 set -e
 directory=`dirname $0`
-source $directory/variablefile
-
-terraform apply -auto-approve -var-file=${variablefiles}
-
-directory=`dirname $0`
-
-$directory/configConsul
-
-vars=""
+source setenv
 
 services=$*
 
@@ -43,9 +35,11 @@ if terraform apply -auto-approve \
   -target=module.monitoring.aws_ecs_service.this \
   -var-file=${variablefiles} ; then
 
-    $directory/slack terraform update $services to poc-poc has succeed
+  $directory/configConsul
+
+  $directory/slack terraform update $services to ${product}-${environment} has succeed
 
 else
-   $directory/slack terraform update $services to poc-poc has failed
+   $directory/slack terraform update $services to ${product}-${environment} has failed
 if
 

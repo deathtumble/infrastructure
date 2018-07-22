@@ -53,7 +53,7 @@ resource "aws_ecs_service" "consul-leader" {
 }
 
 data "template_file" "collectd-consul-leader" {
-  template = "${file("files/collectd.tpl")}"
+  template = "${file("${path.module}/files/collectd.tpl")}"
 
   vars {
     graphite_prefix = "${var.product}.${var.environment}.consul."

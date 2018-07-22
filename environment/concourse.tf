@@ -1,5 +1,5 @@
 module "concourse" {
-  source = "./role"
+  source = "../role"
 
   role = "concourse"
 
@@ -33,7 +33,7 @@ module "concourse" {
 }
 
 data "template_file" "collectd-concourse" {
-  template = "${file("files/collectd.tpl")}"
+  template = "${file("${path.module}/files/collectd.tpl")}"
 
   vars {
     graphite_prefix = "${var.product}.${var.environment}.concourse."

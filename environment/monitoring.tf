@@ -1,5 +1,5 @@
 module "monitoring" {
-  source = "./role"
+  source = "../role"
 
   role = "monitoring"
 
@@ -33,7 +33,7 @@ module "monitoring" {
 }
 
 data "template_file" "collectd-monitoring" {
-  template = "${file("files/collectd.tpl")}"
+  template = "${file("${path.module}/files/collectd.tpl")}"
 
   vars {
     graphite_prefix = "${var.product}.${var.environment}.monitoring."
