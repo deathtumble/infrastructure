@@ -10,16 +10,16 @@ while test $# -gt 0
 do
     case "$1" in
         nexus) 
-            terraform apply -auto-approve -target=module.nexus.aws_ecs_service.this -var-file=${variablefiles} -var 'nexus_task_status=down'
+            $directory/support/terraform apply -auto-approve -target=module.nexus.aws_ecs_service.this -var 'nexus_task_status=down'
             ;;
         concourse) 
-            terraform apply -auto-approve -target=module.concourse.aws_ecs_service.this -var-file=${variablefiles}-var 'concourse_task_status=down'
+            $directory/support/terraform apply -auto-approve -target=module.concourse.aws_ecs_service.this -var 'concourse_task_status=down'
             ;;
         dashing) 
-            terraform apply -auto-approve -target=module.dashing.aws_ecs_service.this -var-file=${variablefiles} 'dashing_task_status=down'
+            $directory/support/terraform apply -auto-approve -target=module.dashing.aws_ecs_service.this -var 'dashing_task_status=down'
             ;;
         monitoring) 
-            terraform apply -auto-approve -target=module.monitoring.aws_ecs_service.this -var-file=${variablefiles} -var 'monitoring_task_status=down'
+            $directory/support/terraform apply -auto-approve -target=module.monitoring.aws_ecs_service.this -var 'monitoring_task_status=down'
             ;;
     esac
     
@@ -28,18 +28,17 @@ done
 
 sleep 90
 
-if terraform apply -auto-approve \
+if $directory/support/terraform apply -auto-approve \
   -target=module.nexus.aws_ecs_service.this \
   -target=module.concourse.aws_ecs_service.this \
   -target=module.dashing.aws_ecs_service.this \
-  -target=module.monitoring.aws_ecs_service.this \
-  -var-file=${variablefiles} ; then
+  -target=module.monitoring.aws_ecs_service.this ; then
 
-  $directory/configConsul ${product} ${environment}
+  $directory/support/configConsul ${product} ${environment}
 
-  $directory/slack terraform update $services to ${product}-${environment} has succeed
+  $directory/support/slack terraform update $services to ${product}-${environment} has succeed
 
 else
-   $directory/slack terraform update $services to ${product}-${environment} has failed
+   $directory/support/slack terraform update $services to ${product}-${environment} has failed
 if
 
