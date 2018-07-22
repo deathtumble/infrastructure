@@ -1,81 +1,3 @@
-variable "consul_server_count" {
-  type    = "string"
-  default = "2"
-}
-
-variable "consul_server_instance_names" {
-  default = {
-    "0" = "1"
-    "1" = "2"
-    "2" = "3"
-  }
-}
-
-variable "aws_proxy_docker_tag" {
-  type    = "string"
-  default = "2959b2e"
-}
-
-variable "dashing_docker_tag" {
-  type    = "string"
-  default = "6151710"
-}
-
-variable "consul_docker_tag" {
-  type    = "string"
-  default = "26fe3cc"
-}
-
-variable "collectd_docker_tag" {
-  type    = "string"
-  default = "0.1.1"
-}
-
-variable "concourse_docker_tag" {
-  type    = "string"
-  default = "88e46cc"
-}
-
-variable "region" {
-  type    = "string"
-  default = "eu-west-1"
-}
-
-variable "availability_zone_1" {
-  type    = "string"
-  default = "eu-west-1c"
-}
-
-variable "availability_zone_2" {
-  type    = "string"
-  default = "eu-west-1b"
-}
-
-variable "ecs_ami_id" {
-  type    = "string"
-  default = "ami-1f4749f5"
-}
-
-variable "concourse_task_status" {
-  type    = "string"
-  default = "up"
-}
-
-variable "nexus_task_status" {
-  type    = "string"
-  default = "up"
-}
-
-variable "dashing_task_status" {
-  type    = "string"
-  default = "up"
-}
-
-variable "monitoring_task_status" {
-  type    = "string"
-  default = "up"
-}
-
 variable "aws_route53_zone_id" {
   type = "string"
 }
@@ -85,10 +7,6 @@ variable "nexus_volume_id" {
 }
 
 variable "monitoring_volume_id" {
-  type = "string"
-}
-
-variable "concourse_volume_id" {
   type = "string"
 }
 
@@ -115,3 +33,34 @@ variable "nameTag" {
 variable "admin_cidr" {
   type = "string"
 }
+
+variable "ecs_ami_id" {
+  type    = "string"
+  default = "ami-1f4749f5"
+}
+
+variable "aws_proxy_docker_tag" {
+  type    = "string"
+  default = "2959b2e"
+}
+
+variable "dashing_docker_tag" {
+  type    = "string"
+  default = "6151710"
+}
+
+variable "consul_docker_tag" {
+  type    = "string"
+  default = "139d617"
+}
+
+variable "concourse_docker_tag" {
+  type    = "string"
+  default = "88e46cc"
+}
+
+variable "collectd_docker_tag" {
+  type    = "string"
+  default = "0.1.1"
+}
+
