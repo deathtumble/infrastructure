@@ -1,5 +1,5 @@
 resource "aws_alb_target_group" "this" {
-  name     = "${var.role}"
+  name     = "${var.role}-${var.environment}"
   port     = "${var.elb_instance_port}"
   protocol = "HTTP"
   vpc_id   = "${var.vpc_id}"
@@ -15,7 +15,7 @@ resource "aws_alb_target_group" "this" {
   }
 
   tags {
-    Name          = "${var.role}"
+    Name          = "${var.role}-${var.environment}"
     Product       = "${var.product}"
     Environment   = "${var.environment}"
   }

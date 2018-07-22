@@ -1,12 +1,12 @@
 resource "aws_lb_cookie_stickiness_policy" "consului" {
-  name                     = "consului"
+  name                     = "consului-${var.environment}"
   load_balancer            = "${aws_elb.consului.id}"
   lb_port                  = 80
   cookie_expiration_period = 600
 }
 
 resource "aws_elb" "consului" {
-  name            = "consului"
+  name            = "consului-${var.environment}"
   security_groups = ["${aws_security_group.consului.id}"]
   subnets         = ["${aws_subnet.av1.id}"]
   depends_on      = ["aws_security_group.consului"]
@@ -36,7 +36,7 @@ resource "aws_route53_record" "consul" {
 }
 
 resource "aws_security_group" "consului" {
-  name = "consului"
+  name = "consului-${var.environment}"
 
   description = "consului security group"
   vpc_id      = "${aws_vpc.default.id}"
