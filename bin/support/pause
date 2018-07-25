@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+
+sp="/-\|"
+
+printf " "
+
+let iterations=10*$1
+
+for ((i=0; i<=$iterations; i++)); do
+    sleep 0.1
+    
+    if ! ((i % 10)); then
+       printf "\b.${sp:i%${#sp}:1}"
+    else     
+       printf "\b${sp:i%${#sp}:1}"
+    fi   
+
+done
+
+printf "\b Continue\n"

@@ -26,7 +26,11 @@ do
     shift
 done
 
-sleep 90
+printf 'Pausing for 90 seconds\n'
+
+$directory/support/pause 90
+
+printf "\b Continue\n"
 
 if $directory/support/terraform apply -auto-approve ; then
 
