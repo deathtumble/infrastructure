@@ -96,7 +96,7 @@ resource "aws_ecs_task_definition" "dashing" {
             "name": "aws-proxy",
             "cpu": 0,
             "essential": false,
-            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/aws_proxy:${var.aws_proxy_docker_tag}",
+            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/aws-proxy:${var.aws_proxy_docker_tag}",
             "memory": 500,
             "environment": [
                 {
@@ -117,6 +117,18 @@ resource "aws_ecs_task_definition" "dashing" {
                   "hostPort": 8080,
                   "containerPort": 8080,
                   "protocol": "tcp"
+                }
+            ],
+            "mountPoints": [
+                {
+                  "sourceVolume": "consul_config",
+                  "containerPath": "/opt/consul/conf",
+                  "readOnly": false
+                },
+                {
+                  "sourceVolume": "goss_config",
+                  "containerPath": "/etc/goss",
+                  "readOnly": false
                 }
             ]
         }
