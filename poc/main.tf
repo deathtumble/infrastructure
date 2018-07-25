@@ -11,11 +11,6 @@ module "murray" {
   nameTag = "${var.nameTag}"
   admin_cidr = "${var.admin_cidr}"
   ecs_ami_id = "${var.ecs_ami_id}"
-  aws_proxy_docker_tag = "${var.aws_proxy_docker_tag}"
-  dashing_docker_tag = "${var.dashing_docker_tag}"
-  consul_docker_tag = "${var.consul_docker_tag}"
-  concourse_docker_tag = "${var.concourse_docker_tag}"
-  collectd_docker_tag = "${var.collectd_docker_tag}"
   
   concourse_task_status = "${var.concourse_task_status}"
   monitoring_task_status = "${var.monitoring_task_status}"
