@@ -17,6 +17,11 @@ module "murray" {
   concourse_docker_tag = "${var.concourse_docker_tag}"
   collectd_docker_tag = "${var.collectd_docker_tag}"
   
+  concourse_task_status = "${var.concourse_task_status}"
+  monitoring_task_status = "${var.monitoring_task_status}"
+  dashing_task_status = "${var.dashing_task_status}"
+  nexus_task_status = "${var.nexus_task_status}"
+  
   concourse_postgres_password = "${var.concourse_postgres_password}"
   concourse_password = "${var.concourse_password}"
   aws-proxy_access_id = "${var.aws-proxy_access_id}"

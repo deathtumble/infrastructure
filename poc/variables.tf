@@ -64,3 +64,23 @@ variable "collectd_docker_tag" {
   default = "0.1.1"
 }
 
+variable "concourse_task_status" {
+  type    = "string"
+  default = "up"
+}
+
+variable "nexus_task_status" {
+  type    = "string"
+  default = "up"
+}
+
+variable "dashing_task_status" {
+  type    = "string"
+  default = "up"
+}
+
+variable "monitoring_task_status" {
+  type    = "string"
+  default = "up"
+}
+
