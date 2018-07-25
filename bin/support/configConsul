@@ -27,3 +27,5 @@ curl http://${product}-${environment}.urbanfortress.uk:8500/v1/catalog/register 
     }
 }' 
 BODY
+
+printf "\n"
