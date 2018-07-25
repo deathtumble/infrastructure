@@ -10,7 +10,6 @@ module "prod"
   environment = "${var.environment}"
   nameTag = "${var.nameTag}"
   admin_cidr = "${var.admin_cidr}"
-  ecs_ami_id = "${var.ecs_ami_id}"
   
   concourse_task_status = "${var.concourse_task_status}"
   monitoring_task_status = "${var.monitoring_task_status}"
