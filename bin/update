@@ -30,11 +30,11 @@ sleep 90
 
 if $directory/support/terraform apply -auto-approve ; then
 
-  $directory/support/configConsul ${product} ${environment}
+    $directory/support/configConsul ${product} ${environment}
 
-  $directory/support/slack terraform update $services to ${product}-${environment} has succeed
+    $directory/support/slack terraform update $services to ${product}-${environment} has succeed
 
 else
-   $directory/support/slack terraform update $services to ${product}-${environment} has failed
-if
+    $directory/support/slack terraform update $services to ${product}-${environment} has failed
+fi
 
