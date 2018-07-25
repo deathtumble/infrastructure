@@ -10,16 +10,16 @@ while test $# -gt 0
 do
     case "$1" in
         nexus) 
-            $directory/support/terraform apply -auto-approve -target=module.nexus.aws_ecs_service.this -var 'nexus_task_status=down'
+            $directory/support/terraform apply -auto-approve -var 'nexus_task_status=down'
             ;;
         concourse) 
-            $directory/support/terraform apply -auto-approve -target=module.concourse.aws_ecs_service.this -var 'concourse_task_status=down'
+            $directory/support/terraform apply -auto-approve -var 'concourse_task_status=down'
             ;;
         dashing) 
-            $directory/support/terraform apply -auto-approve -target=module.dashing.aws_ecs_service.this -var 'dashing_task_status=down'
+            $directory/support/terraform apply -auto-approve -var 'dashing_task_status=down'
             ;;
         monitoring) 
-            $directory/support/terraform apply -auto-approve -target=module.monitoring.aws_ecs_service.this -var 'monitoring_task_status=down'
+            $directory/support/terraform apply -auto-approve -var 'monitoring_task_status=down'
             ;;
     esac
     
@@ -28,11 +28,7 @@ done
 
 sleep 90
 
-if $directory/support/terraform apply -auto-approve \
-  -target=module.nexus.aws_ecs_service.this \
-  -target=module.concourse.aws_ecs_service.this \
-  -target=module.dashing.aws_ecs_service.this \
-  -target=module.monitoring.aws_ecs_service.this ; then
+if $directory/support/terraform apply -auto-approve ; then
 
   $directory/support/configConsul ${product} ${environment}
 
