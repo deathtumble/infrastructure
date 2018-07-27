@@ -4,4 +4,4 @@ set -e
 directory=`dirname $0`
 source setenv
 
-$directory/support/terraform.sh plan
+$directory/support/terraform plan
