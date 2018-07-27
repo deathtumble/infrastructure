@@ -36,7 +36,7 @@ variable "admin_cidr" {
 
 variable "ecs_ami_id" {
   type    = "string"
-  default = "ami-86ff1a6b"
+  default = "ami-2d6a8fc0"
 }
 
 variable "aws_proxy_docker_tag" {
