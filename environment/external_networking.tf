@@ -4,7 +4,7 @@ resource "aws_subnet" "av1" {
   availability_zone = "${var.availability_zone_1}"
 
   tags {
-    Name = "chatops-${var.product}-${var.environment}"
+    Name = "av1-${var.product}-${var.environment}"
   }
 }
 
@@ -14,7 +14,7 @@ resource "aws_subnet" "av2" {
   availability_zone = "${var.availability_zone_2}"
 
   tags {
-    Name = "chatops-${var.product}-${var.environment}"
+    Name = "av1-${var.product}-${var.environment}"
   }
 }
 
