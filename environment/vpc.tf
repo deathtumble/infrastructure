@@ -67,12 +67,6 @@ resource "aws_route_table" "main" {
     Product     = "${var.product}"
     Environment = "${var.environment}"
   }
-
-  tags {
-    Name        = "${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
-  }
 }
 
 resource "aws_main_route_table_association" "default" {
