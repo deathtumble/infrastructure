@@ -30,7 +30,7 @@ module "murray" {
 terraform {
   backend "s3" {
     bucket = "terraform.backend.urbanfortress.uk"
-    key = "poc/murray"
+    key = "poc/poc"
     region = "eu-west-1"
   }
 }
