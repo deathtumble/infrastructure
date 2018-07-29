@@ -7,4 +7,4 @@ key_name = "poc"
 
 root_domain_name = "urbanfortress.uk" 
 aws_route53_zone_id = "ZHWSM6HESLWEO" 
-admin_cidr = "81.174.166.51/32"
+admin_cidr = "0.0.0.0/0"
