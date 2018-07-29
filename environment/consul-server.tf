@@ -1,4 +1,4 @@
-resource "aws_instance" "consul-server" {
+resource "aws_instance" "consul" {
   count                   = "${var.consul_server_count}"
   ami                     = "${var.ecs_ami_id}"
   availability_zone       = "${var.availability_zone_1}"
@@ -11,7 +11,7 @@ resource "aws_instance" "consul-server" {
 
   vpc_security_group_ids = [
     "${aws_security_group.ssh.id}",
-    "${aws_security_group.consul-server.id}",
+    "${aws_security_group.consul.id}",
   ]
 
   subnet_id                   = "${aws_subnet.av1.id}"
@@ -23,7 +23,7 @@ resource "aws_instance" "consul-server" {
   user_data = <<EOF
 #cloud-config
 write_files:
- - content: ECS_CLUSTER=consul-server-${var.environment}
+ - content: ECS_CLUSTER=consul-${var.environment}
    path: /etc/ecs/ecs.config   
    permissions: '0644'
 runcmd:
@@ -40,19 +40,19 @@ EOF
   }
 }
 
-resource "aws_ecs_cluster" "consul-server" {
-  name = "consul-server-${var.environment}"
+resource "aws_ecs_cluster" "consul" {
+  name = "consul-${var.environment}"
 }
 
-resource "aws_ecs_service" "consul-server" {
-  name            = "consul-server-${var.environment}"
-  cluster         = "consul-server-${var.environment}"
-  task_definition = "consul-server-${var.environment}:${aws_ecs_task_definition.consul-server.revision}"
-  depends_on      = ["aws_ecs_cluster.consul-server", "aws_ecs_task_definition.consul-server"]
+resource "aws_ecs_service" "consul" {
+  name            = "consul-${var.environment}"
+  cluster         = "consul-${var.environment}"
+  task_definition = "consul-${var.environment}:${aws_ecs_task_definition.consul.revision}"
+  depends_on      = ["aws_ecs_cluster.consul", "aws_ecs_task_definition.consul"]
   desired_count   = 2
 }
 
-data "template_file" "collectd-consul-server" {
+data "template_file" "collectd-consul" {
   template = "${file("${path.module}/files/collectd.tpl")}"
 
   vars {
@@ -61,15 +61,15 @@ data "template_file" "collectd-consul-server" {
   }
 }
 
-resource "aws_ecs_task_definition" "consul-server" {
-  family       = "consul-server-${var.environment}"
+resource "aws_ecs_task_definition" "consul" {
+  family       = "consul-${var.environment}"
   network_mode = "host"
 
   container_definitions = <<DEFINITION
     [
-        ${data.template_file.collectd-consul-server.rendered},
+        ${data.template_file.collectd-consul.rendered},
         {
-            "name": "consul-server",
+            "name": "consul",
             "cpu": 0,
             "essential": true,
             "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/consul:${var.consul_docker_tag}",
@@ -148,8 +148,8 @@ resource "aws_ecs_task_definition" "consul-server" {
     DEFINITION
 }
 
-resource "aws_security_group" "consul-server" {
-  name = "consul-server-${var.product}-${var.environment}"
+resource "aws_security_group" "consul" {
+  name = "consul-${var.product}-${var.environment}"
 
   vpc_id = "${aws_vpc.default.id}"
 
@@ -210,7 +210,7 @@ resource "aws_security_group" "consul-server" {
   }
 
   tags {
-    Name        = "consul-server-${var.product}-${var.environment}"
+    Name        = "consul-${var.product}-${var.environment}"
     Product     = "${var.product}"
     Environment = "${var.environment}"
   }

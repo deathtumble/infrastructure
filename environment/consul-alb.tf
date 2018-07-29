@@ -15,7 +15,7 @@ resource "aws_alb_target_group" "consul" {
   }
 
   tags {
-    Name          = "consul-server-${var.environment}"
+    Name          = "consul-${var.environment}"
     Product       = "${var.product}"
     Environment   = "${var.environment}"
   }
@@ -32,10 +32,10 @@ resource "aws_alb_listener" "consul" {
   }
 }
 
-resource "aws_alb_target_group_attachment" "consul-server" {
+resource "aws_alb_target_group_attachment" "consul" {
   count    = "${var.consul_server_count}"
   target_group_arn = "${aws_alb_target_group.consul.arn}"
-  target_id        = "${aws_instance.consul-server.*.id[count.index]}"
+  target_id        = "${aws_instance.consul.*.id[count.index]}"
   port             = "8500"
 }
 

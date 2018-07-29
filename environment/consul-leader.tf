@@ -11,7 +11,7 @@ resource "aws_instance" "consul-leader" {
 
   vpc_security_group_ids = [
     "${aws_security_group.ssh.id}",
-    "${aws_security_group.consul-server.id}",
+    "${aws_security_group.consul.id}",
   ]
 
   subnet_id                   = "${aws_subnet.av1.id}"
