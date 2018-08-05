@@ -2,6 +2,6 @@
 
 set -e
 directory=`dirname $0`
-source setenv
+source config.vartf
 
 $directory/support/terraform plan
