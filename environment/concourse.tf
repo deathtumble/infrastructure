@@ -44,6 +44,7 @@ data "template_file" "collectd-concourse" {
 resource "aws_ecs_task_definition" "concourse" {
   family       = "concourse-${var.environment}"
   network_mode = "host"
+  depends_on = ["aws_db_instance.concourse"]
 
   volume {
     name      = "consul_config"
@@ -94,7 +95,7 @@ resource "aws_ecs_task_definition" "concourse" {
                 }, 
                 {
                     "Name": "CONCOURSE_POSTGRES_HOST",
-                    "Value": "postgres.service.consul"
+                    "Value": "${aws_db_instance.concourse.address}"
                 }, 
                 {
                     "Name": "CONCOURSE_POSTGRES_USER",

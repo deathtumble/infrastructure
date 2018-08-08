@@ -34,8 +34,6 @@ printf "\b Continue\n"
 
 if $directory/support/terraform apply -auto-approve ; then
 
-    $directory/support/configConsul ${product} ${environment}
-
     $directory/support/slack terraform update $services to ${product}-${environment} has succeed
 
 else

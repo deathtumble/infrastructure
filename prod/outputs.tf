@@ -13,7 +13,3 @@ output "concourse_task_count" {
 output "monitoring_task_count" {
    value = "${module.prod.monitoring_task_count}"
 }
-
-output "postgres_db_address" {
-   value = "${module.prod.postgres_db_address}"
-}

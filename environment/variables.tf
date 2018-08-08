@@ -56,7 +56,7 @@ variable "consul_docker_tag" {
 
 variable "concourse_docker_tag" {
   type    = "string"
-  default = "88e46cc"
+  default = "a16aa45"
 }
 
 variable "collectd_docker_tag" {
@@ -99,7 +99,6 @@ variable "concourse_tsa_public_key_value" {
 variable "concourse_tsa_worker_private_key_value" {
   type = "string"
 }
-
 
 
 

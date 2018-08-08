@@ -14,6 +14,3 @@ output "monitoring_task_count" {
    value = "${module.monitoring.task_count}"
 }
 
-output "postgres_db_address" {
-   value = "${aws_db_instance.concourse.address}"
-}
