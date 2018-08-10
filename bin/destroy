@@ -2,9 +2,9 @@
 
 set -e
 directory=`dirname $0`
-source config.vartf
+source terraform.tfvars
 
-if $directory/support/terraform destroy -force ;  then
+if terraform destroy -force ;  then
 
     $directory/support/slack terraform destroy to ${product}-${environment} has succeed
 else 

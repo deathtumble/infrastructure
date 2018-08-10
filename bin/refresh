@@ -2,8 +2,7 @@
 
 set -e
 directory=`dirname $0`
-source config.vartf
 
-$directory/support/terraform refresh
+terraform refresh
 
 

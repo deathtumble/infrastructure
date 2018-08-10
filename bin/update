@@ -2,7 +2,7 @@
 
 set -e
 directory=`dirname $0`
-source config.vartf
+source terraform.tfvars
 
 services=$*
 
@@ -10,16 +10,16 @@ while test $# -gt 0
 do
     case "$1" in
         nexus) 
-            $directory/support/terraform apply -auto-approve -var 'nexus_task_status=down'
+            terraform apply -auto-approve -var 'nexus_task_status=down'
             ;;
         concourse) 
-            $directory/support/terraform apply -auto-approve -var 'concourse_task_status=down'
+            terraform apply -auto-approve -var 'concourse_task_status=down'
             ;;
         dashing) 
-            $directory/support/terraform apply -auto-approve -var 'dashing_task_status=down'
+            terraform apply -auto-approve -var 'dashing_task_status=down'
             ;;
         monitoring) 
-            $directory/support/terraform apply -auto-approve -var 'monitoring_task_status=down'
+            terraform apply -auto-approve -var 'monitoring_task_status=down'
             ;;
     esac
     
@@ -32,7 +32,7 @@ $directory/support/pause 90
 
 printf "\b Continue\n"
 
-if $directory/support/terraform apply -auto-approve ; then
+if terraform apply -auto-approve ; then
 
     $directory/support/slack terraform update $services to ${product}-${environment} has succeed
 

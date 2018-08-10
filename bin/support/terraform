@@ -1,6 +1,0 @@
-#!/bin/bash
-
-set -e
-
-terraform $@ -var-file=config.vartf
-

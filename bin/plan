@@ -2,6 +2,6 @@
 
 set -e
 directory=`dirname $0`
-source config.vartf
+source terraform.tfvars
 
-$directory/support/terraform plan
+terraform plan
