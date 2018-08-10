@@ -93,6 +93,10 @@ variable "key_name" {
   type = "string"
 }
 
-variable "aws_alb_arn" {
+variable "aws_lb_listener_default_arn" {
+  type = "string"
+}
+
+variable "aws_lb_listener_rule_priority" {
   type = "string"
 }

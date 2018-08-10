@@ -54,15 +54,51 @@ resource "aws_alb" "default" {
   }
 }
 
+resource "aws_alb_target_group" "default" {
+  name     = "default"
+  port     = "80"
+  protocol = "HTTP"
+  vpc_id   = "${aws_vpc.default.id}"
+
+  tags {
+    Name          = "default-${var.environment}"
+    Product       = "${var.product}"
+    Environment   = "${var.environment}"
+  }
+}
+
+resource "aws_alb_listener" "default" {
+  load_balancer_arn = "${aws_alb.default.arn}"
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    target_group_arn = "${aws_alb_target_group.default.arn}"
+    type             = "forward"
+  }
+}
+
 resource "aws_route53_record" "environment" {
   count   = "1"
   zone_id = "${var.aws_route53_zone_id}"
-  name    = "${var.product}-${var.environment}"
-  type    = "CNAME"
+  name    = "${var.environment}"
+  type    = "NS"
   ttl     = 60
-  records = ["${aws_alb.default.dns_name}"]
+  records = [
+    "${aws_route53_zone.environment.name_servers.0}",
+    "${aws_route53_zone.environment.name_servers.1}",
+    "${aws_route53_zone.environment.name_servers.2}",
+    "${aws_route53_zone.environment.name_servers.3}"
+  ]
 }
 
+resource "aws_route53_zone" "environment" {
+  name = "${var.environment}.${var.root_domain_name}"
+
+  tags {
+    Environment = "${var.environment}"
+  }
+}
 
 resource "aws_security_group" "alb" {
   name = "alb"

@@ -18,7 +18,8 @@ module "monitoring" {
   volume_id = "${var.monitoring_volume_id}"
 
   // globals
-  aws_alb_arn              = "${aws_alb.default.arn}"
+  aws_lb_listener_default_arn = "${aws_alb_listener.default.arn}"
+  aws_lb_listener_rule_priority = 96
   key_name                 = "${var.key_name}"
   aws_subnet_id            = "${aws_subnet.av1.id}"
   vpc_id                   = "${aws_vpc.default.id}"
@@ -27,7 +28,7 @@ module "monitoring" {
   ami_id                   = "${var.ecs_ami_id}"
   product                  = "${var.product}"
   environment              = "${var.environment}"
-  aws_route53_zone_id      = "${var.aws_route53_zone_id}"
+  aws_route53_zone_id      = "${aws_route53_zone.environment.zone_id}"
   aws_alb_default_dns_name = "${aws_alb.default.dns_name}"
   root_domain_name         = "${var.root_domain_name}"
 }
