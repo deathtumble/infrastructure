@@ -2,6 +2,5 @@
 
 set -e
 directory=`dirname $0`
-source terraform.tfvars
 
 terraform plan

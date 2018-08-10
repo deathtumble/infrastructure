@@ -2,12 +2,13 @@
 
 set -e
 directory=`dirname $0`
-source terraform.tfvars
+
+environment=${PWD##*/} 
 
 if  terraform apply -auto-approve ; then
 
-    $directory/support/slack terraform apply to ${product}-${environment} has succeed
+    $directory/support/slack terraform apply to ${environment} has succeed
 else
-    $directory/support/slack terraform apply to ${product}-${environment} has failed
+    $directory/support/slack terraform apply to ${environment} has failed
 fi    
 

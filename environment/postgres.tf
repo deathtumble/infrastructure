@@ -1,10 +1,10 @@
 resource "aws_db_subnet_group" "default" {
-   name = "main-${var.environment}"
+   name = "main-${local.environment}"
    subnet_ids = ["${aws_subnet.av1.id}", "${aws_subnet.av2.id}"] 
 }
 
 resource "aws_security_group" "postgres" {
-  name = "postgres-${var.environment}"
+  name = "postgres-${local.environment}"
 
   description = "dashing security group"
   vpc_id      = "${aws_vpc.default.id}"
@@ -13,7 +13,7 @@ resource "aws_security_group" "postgres" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}", "${var.vpc_cidr}"]
+    cidr_blocks = ["${local.admin_cidr}", "${var.vpc_cidr}"]
   }
 
   egress {
@@ -24,15 +24,15 @@ resource "aws_security_group" "postgres" {
   }
 
   tags {
-    Name        = "postgres-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
+    Name        = "postgres-${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
   }
 }
 
 
 resource "aws_db_instance" "concourse" {
-  identifier = "${var.product}-${var.environment}" 
+  identifier = "${local.product}-${local.environment}" 
   allocated_storage    = 20
   storage_type         = "gp2"
   engine               = "postgres"

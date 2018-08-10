@@ -15,9 +15,9 @@ resource "aws_vpc" "default" {
   assign_generated_ipv6_cidr_block = false
 
   tags {
-    Name        = "${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
+    Name        = "${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
   }
 }
 
@@ -25,9 +25,9 @@ resource "aws_internet_gateway" "default" {
   vpc_id = "${aws_vpc.default.id}"
 
   tags {
-    Name        = "${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
+    Name        = "${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
   }
 }
 
@@ -53,9 +53,9 @@ resource "aws_network_acl" "default" {
   }
 
   tags {
-    Name        = "${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
+    Name        = "${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
   }
 }
 
@@ -63,9 +63,9 @@ resource "aws_route_table" "main" {
   vpc_id = "${aws_vpc.default.id}"
 
   tags {
-    Name        = "main-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
+    Name        = "main-${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
   }
 }
 

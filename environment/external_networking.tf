@@ -4,7 +4,7 @@ resource "aws_subnet" "av1" {
   availability_zone = "${var.availability_zone_1}"
 
   tags {
-    Name = "av1-${var.product}-${var.environment}"
+    Name = "av1-${local.product}-${local.environment}"
   }
 }
 
@@ -14,7 +14,7 @@ resource "aws_subnet" "av2" {
   availability_zone = "${var.availability_zone_2}"
 
   tags {
-    Name = "av1-${var.product}-${var.environment}"
+    Name = "av1-${local.product}-${local.environment}"
   }
 }
 
@@ -22,9 +22,9 @@ resource "aws_route_table" "default" {
   vpc_id = "${aws_vpc.default.id}"
 
   tags {
-    Name        = "consul-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
+    Name        = "consul-${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
     Layer       = "consul"
   }
 }
@@ -41,7 +41,7 @@ resource "aws_route_table_association" "default" {
 }
 
 resource "aws_alb" "default" {
-  name            = "${var.product}-${var.environment}"
+  name            = "${local.product}-${local.environment}"
   internal        = false
   security_groups = ["${aws_security_group.alb.id}"]
   subnets         = ["${aws_subnet.av1.id}", "${aws_subnet.av2.id}"]
@@ -61,9 +61,9 @@ resource "aws_alb_target_group" "default" {
   vpc_id   = "${aws_vpc.default.id}"
 
   tags {
-    Name          = "default-${var.environment}"
-    Product       = "${var.product}"
-    Environment   = "${var.environment}"
+    Name          = "default-${local.environment}"
+    Product       = "${local.product}"
+    Environment   = "${local.environment}"
   }
 }
 
@@ -80,8 +80,8 @@ resource "aws_alb_listener" "default" {
 
 resource "aws_route53_record" "environment" {
   count   = "1"
-  zone_id = "${var.aws_route53_zone_id}"
-  name    = "${var.environment}"
+  zone_id = "${local.aws_route53_zone_id}"
+  name    = "${local.environment}"
   type    = "NS"
   ttl     = 60
   records = [
@@ -93,10 +93,10 @@ resource "aws_route53_record" "environment" {
 }
 
 resource "aws_route53_zone" "environment" {
-  name = "${var.environment}.${var.root_domain_name}"
+  name = "${local.environment}.${local.root_domain_name}"
 
   tags {
-    Environment = "${var.environment}"
+    Environment = "${local.environment}"
   }
 }
 
@@ -156,9 +156,9 @@ resource "aws_security_group" "alb" {
   }
 
   tags {
-    Name        = "alb-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
+    Name        = "alb-${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
   }
 }
 

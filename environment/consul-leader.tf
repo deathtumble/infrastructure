@@ -6,7 +6,7 @@ resource "aws_instance" "consul-leader" {
   ebs_optimized           = "false"
   disable_api_termination = "false"
   instance_type           = "t2.small"
-  key_name                = "${var.key_name}"
+  key_name                = "${local.key_name}"
   monitoring              = "false"
 
   vpc_security_group_ids = [
@@ -23,7 +23,7 @@ resource "aws_instance" "consul-leader" {
   user_data = <<EOF
 #cloud-config
 write_files:
- - content: ECS_CLUSTER=consul-leader-${var.environment}
+ - content: ECS_CLUSTER=consul-leader-${local.environment}
    path: /etc/ecs/ecs.config   
    permissions: '0644'
 runcmd:
@@ -33,21 +33,21 @@ EOF
 
   tags {
     Name          = "consul-0"
-    Product       = "${var.product}"
-    Environment   = "${var.environment}"
-    ConsulCluster = "${var.product}-${var.environment}"
+    Product       = "${local.product}"
+    Environment   = "${local.environment}"
+    ConsulCluster = "${local.product}-${local.environment}"
     Goss          = "true"
   }
 }
 
 resource "aws_ecs_cluster" "consul-leader" {
-  name = "consul-leader-${var.environment}"
+  name = "consul-leader-${local.environment}"
 }
 
 resource "aws_ecs_service" "consul-leader" {
-  name            = "consul-leader-${var.environment}"
-  cluster         = "consul-leader-${var.environment}"
-  task_definition = "consul-leader-${var.environment}:${aws_ecs_task_definition.consul-leader.revision}"
+  name            = "consul-leader-${local.environment}"
+  cluster         = "consul-leader-${local.environment}"
+  task_definition = "consul-leader-${local.environment}:${aws_ecs_task_definition.consul-leader.revision}"
   depends_on      = ["aws_ecs_cluster.consul-leader", "aws_ecs_task_definition.consul-leader"]
   desired_count   = 1
 }
@@ -56,13 +56,13 @@ data "template_file" "collectd-consul-leader" {
   template = "${file("${path.module}/files/collectd.tpl")}"
 
   vars {
-    graphite_prefix = "${var.product}.${var.environment}.consul."
+    graphite_prefix = "${local.product}.${local.environment}.consul."
     collectd_docker_tag = "${var.collectd_docker_tag}"
   }
 }
 
 resource "aws_ecs_task_definition" "consul-leader" {
-  family       = "consul-leader-${var.environment}"
+  family       = "consul-leader-${local.environment}"
   network_mode = "host"
 
   container_definitions = <<DEFINITION
@@ -77,7 +77,7 @@ resource "aws_ecs_task_definition" "consul-leader" {
             "environment": [
                 {
                     "Name": "CONSUL_LOCAL_CONFIG",
-                    "Value": "{\"skip_leave_on_interrupt\": true, \"telemetry\": {\"metrics_prefix\":\"${var.product}.${var.environment}.consul.server\", \"statsd_address\":\"10.0.0.36:8125\"}}"
+                    "Value": "{\"skip_leave_on_interrupt\": true, \"telemetry\": {\"metrics_prefix\":\"${local.product}.${local.environment}.consul.server\", \"statsd_address\":\"10.0.0.36:8125\"}}"
                 },
                 {
                     "Name": "CONSUL_BIND_INTERFACE",
@@ -99,7 +99,7 @@ resource "aws_ecs_task_definition" "consul-leader" {
                 "-recursor=${var.dns_ip}",
                 "-bootstrap",
                 "-retry-join",
-                "provider=aws tag_key=ConsulCluster tag_value=${var.product}-${var.environment}",
+                "provider=aws tag_key=ConsulCluster tag_value=${local.product}-${local.environment}",
                 "-ui"
             ],
             "portMappings": [

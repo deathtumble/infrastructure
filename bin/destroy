@@ -2,11 +2,12 @@
 
 set -e
 directory=`dirname $0`
-source terraform.tfvars
+
+environment=${PWD##*/} 
 
 if terraform destroy -force ;  then
 
-    $directory/support/slack terraform destroy to ${product}-${environment} has succeed
+    $directory/support/slack terraform destroy to ${environment} has succeed
 else 
-    $directory/support/slack terraform destroy to ${product}-${environment} has failed
+    $directory/support/slack terraform destroy to ${environment} has failed
 fi    

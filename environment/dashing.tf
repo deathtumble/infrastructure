@@ -12,7 +12,7 @@ module "dashing" {
   elb_instance_port    = "80"
   healthcheck_protocol = "HTTP"
   healthcheck_path     = "/favicon.ico"
-  task_definition      = "dashing-${var.environment}:${aws_ecs_task_definition.dashing.revision}"
+  task_definition      = "dashing-${local.environment}:${aws_ecs_task_definition.dashing.revision}"
   task_status          = "${var.dashing_task_status}"
   instance_type        = "t2.medium"
 
@@ -21,30 +21,30 @@ module "dashing" {
   // globals
   aws_lb_listener_default_arn = "${aws_alb_listener.default.arn}"
   aws_lb_listener_rule_priority = 97
-  key_name                 = "${var.key_name}"
+  key_name = "${local.key_name}"
+  product = "${local.product}"
+  environment = "${local.environment}"
+  root_domain_name = "${local.root_domain_name}"
   aws_subnet_id            = "${aws_subnet.av1.id}"
   vpc_id                   = "${aws_vpc.default.id}"
   gateway_id               = "${aws_internet_gateway.default.id}"
   availability_zone        = "${var.availability_zone_1}"
   ami_id                   = "${var.ecs_ami_id}"
-  product                  = "${var.product}"
-  environment              = "${var.environment}"
   aws_route53_zone_id      = "${aws_route53_zone.environment.zone_id}"
   aws_alb_default_dns_name = "${aws_alb.default.dns_name}"
-  root_domain_name         = "${var.root_domain_name}"
 }
 
 data "template_file" "collectd-dashing" {
   template = "${file("${path.module}/files/collectd.tpl")}"
 
   vars {
-    graphite_prefix = "${var.product}.${var.environment}.dashing."
+    graphite_prefix = "${local.product}.${local.environment}.dashing."
     collectd_docker_tag = "${var.collectd_docker_tag}"
   }
 }
 
 resource "aws_ecs_task_definition" "dashing" {
-  family       = "dashing-${var.environment}"
+  family       = "dashing-${local.environment}"
   network_mode = "host"
 
   volume {
@@ -154,7 +154,7 @@ resource "aws_security_group" "dashing" {
     from_port   = 8082
     to_port     = 8082
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}", "${var.vpc_cidr}"]
+    cidr_blocks = ["${local.admin_cidr}", "${var.vpc_cidr}"]
   }
 
   egress {
@@ -165,9 +165,9 @@ resource "aws_security_group" "dashing" {
   }
 
   tags {
-    Name        = "dashing-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
+    Name        = "dashing-${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
     Layer       = "dashing"
   }
 }

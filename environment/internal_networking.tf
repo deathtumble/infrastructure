@@ -1,5 +1,5 @@
 data "aws_route53_zone" "selected" {
-  zone_id = "${var.aws_route53_zone_id}"
+  zone_id = "${local.aws_route53_zone_id}"
 }
 
 variable "vpc_cidr" {
@@ -26,7 +26,7 @@ variable "environment_cidr" {
  */
 
 resource "aws_security_group" "ssh" {
-  name = "ssh-${var.product}-${var.environment}"
+  name = "ssh-${local.product}-${local.environment}"
 
   vpc_id = "${aws_vpc.default.id}"
 
@@ -34,7 +34,7 @@ resource "aws_security_group" "ssh" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}", "${local.admin_cidr}"]
   }
 
   egress {
@@ -45,14 +45,14 @@ resource "aws_security_group" "ssh" {
   }
 
   tags {
-    Name        = "ssh-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
+    Name        = "ssh-${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
   }
 }
 
 resource "aws_security_group" "goss" {
-  name = "goss-${var.product}-${var.environment}"
+  name = "goss-${local.product}-${local.environment}"
 
   vpc_id = "${aws_vpc.default.id}"
 
@@ -60,12 +60,12 @@ resource "aws_security_group" "goss" {
     from_port   = 8082
     to_port     = 8082
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}", "${var.vpc_cidr}"]
+    cidr_blocks = ["${local.admin_cidr}", "${var.vpc_cidr}"]
   }
 
   tags {
-    Name        = "ssh-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
+    Name        = "ssh-${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
   }
 }

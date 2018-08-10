@@ -6,7 +6,7 @@ resource "aws_instance" "consul" {
   ebs_optimized           = "false"
   disable_api_termination = "false"
   instance_type           = "t2.small"
-  key_name                = "${var.key_name}"
+  key_name                = "${local.key_name}"
   monitoring              = "false"
 
   vpc_security_group_ids = [
@@ -23,7 +23,7 @@ resource "aws_instance" "consul" {
   user_data = <<EOF
 #cloud-config
 write_files:
- - content: ECS_CLUSTER=consul-${var.environment}
+ - content: ECS_CLUSTER=consul-${local.environment}
    path: /etc/ecs/ecs.config   
    permissions: '0644'
 runcmd:
@@ -33,21 +33,21 @@ EOF
   
   tags {
     Name          = "consul-${lookup(var.consul_server_instance_names, count.index)}"
-    Product       = "${var.product}"
-    Environment   = "${var.environment}"
-    ConsulCluster = "${var.product}-${var.environment}"
+    Product       = "${local.product}"
+    Environment   = "${local.environment}"
+    ConsulCluster = "${local.product}-${local.environment}"
     Goss          = "true"
   }
 }
 
 resource "aws_ecs_cluster" "consul" {
-  name = "consul-${var.environment}"
+  name = "consul-${local.environment}"
 }
 
 resource "aws_ecs_service" "consul" {
-  name            = "consul-${var.environment}"
-  cluster         = "consul-${var.environment}"
-  task_definition = "consul-${var.environment}:${aws_ecs_task_definition.consul.revision}"
+  name            = "consul-${local.environment}"
+  cluster         = "consul-${local.environment}"
+  task_definition = "consul-${local.environment}:${aws_ecs_task_definition.consul.revision}"
   depends_on      = ["aws_ecs_cluster.consul", "aws_ecs_task_definition.consul"]
   desired_count   = 2
 }
@@ -56,13 +56,13 @@ data "template_file" "collectd-consul" {
   template = "${file("${path.module}/files/collectd.tpl")}"
 
   vars {
-    graphite_prefix = "${var.product}.${var.environment}.consul."
+    graphite_prefix = "${local.product}.${local.environment}.consul."
     collectd_docker_tag = "${var.collectd_docker_tag}"
   }
 }
 
 resource "aws_ecs_task_definition" "consul" {
-  family       = "consul-${var.environment}"
+  family       = "consul-${local.environment}"
   network_mode = "host"
 
   container_definitions = <<DEFINITION
@@ -77,7 +77,7 @@ resource "aws_ecs_task_definition" "consul" {
             "environment": [
                 {
                     "Name": "CONSUL_LOCAL_CONFIG",
-                    "Value": "{\"skip_leave_on_interrupt\": true, \"telemetry\": {\"metrics_prefix\":\"${var.product}.${var.environment}.consul.server\", \"statsd_address\":\"10.0.0.36:8125\"}}"
+                    "Value": "{\"skip_leave_on_interrupt\": true, \"telemetry\": {\"metrics_prefix\":\"${local.product}.${local.environment}.consul.server\", \"statsd_address\":\"10.0.0.36:8125\"}}"
                 },
                 {
                     "Name": "CONSUL_BIND_INTERFACE",
@@ -98,7 +98,7 @@ resource "aws_ecs_task_definition" "consul" {
                 "-dns-port=53",
                 "-recursor=${var.dns_ip}",
                 "-retry-join",
-                "provider=aws tag_key=ConsulCluster tag_value=${var.product}-${var.environment}",
+                "provider=aws tag_key=ConsulCluster tag_value=${local.product}-${local.environment}",
                 "-ui"
             ],
             "portMappings": [
@@ -149,7 +149,7 @@ resource "aws_ecs_task_definition" "consul" {
 }
 
 resource "aws_security_group" "consul" {
-  name = "consul-${var.product}-${var.environment}"
+  name = "consul-${local.product}-${local.environment}"
 
   vpc_id = "${aws_vpc.default.id}"
 
@@ -157,7 +157,7 @@ resource "aws_security_group" "consul" {
     from_port   = 8082
     to_port     = 8082
     protocol    = "tcp"
-    cidr_blocks = ["${var.admin_cidr}", "${var.vpc_cidr}"]
+    cidr_blocks = ["${local.admin_cidr}", "${var.vpc_cidr}"]
   }
 
   ingress {
@@ -192,7 +192,7 @@ resource "aws_security_group" "consul" {
     from_port   = 8500
     to_port     = 8500
     protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}", "${local.admin_cidr}"]
   }
 
   ingress {
@@ -206,18 +206,18 @@ resource "aws_security_group" "consul" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}", "${local.admin_cidr}"]
   }
 
   tags {
-    Name        = "consul-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
+    Name        = "consul-${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
   }
 }
 
 resource "aws_security_group" "consul-client" {
-  name = "consul-client-${var.product}-${var.environment}"
+  name = "consul-client-${local.product}-${local.environment}"
 
   vpc_id = "${aws_vpc.default.id}"
 
@@ -257,8 +257,8 @@ resource "aws_security_group" "consul-client" {
   }
 
   tags {
-    Name        = "consul-client-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
+    Name        = "consul-client-${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
   }
 }

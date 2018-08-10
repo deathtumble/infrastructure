@@ -12,38 +12,38 @@ module "monitoring" {
   elb_instance_port    = "3000"
   healthcheck_protocol = "HTTP"
   healthcheck_path     = "/api/health"
-  task_definition      = "monitoring-${var.environment}:${aws_ecs_task_definition.monitoring.revision}"
+  task_definition      = "monitoring-${local.environment}:${aws_ecs_task_definition.monitoring.revision}"
   task_status          = "${var.monitoring_task_status}"
 
-  volume_id = "${var.monitoring_volume_id}"
+  volume_id = "${local.monitoring_volume_id}"
 
   // globals
   aws_lb_listener_default_arn = "${aws_alb_listener.default.arn}"
   aws_lb_listener_rule_priority = 96
-  key_name                 = "${var.key_name}"
+  key_name = "${local.key_name}"
+  product = "${local.product}"
+  environment = "${local.environment}"
+  root_domain_name = "${local.root_domain_name}"
   aws_subnet_id            = "${aws_subnet.av1.id}"
   vpc_id                   = "${aws_vpc.default.id}"
   gateway_id               = "${aws_internet_gateway.default.id}"
   availability_zone        = "${var.availability_zone_1}"
   ami_id                   = "${var.ecs_ami_id}"
-  product                  = "${var.product}"
-  environment              = "${var.environment}"
   aws_route53_zone_id      = "${aws_route53_zone.environment.zone_id}"
   aws_alb_default_dns_name = "${aws_alb.default.dns_name}"
-  root_domain_name         = "${var.root_domain_name}"
 }
 
 data "template_file" "collectd-monitoring" {
   template = "${file("${path.module}/files/collectd.tpl")}"
 
   vars {
-    graphite_prefix = "${var.product}.${var.environment}.monitoring."
+    graphite_prefix = "${local.product}.${local.environment}.monitoring."
     collectd_docker_tag = "${var.collectd_docker_tag}"
   }
 }
 
 resource "aws_ecs_task_definition" "monitoring" {
-  family       = "monitoring-${var.environment}"
+  family       = "monitoring-${local.environment}"
   network_mode = "host"
 
   volume {
@@ -217,7 +217,7 @@ resource "aws_ecs_task_definition" "monitoring" {
 }
 
 resource "aws_security_group" "graphite" {
-  name = "graphite-${var.product}-${var.environment}"
+  name = "graphite-${local.product}-${local.environment}"
 
   vpc_id = "${aws_vpc.default.id}"
 
@@ -232,27 +232,27 @@ resource "aws_security_group" "graphite" {
     from_port   = 3000
     to_port     = 3000
     protocol    = "udp"
-    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}", "${local.admin_cidr}"]
   }
 
   ingress {
     from_port   = 3000
     to_port     = 3000
     protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}", "${local.admin_cidr}"]
   }
 
   ingress {
     from_port   = 8082
     to_port     = 8082
     protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}", "${var.admin_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}", "${local.admin_cidr}"]
   }
 
   tags {
-    Name        = "graphite-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
+    Name        = "graphite-${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
   }
 }
 
@@ -266,7 +266,7 @@ resource "aws_security_group" "grafana" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = "${concat(var.monitoring_cidrs, list(var.admin_cidr))}"
+    cidr_blocks = ["${local.admin_cidr}"]
   }
 
   egress {
@@ -277,9 +277,9 @@ resource "aws_security_group" "grafana" {
   }
 
   tags {
-    Name        = "grafana-${var.product}-${var.environment}"
-    Product     = "${var.product}"
-    Environment = "${var.environment}"
+    Name        = "grafana-${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
     Layer       = "grafana"
   }
 }

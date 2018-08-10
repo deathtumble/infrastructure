@@ -1,15 +1,7 @@
 module "prod"
 {  source = "../environment"
   
-  aws_route53_zone_id = "${var.aws_route53_zone_id}"
-  nexus_volume_id = "${var.nexus_volume_id}"
-  monitoring_volume_id = "${var.monitoring_volume_id}"
-  key_name = "${var.key_name}"
-  root_domain_name = "${var.root_domain_name}"
-  product = "${var.product}"
-  environment = "${var.environment}"
-  nameTag = "${var.nameTag}"
-  admin_cidr = "${var.admin_cidr}"
+  globals = "${var.globals}"
   
   concourse_task_status = "${var.concourse_task_status}"
   monitoring_task_status = "${var.monitoring_task_status}"

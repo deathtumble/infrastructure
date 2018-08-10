@@ -3,42 +3,6 @@ variable "region" {
   default = "eu-west-1"
 }
 
-variable "aws_route53_zone_id" {
-  type = "string"
-}
-
-variable "nexus_volume_id" {
-  type = "string"
-}
-
-variable "monitoring_volume_id" {
-  type = "string"
-}
-
-variable "key_name" {
-  type = "string"
-}
-
-variable "root_domain_name" {
-  type = "string"
-}
-
-variable "product" {
-  type = "string"
-}
-
-variable "environment" {
-  type = "string"
-}
-
-variable "nameTag" {
-  type = "string"
-}
-
-variable "admin_cidr" {
-  type = "string"
-}
-
 variable "concourse_task_status" {
   type    = "string"
   default = "up"
@@ -59,3 +23,17 @@ variable "monitoring_task_status" {
   default = "up"
 }
 
+variable "globals" {
+  type   = "map"
+  default = {
+    product="" 
+    environment="" 
+    root_domain_name="" 
+    aws_route53_zone_id="" 
+    admin_cidr=""
+    nameTag=""
+    nexus_volume_id=""
+    monitoring_volume_id="" 
+    key_name=""
+  }
+}
