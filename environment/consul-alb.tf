@@ -21,17 +21,28 @@ resource "aws_alb_target_group" "consul" {
   }
 }
 
-resource "aws_alb_listener" "consul" {
-  load_balancer_arn = "${aws_alb.default.arn}"
-  port              = "8500"
-  protocol          = "HTTP"
-
-  default_action {
-    target_group_arn = "${aws_alb_target_group.consul.arn}"
-    type             = "forward"
-  }
+resource "aws_route53_record" "consul" {
+  zone_id = "${aws_route53_zone.environment.zone_id}"
+  name    = "consul.${var.environment}.${var.root_domain_name}"
+  type    = "CNAME"
+  ttl     = 60
+  records = ["${aws_alb.default.dns_name}"]
 }
 
+resource "aws_lb_listener_rule" "host_based_routing" {
+  listener_arn = "${aws_alb_listener.default.arn}"
+  priority     = "94"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_alb_target_group.consul.arn}"
+  }
+
+  condition {
+    field  = "host-header"
+    values = ["consul.${var.environment}.${var.root_domain_name}"]
+  }
+}
 resource "aws_alb_target_group_attachment" "consul" {
   count    = "${var.consul_server_count}"
   target_group_arn = "${aws_alb_target_group.consul.arn}"
