@@ -56,7 +56,7 @@ variable "consul_docker_tag" {
 
 variable "concourse_docker_tag" {
   type    = "string"
-  default = "a16aa45"
+  default = "b819b73"
 }
 
 variable "collectd_docker_tag" {
