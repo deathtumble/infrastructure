@@ -1,6 +1,0 @@
-#!/bin/bash
-
-set -e
-
-product=poc 
-environment=murray
