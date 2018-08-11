@@ -1,8 +1,3 @@
-variable "region" {
-  type    = "string"
-  default = "eu-west-1"
-}
-
 variable "concourse_task_status" {
   type    = "string"
   default = "up"

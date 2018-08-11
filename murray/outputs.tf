@@ -13,4 +13,3 @@ output "concourse_task_count" {
 output "monitoring_task_count" {
    value = "${module.environment.monitoring_task_count}"
 }
-
