@@ -1,5 +1,5 @@
 resource "aws_alb_target_group" "this" {
-  name     = "${var.role}-${var.environment}"
+  name     = "${var.role}-${local.environment}"
   port     = "${var.elb_instance_port}"
   protocol = "HTTP"
   vpc_id   = "${var.vpc_id}"
@@ -15,15 +15,15 @@ resource "aws_alb_target_group" "this" {
   }
 
   tags {
-    Name          = "${var.role}-${var.environment}"
-    Product       = "${var.product}"
-    Environment   = "${var.environment}"
+    Name          = "${var.role}-${local.environment}"
+    Product       = "${local.product}"
+    Environment   = "${local.environment}"
   }
 }
 
 resource "aws_route53_record" "this" {
-  zone_id = "${var.aws_route53_zone_id}"
-  name    = "${var.role}.${var.environment}.${var.root_domain_name}"
+  zone_id = "${var.aws_route53_environment_zone_id}"
+  name    = "${var.role}.${local.environment}.${local.root_domain_name}"
   type    = "CNAME"
   ttl     = 60
   records = ["${var.aws_alb_default_dns_name}"]
@@ -40,7 +40,7 @@ resource "aws_lb_listener_rule" "host_based_routing" {
 
   condition {
     field  = "host-header"
-    values = ["${var.role}.${var.environment}.${var.root_domain_name}"]
+    values = ["${var.role}.${local.environment}.${local.root_domain_name}"]
   }
 }
 resource "aws_alb_target_group_attachment" "this" {

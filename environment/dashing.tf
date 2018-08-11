@@ -3,6 +3,8 @@ module "dashing" {
 
   role = "dashing"
 
+  globals = "${var.globals}"
+
   vpc_security_group_ids = [
     "${aws_security_group.dashing.id}",
     "${aws_security_group.ssh.id}",
@@ -21,16 +23,12 @@ module "dashing" {
   // globals
   aws_lb_listener_default_arn = "${aws_alb_listener.default.arn}"
   aws_lb_listener_rule_priority = 97
-  key_name = "${local.key_name}"
-  product = "${local.product}"
-  environment = "${local.environment}"
-  root_domain_name = "${local.root_domain_name}"
   aws_subnet_id            = "${aws_subnet.av1.id}"
   vpc_id                   = "${aws_vpc.default.id}"
   gateway_id               = "${aws_internet_gateway.default.id}"
   availability_zone        = "${var.availability_zone_1}"
   ami_id                   = "${var.ecs_ami_id}"
-  aws_route53_zone_id      = "${aws_route53_zone.environment.zone_id}"
+  aws_route53_environment_zone_id      = "${aws_route53_zone.environment.zone_id}"
   aws_alb_default_dns_name = "${aws_alb.default.dns_name}"
 }
 

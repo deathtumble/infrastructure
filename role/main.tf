@@ -31,7 +31,7 @@ resource "aws_instance" "this" {
   ebs_optimized               = "false"
   disable_api_termination     = "false"
   instance_type               = "${var.instance_type}"
-  key_name                    = "${var.key_name}"
+  key_name                    = "${local.key_name}"
   monitoring                  = "false"
   vpc_security_group_ids      = ["${var.vpc_security_group_ids}"]
   subnet_id                   = "${var.aws_subnet_id}"
@@ -44,7 +44,7 @@ resource "aws_instance" "this" {
 #cloud-config
 hostname: ${var.role}    
 write_files:
- - content: ECS_CLUSTER=${var.role}-${var.environment}
+ - content: ECS_CLUSTER=${var.role}-${local.environment}
    path: /etc/ecs/ecs.config   
    permissions: '0644'
 runcmd:
@@ -55,20 +55,20 @@ EOF
 
   tags {
     Name          = "${var.role}"
-    Product       = "${var.product}"
-    Environment   = "${var.environment}"
+    Product       = "${local.product}"
+    Environment   = "${local.environment}"
     ConsulCluster = "${var.role}"
     Goss          = "true"
   }
 }
 
 resource "aws_ecs_cluster" "this" {
-  name = "${var.role}-${var.environment}"
+  name = "${var.role}-${local.environment}"
 }
 
 resource "aws_ecs_service" "this" {
-  name            = "${var.role}-${var.environment}"
-  cluster         = "${var.role}-${var.environment}"
+  name            = "${var.role}-${local.environment}"
+  cluster         = "${var.role}-${local.environment}"
   task_definition = "${var.task_definition}"
   desired_count   = "${var.task_status == "down" ? 0 : var.desired_task_count}"
 }

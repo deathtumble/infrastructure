@@ -1,3 +1,16 @@
+variable "globals" {
+  type   = "map"
+  default = {
+    product="" 
+    environment="" 
+    root_domain_name="" 
+    aws_route53_zone_id="" 
+    admin_cidr=""
+    nameTag=""
+    key_name=""
+  }
+}
+
 variable "role" {
   type = "string"
 }
@@ -12,14 +25,6 @@ variable "availability_zone" {
 
 variable "instance_type" {
   default = "t2.small"
-}
-
-variable "product" {
-  type = "string"
-}
-
-variable "environment" {
-  type = "string"
 }
 
 variable "volume_id" {
@@ -43,15 +48,11 @@ variable "aws_alb_default_dns_name" {
   type = "string"
 }
 
-variable "aws_route53_zone_id" {
+variable "aws_route53_environment_zone_id" {
   type = "string"
 }
 
 variable "gateway_id" {
-  type = "string"
-}
-
-variable "root_domain_name" {
   type = "string"
 }
 
@@ -87,10 +88,6 @@ variable "desired_task_count" {
 variable "desired_instance_count" {
   type = "string"
   default = "1"
-}
-
-variable "key_name" {
-  type = "string"
 }
 
 variable "aws_lb_listener_default_arn" {
