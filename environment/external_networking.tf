@@ -55,7 +55,7 @@ resource "aws_alb" "default" {
 }
 
 resource "aws_alb_target_group" "default" {
-  name     = "default"
+  name     = "${local.environment}-default"
   port     = "80"
   protocol = "HTTP"
   vpc_id   = "${aws_vpc.default.id}"

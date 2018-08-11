@@ -41,7 +41,7 @@ resource "aws_db_instance" "concourse" {
   name                 = "concourse"
   username             = "concourse"
   db_subnet_group_name = "${aws_db_subnet_group.default.name}"
-  password             = "${var.concourse_postgres_password}"
+  password             = "${local.concourse_postgres_password}"
   parameter_group_name = "default.postgres9.6"
   vpc_security_group_ids = ["${aws_security_group.postgres.id}"]
   skip_final_snapshot = true

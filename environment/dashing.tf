@@ -102,11 +102,11 @@ resource "aws_ecs_task_definition" "dashing" {
             "environment": [
                 {
                     "Name": "AWS_ACCESS_KEY_ID",
-                    "Value": "${var.aws-proxy_access_id}"
+                    "Value": "${local.aws-proxy_access_id}"
                 },
                 {
                     "Name": "AWS_SECRET_ACCESS_KEY",
-                    "Value": "${var.aws-proxy_secret_access_key}"
+                    "Value": "${local.aws-proxy_secret_access_key}"
                 },
                 {
                     "Name": "aws.region",

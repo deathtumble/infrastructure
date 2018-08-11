@@ -1,4 +1,4 @@
-module "prod"
+module "environment"
 {  source = "../environment"
   
   globals = "${var.globals}"

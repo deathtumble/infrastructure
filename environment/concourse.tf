@@ -88,7 +88,7 @@ resource "aws_ecs_task_definition" "concourse" {
                 }, 
                 {
                     "Name": "CONCOURSE_BASIC_AUTH_PASSWORD",
-                    "Value": "${var.concourse_password}"
+                    "Value": "${local.concourse_password}"
                 }, 
                 {
                     "Name": "CONCOURSE_EXTERNAL_URL",
@@ -104,7 +104,7 @@ resource "aws_ecs_task_definition" "concourse" {
                 }, 
                 {
                     "Name": "CONCOURSE_POSTGRES_PASSWORD",
-                    "Value": "${var.concourse_postgres_password}"
+                    "Value": "${local.concourse_postgres_password}"
                 }, 
                 {
                     "Name": "CONCOURSE_POSTGRES_DATABASE",

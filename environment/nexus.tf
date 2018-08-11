@@ -25,7 +25,7 @@ module "nexus" {
   key_name = "${local.key_name}"
   product = "${local.product}"
   environment = "${local.environment}"
-  root_domain_name = "${local.root_domain_name"]}"
+  root_domain_name = "${local.root_domain_name}"
   aws_subnet_id            = "${aws_subnet.av1.id}"
   vpc_id                   = "${aws_vpc.default.id}"
   gateway_id               = "${aws_internet_gateway.default.id}"
