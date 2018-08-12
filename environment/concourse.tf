@@ -11,24 +11,33 @@ module "concourse" {
     "${aws_security_group.consul-client.id}",
   ]
 
-  elb_instance_port    = "8080"
-  healthcheck_protocol = "HTTP"
-  healthcheck_path     = "/public/images/favicon.png"
-  task_definition      = "concourse-${local.environment}:${aws_ecs_task_definition.concourse.revision}"
-  task_status          = "${var.concourse_task_status}"
   instance_type        = "t2.medium"
-  elb_protocol         = "http"
 
   // globals
-  aws_lb_listener_default_arn = "${aws_alb_listener.default.arn}"
-  aws_lb_listener_rule_priority = 98
   aws_subnet_id            = "${aws_subnet.av1.id}"
   vpc_id                   = "${aws_vpc.default.id}"
   gateway_id               = "${aws_internet_gateway.default.id}"
   availability_zone        = "${var.availability_zone_1}"
   ami_id                   = "${var.ecs_ami_id}"
+}
+
+module "concourse-ecs-alb" {
+  source = "../ecs-alb"
+
+  elb_instance_port    = "8080"
+  healthcheck_protocol = "HTTP"
+  healthcheck_path     = "/public/images/favicon.png"
+  task_definition      = "concourse-${local.environment}:${aws_ecs_task_definition.concourse.revision}"
+  task_status          = "${var.concourse_task_status}"
+  aws_lb_listener_default_arn = "${aws_alb_listener.default.arn}"
+  aws_lb_listener_rule_priority = 98
   aws_route53_environment_zone_id      = "${aws_route53_zone.environment.zone_id}"
   aws_alb_default_dns_name = "${aws_alb.default.dns_name}"
+  vpc_id                   = "${aws_vpc.default.id}"
+  role = "concourse"
+  product = "${local.product}"
+  environment = "${local.environment}"
+  root_domain_name = "${local.root_domain_name}"
 }
 
 data "template_file" "collectd-concourse" {

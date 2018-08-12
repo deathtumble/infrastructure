@@ -1,5 +1,5 @@
 resource "aws_alb_target_group" "this" {
-  name     = "${var.role}-${local.environment}"
+  name     = "${var.role}-${var.environment}"
   port     = "${var.elb_instance_port}"
   protocol = "HTTP"
   vpc_id   = "${var.vpc_id}"
@@ -15,15 +15,15 @@ resource "aws_alb_target_group" "this" {
   }
 
   tags {
-    Name          = "${var.role}-${local.environment}"
-    Product       = "${local.product}"
-    Environment   = "${local.environment}"
+    Name          = "${var.role}-${var.environment}"
+    Product       = "${var.product}"
+    Environment   = "${var.environment}"
   }
 }
 
 resource "aws_route53_record" "this" {
   zone_id = "${var.aws_route53_environment_zone_id}"
-  name    = "${var.role}.${local.environment}.${local.root_domain_name}"
+  name    = "${var.role}.${var.environment}.${var.root_domain_name}"
   type    = "CNAME"
   ttl     = 60
   records = ["${var.aws_alb_default_dns_name}"]
@@ -40,6 +40,23 @@ resource "aws_lb_listener_rule" "host_based_routing" {
 
   condition {
     field  = "host-header"
-    values = ["${var.role}.${local.environment}.${local.root_domain_name}"]
+    values = ["${var.role}.${var.environment}.${var.root_domain_name}"]
+  }
+}
+
+resource "aws_ecs_cluster" "this" {
+  name = "${var.role}-${var.environment}"
+}
+
+resource "aws_ecs_service" "this" {
+  name            = "${var.role}-${var.environment}"
+  cluster         = "${var.role}-${var.environment}"
+  task_definition = "${var.task_definition}"
+  desired_count   = "${var.task_status == "down" ? 0 : var.desired_task_count}"
+
+  load_balancer {
+    target_group_arn = "${aws_alb_target_group.this.arn}"
+    container_name   = "${var.role}"
+    container_port   = "${var.elb_instance_port}"
   }
 }

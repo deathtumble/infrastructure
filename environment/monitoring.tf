@@ -11,24 +11,33 @@ module "monitoring" {
     "${aws_security_group.consul-client.id}",
   ]
 
-  elb_instance_port    = "3000"
-  healthcheck_protocol = "HTTP"
-  healthcheck_path     = "/api/health"
-  task_definition      = "monitoring-${local.environment}:${aws_ecs_task_definition.monitoring.revision}"
-  task_status          = "${var.monitoring_task_status}"
-
   volume_id = "${local.monitoring_volume_id}"
 
   // globals
-  aws_lb_listener_default_arn = "${aws_alb_listener.default.arn}"
-  aws_lb_listener_rule_priority = 96
   aws_subnet_id            = "${aws_subnet.av1.id}"
   vpc_id                   = "${aws_vpc.default.id}"
   gateway_id               = "${aws_internet_gateway.default.id}"
   availability_zone        = "${var.availability_zone_1}"
   ami_id                   = "${var.ecs_ami_id}"
+}
+
+module "monitoring-ecs-alb" {
+  source = "../ecs-alb"
+
+  elb_instance_port    = "3000"
+  healthcheck_protocol = "HTTP"
+  healthcheck_path     = "/api/health"
+  task_definition      = "monitoring-${local.environment}:${aws_ecs_task_definition.monitoring.revision}"
+  task_status          = "${var.monitoring_task_status}"
+  aws_lb_listener_default_arn = "${aws_alb_listener.default.arn}"
+  aws_lb_listener_rule_priority = 96
   aws_route53_environment_zone_id      = "${aws_route53_zone.environment.zone_id}"
   aws_alb_default_dns_name = "${aws_alb.default.dns_name}"
+  vpc_id                   = "${aws_vpc.default.id}"
+  role = "monitoring"
+  product = "${local.product}"
+  environment = "${local.environment}"
+  root_domain_name = "${local.root_domain_name}"
 }
 
 data "template_file" "collectd-monitoring" {

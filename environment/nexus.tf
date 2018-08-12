@@ -12,25 +12,36 @@ module "nexus" {
     "${aws_security_group.goss.id}",
   ]
 
-  elb_instance_port    = "8081"
-  healthcheck_protocol = "HTTP"
-  healthcheck_path     = "/service/metrics/healthcheck"
-  task_definition      = "nexus-${local.environment}:${aws_ecs_task_definition.nexus.revision}"
-  task_status          = "${var.nexus_task_status}"
   instance_type        = "t2.medium"
 
   volume_id = "${local.nexus_volume_id}"
 
   // globals
-  aws_lb_listener_default_arn = "${aws_alb_listener.default.arn}"
-  aws_lb_listener_rule_priority = 95
   aws_subnet_id            = "${aws_subnet.av1.id}"
   vpc_id                   = "${aws_vpc.default.id}"
   gateway_id               = "${aws_internet_gateway.default.id}"
   availability_zone        = "${var.availability_zone_1}"
   ami_id                   = "${var.ecs_ami_id}"
+}
+
+module "nexus-ecs-alb" {
+  source = "../ecs-alb"
+
+  elb_instance_port    = "8081"
+  healthcheck_protocol = "HTTP"
+  healthcheck_path     = "/service/metrics/healthcheck"
+  task_definition      = "nexus-${local.environment}:${aws_ecs_task_definition.nexus.revision}"
+  task_status          = "${var.nexus_task_status}"
+  aws_lb_listener_default_arn = "${aws_alb_listener.default.arn}"
+  aws_lb_listener_rule_priority = 95
   aws_route53_environment_zone_id      = "${aws_route53_zone.environment.zone_id}"
   aws_alb_default_dns_name = "${aws_alb.default.dns_name}"
+  vpc_id                   = "${aws_vpc.default.id}"
+  role = "nexus"
+  product = "${local.product}"
+  environment = "${local.environment}"
+  root_domain_name = "${local.root_domain_name}"
+
 }
 
 data "template_file" "collectd-nexus" {
