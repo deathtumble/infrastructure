@@ -1,23 +1,38 @@
-module "instance" {
-  source = "../ephemeralinstance"
 
-  role = "${var.role}"
+resource "aws_instance" "this" {
+  count                       = "${var.desired_instance_count}"
+  ami                         = "${var.ami_id}"
+  availability_zone           = "${var.availability_zone}"
+  tenancy                     = "default"
+  ebs_optimized               = "false"
+  disable_api_termination     = "false"
+  instance_type               = "${var.instance_type}"
+  key_name                    = "${var.key_name}"
+  monitoring                  = "false"
+  vpc_security_group_ids      = ["${var.vpc_security_group_ids}"]
+  subnet_id                   = "${var.aws_subnet_id}"
+  associate_public_ip_address = "true"
+  source_dest_check           = "true"
+  iam_instance_profile        = "ecsinstancerole"
+  ipv6_address_count          = "0"
 
-  vpc_security_group_ids = [
-    "${aws_security_group.concourse.id}",
-    "${aws_security_group.ssh.id}",
-    "${aws_security_group.consul-client.id}",
-  ]
+  user_data = <<EOF
+#cloud-config
+hostname: ${var.role}    
+write_files:
+ - content: ECS_CLUSTER=${var.role}-${var.environment}
+   path: /etc/ecs/ecs.config   
+   permissions: '0644'
+runcmd:
+ - service goss start
+ - service modd start
+EOF
 
-  instance_type            = "${var.instance_type}"
-
-  // globals
-  key_name                 = "${var.key_name}"
-  aws_subnet_id            = "${aws_subnet.av1.id}"
-  vpc_id                   = "${aws_vpc.default.id}"
-  availability_zone        = "${var.availability_zone_1}"
-  ami_id                   = "${var.ecs_ami_id}"
-  product                  = "${var.product}"
-  environment              = "${var.environment}"
+  tags {
+    Name          = "${var.role}"
+    Product       = "${var.product}"
+    Environment   = "${var.environment}"
+    ConsulCluster = "${var.role}"
+    Goss          = "true"
+  }
 }
-
