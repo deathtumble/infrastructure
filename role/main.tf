@@ -71,4 +71,10 @@ resource "aws_ecs_service" "this" {
   cluster         = "${var.role}-${local.environment}"
   task_definition = "${var.task_definition}"
   desired_count   = "${var.task_status == "down" ? 0 : var.desired_task_count}"
+
+  load_balancer {
+    target_group_arn = "${aws_alb_target_group.this.arn}"
+    container_name   = "${var.role}"
+    container_port   = "${var.elb_instance_port}"
+  }
 }

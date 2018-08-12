@@ -43,9 +43,3 @@ resource "aws_lb_listener_rule" "host_based_routing" {
     values = ["${var.role}.${local.environment}.${local.root_domain_name}"]
   }
 }
-resource "aws_alb_target_group_attachment" "this" {
-  target_group_arn = "${aws_alb_target_group.this.arn}"
-  target_id        = "${aws_instance.this.id}"
-  port             = "${var.elb_instance_port}"
-}
-

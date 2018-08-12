@@ -50,6 +50,12 @@ resource "aws_ecs_service" "consul" {
   task_definition = "consul-${local.environment}:${aws_ecs_task_definition.consul.revision}"
   depends_on      = ["aws_ecs_cluster.consul", "aws_ecs_task_definition.consul"]
   desired_count   = 2
+
+  load_balancer {
+    target_group_arn = "${aws_alb_target_group.consul.arn}"
+    container_name   = "consul"
+    container_port   = "8500"
+  }
 }
 
 data "template_file" "collectd-consul" {

@@ -43,10 +43,3 @@ resource "aws_lb_listener_rule" "host_based_routing" {
     values = ["consul.${local.environment}.${local.root_domain_name}"]
   }
 }
-resource "aws_alb_target_group_attachment" "consul" {
-  count    = "${var.consul_server_count}"
-  target_group_arn = "${aws_alb_target_group.consul.arn}"
-  target_id        = "${aws_instance.consul.*.id[count.index]}"
-  port             = "8500"
-}
-

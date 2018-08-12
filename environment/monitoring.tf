@@ -180,7 +180,7 @@ resource "aws_ecs_task_definition" "monitoring" {
             ]
         },
 		{
-		    "name": "grafana",
+		    "name": "monitoring",
 		    "cpu": 0,
 		    "essential": true,
 		    "image": "grafana/grafana:5.1.0",

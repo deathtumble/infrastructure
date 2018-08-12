@@ -60,7 +60,7 @@ resource "aws_ecs_task_definition" "concourse" {
         ${data.template_file.consul_agent.rendered},
         ${data.template_file.collectd-dashing.rendered},
         {
-            "name": "concourse-web",
+            "name": "concourse",
             "cpu": 0,
             "essential": true,
             "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/concourse-web:${var.concourse_docker_tag}",

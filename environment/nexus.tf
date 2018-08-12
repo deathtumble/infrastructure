@@ -44,7 +44,7 @@ data "template_file" "collectd-nexus" {
 
 resource "aws_ecs_task_definition" "nexus" {
   family       = "nexus-${local.environment}"
-  network_mode = "host"
+  network_mode = "bridge"
 
   volume {
     name      = "nexus-data"
@@ -70,13 +70,6 @@ resource "aws_ecs_task_definition" "nexus" {
                 {
                   "hostPort": 8081,
                   "containerPort": 8081,
-                  "protocol": "tcp"
-                }
-            ],
-            "portMappings": [
-                {
-                  "hostPort": 8082,
-                  "containerPort": 8082,
                   "protocol": "tcp"
                 }
             ],
