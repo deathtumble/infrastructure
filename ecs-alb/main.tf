@@ -59,4 +59,6 @@ resource "aws_ecs_service" "this" {
     container_name   = "${var.role}"
     container_port   = "${var.elb_instance_port}"
   }
+  
+  depends_on = ["aws_alb_target_group.this"]
 }
