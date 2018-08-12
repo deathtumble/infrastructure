@@ -52,7 +52,6 @@ resource "aws_ecs_service" "consul" {
   name            = "consul-${local.environment}"
   cluster         = "consul-${local.environment}"
   task_definition = "consul-${local.environment}:${aws_ecs_task_definition.consul.revision}"
-  depends_on      = ["aws_ecs_cluster.consul", "aws_ecs_task_definition.consul"]
   desired_count   = 2
 
   load_balancer {

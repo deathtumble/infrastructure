@@ -23,7 +23,7 @@ resource "aws_instance" "consul-leader" {
   user_data = <<EOF
 #cloud-config
 write_files:
- - content: ECS_CLUSTER=consul-leader-${local.environment}
+ - content: ECS_CLUSTER=consul-${local.environment}
    path: /etc/ecs/ecs.config   
    permissions: '0644'
 runcmd:
@@ -40,15 +40,10 @@ EOF
   }
 }
 
-resource "aws_ecs_cluster" "consul-leader" {
-  name = "consul-leader-${local.environment}"
-}
-
 resource "aws_ecs_service" "consul-leader" {
   name            = "consul-leader-${local.environment}"
-  cluster         = "consul-leader-${local.environment}"
+  cluster         = "consul-${local.environment}"
   task_definition = "consul-leader-${local.environment}:${aws_ecs_task_definition.consul-leader.revision}"
-  depends_on      = ["aws_ecs_cluster.consul-leader", "aws_ecs_task_definition.consul-leader"]
   desired_count   = 1
 }
 
@@ -69,7 +64,7 @@ resource "aws_ecs_task_definition" "consul-leader" {
     [
         ${data.template_file.collectd-consul-leader.rendered},
         {
-            "name": "consul-leader",
+            "name": "consul",
             "cpu": 0,
             "essential": true,
             "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/consul:${var.consul_docker_tag}",
