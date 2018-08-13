@@ -59,5 +59,7 @@ resource "aws_ecs_service" "consul" {
     container_name   = "consul"
     container_port   = "8500"
   }
+
+  depends_on = ["aws_alb_listener.default"]
 }
 

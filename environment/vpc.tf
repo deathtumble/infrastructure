@@ -6,6 +6,10 @@ provider "template" {
   version = "~> 0.1"
 }
 
+provider "null" {
+  version = "~> 0.1"
+}
+
 resource "aws_vpc" "default" {
   cidr_block                       = "${var.vpc_cidr}"
   instance_tenancy                 = "default"

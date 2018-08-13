@@ -19,6 +19,7 @@ resource "aws_alb_target_group" "this" {
     Product       = "${var.product}"
     Environment   = "${var.environment}"
   }
+  
 }
 
 resource "aws_route53_record" "this" {
@@ -60,5 +61,11 @@ resource "aws_ecs_service" "this" {
     container_port   = "${var.elb_instance_port}"
   }
   
-  depends_on = ["aws_alb_target_group.this"]
+  depends_on = ["null_resource.alb_listener_exists"]
+}
+
+resource "null_resource" "alb_listener_exists" {
+   triggers {
+      listener_arn = "${var.aws_lb_listener_default_arn}"
+   }
 }
