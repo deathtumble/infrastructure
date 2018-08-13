@@ -14,3 +14,6 @@ output "monitoring_task_count" {
    value = "${module.monitoring-ecs-alb.task_count}"
 }
 
+output "consul_task_count" {
+   value = "${module.consul-ecs-alb.task_count}"
+}

@@ -19,7 +19,10 @@ resource "aws_alb_target_group" "this" {
     Product       = "${var.product}"
     Environment   = "${var.environment}"
   }
-  
+ 
+  lifecycle {
+     create_before_destroy = "true"
+  } 
 }
 
 resource "aws_route53_record" "this" {

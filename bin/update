@@ -11,16 +11,19 @@ while test $# -gt 0
 do
     case "$1" in
         nexus) 
-            terraform apply -auto-approve -var 'nexus_task_status=down'
+            terraform apply -auto-approve -var 'nexus_task_status=down' -target=module.environment.module.nexus-ecs-alb.aws_ecs_service.this
             ;;
         concourse) 
-            terraform apply -auto-approve -var 'concourse_task_status=down'
+            terraform apply -auto-approve -var 'concourse_task_status=down' -target=module.environment.module.concourse-ecs-alb.aws_ecs_service.this
             ;;
         dashing) 
-            terraform apply -auto-approve -var 'dashing_task_status=down'
+            terraform apply -auto-approve -var 'dashing_task_status=down' -target=module.environment.module.dashing-ecs-alb.aws_ecs_service.this
             ;;
         monitoring) 
-            terraform apply -auto-approve -var 'monitoring_task_status=down'
+            terraform apply -auto-approve -var 'monitoring_task_status=down' -target=module.environment.module.monitoring-ecs-alb.aws_ecs_service.this
+            ;;
+        consul) 
+            terraform apply -auto-approve -var 'consul_task_status=down' -target=module.environment.module.consul-ecs-alb.aws_ecs_service.this
             ;;
     esac
     

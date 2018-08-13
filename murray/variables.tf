@@ -18,6 +18,11 @@ variable "monitoring_task_status" {
   default = "up"
 }
 
+variable "consul_task_status" {
+  type    = "string"
+  default = "up"
+}
+
 variable "globals" {
   type   = "map"
   default = {

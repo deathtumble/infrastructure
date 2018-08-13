@@ -13,3 +13,7 @@ output "concourse_task_count" {
 output "monitoring_task_count" {
    value = "${module.environment.monitoring_task_count}"
 }
+
+output "consul_task_count" {
+   value = "${module.environment.consul_task_count}"
+}
