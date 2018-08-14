@@ -1,13 +1,13 @@
 variable "consul_server_count" {
   type    = "string"
-  default = "2"
+  default = "3"
 }
 
 variable "consul_server_instance_names" {
   default = {
-    "0" = "1"
-    "1" = "2"
-    "2" = "3"
+    "0" = "0"
+    "1" = "1"
+    "2" = "2"
   }
 }
 

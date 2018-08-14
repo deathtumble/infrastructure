@@ -48,7 +48,7 @@ module "consul-ecs-alb" {
   healthcheck_path     = "/v1/agent/checks"
   task_definition      = "consul-${local.environment}:${aws_ecs_task_definition.consul.revision}"
   task_status          = "${var.consul_task_status}"
-  desired_task_count   = "2"
+  desired_task_count   = "3"
   aws_lb_listener_default_arn = "${aws_alb_listener.default.arn}"
   aws_lb_listener_rule_priority = 94
   aws_route53_environment_zone_id      = "${aws_route53_zone.environment.zone_id}"
@@ -85,7 +85,7 @@ resource "aws_ecs_task_definition" "consul" {
             "environment": [
                 {
                     "Name": "CONSUL_LOCAL_CONFIG",
-                    "Value": "{\"skip_leave_on_interrupt\": true, \"telemetry\": {\"metrics_prefix\":\"${local.product}.${local.environment}.consul.server\", \"statsd_address\":\"10.0.0.36:8125\"}}"
+                    "Value": "{\"skip_leave_on_interrupt\": true, \"telemetry\": {\"metrics_prefix\":\"${local.product}.${local.environment}.consul.server\"}}"
                 },
                 {
                     "Name": "CONSUL_BIND_INTERFACE",
@@ -105,6 +105,7 @@ resource "aws_ecs_task_definition" "consul" {
                 "-server",
                 "-dns-port=53",
                 "-recursor=${var.dns_ip}",
+                "-bootstrap-expect=3",
                 "-retry-join",
                 "provider=aws tag_key=ConsulCluster tag_value=${local.product}-${local.environment}",
                 "-ui"
