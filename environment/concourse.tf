@@ -56,7 +56,7 @@ resource "aws_ecs_task_definition" "concourse" {
 
   volume {
     name      = "consul_config"
-    host_path = "/opt/consul/conf"
+    host_path = "/etc/consul"
   }
 
   volume {
@@ -119,7 +119,7 @@ resource "aws_ecs_task_definition" "concourse" {
             "mountPoints": [
                 {
                   "sourceVolume": "consul_config",
-                  "containerPath": "/opt/consul/conf",
+                  "containerPath": "/etc/consul",
                   "readOnly": false
                 },
                 {

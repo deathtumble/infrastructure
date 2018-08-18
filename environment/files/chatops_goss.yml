@@ -1,5 +1,5 @@
 file:
-  /opt/consul/conf/chatops_consul.json:
+  /etc/consul/chatops_consul.json:
     exists: true
     mode: "0644"
     owner: root

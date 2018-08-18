@@ -55,7 +55,7 @@ resource "aws_ecs_task_definition" "monitoring" {
 
   volume {
     name      = "consul_config"
-    host_path = "/opt/consul/conf"
+    host_path = "/etc/consul"
   }
 
   volume {

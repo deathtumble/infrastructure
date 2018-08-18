@@ -1,5 +1,5 @@
 file:
-  /opt/consul/conf/consul.json:
+  /etc/consul/consul.json:
     exists: true
     mode: "0644"
     owner: root

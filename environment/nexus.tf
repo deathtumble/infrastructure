@@ -64,7 +64,7 @@ resource "aws_ecs_task_definition" "nexus" {
 
   volume {
     name      = "consul_config"
-    host_path = "/opt/consul/conf"
+    host_path = "/etc/consul"
   }
 
   container_definitions = <<DEFINITION
