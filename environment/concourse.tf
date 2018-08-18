@@ -66,8 +66,6 @@ resource "aws_ecs_task_definition" "concourse" {
 
   container_definitions = <<DEFINITION
     [
-        ${data.template_file.consul_agent.rendered},
-        ${data.template_file.collectd-dashing.rendered},
         {
             "name": "concourse",
             "cpu": 0,

@@ -69,8 +69,6 @@ resource "aws_ecs_task_definition" "nexus" {
 
   container_definitions = <<DEFINITION
 	[
-        ${data.template_file.consul_agent.rendered},
-        ${data.template_file.collectd-nexus.rendered},
         {
             "name": "nexus",
             "cpu": 0,

@@ -67,8 +67,6 @@ resource "aws_ecs_task_definition" "dashing" {
 
   container_definitions = <<DEFINITION
     [
-        ${data.template_file.consul_agent.rendered},
-        ${data.template_file.collectd-dashing.rendered},
         {
             "name": "dashing",
             "cpu": 0,

@@ -47,10 +47,17 @@ write_files:
  - content: ECS_CLUSTER=${var.role}-${local.environment}
    path: /etc/ecs/ecs.config   
    permissions: '0644'
+ - content: |
+      RECURSOR=10.0.0.2
+      REGION=${var.region}
+      CONSUL_CLUSTER=${local.product}-${local.environment}
+   path: /etc/consul/setenv.sh   
+   permissions: '0644'
 runcmd:
 ${var.volume_id == "" ? var.no-mount-cloud-config : var.mount-cloud-config}    
  - service goss start
  - service modd start
+ - service consul start
 EOF
 
   tags {

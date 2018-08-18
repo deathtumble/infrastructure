@@ -105,8 +105,6 @@ resource "aws_ecs_task_definition" "monitoring" {
 
   container_definitions = <<DEFINITION
 	[
-        ${data.template_file.consul_agent.rendered},
-        ${data.template_file.collectd-monitoring.rendered},
 		{
 		    "name": "graphite-statsd",
 		    "cpu": 0,
