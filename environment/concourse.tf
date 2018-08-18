@@ -1,5 +1,5 @@
-module "concourse" {
-  source = "../role"
+module "concourse-instance" {
+  source = "../ephemeralinstance"
 
   role = "concourse"
 

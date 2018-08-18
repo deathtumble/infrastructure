@@ -1,5 +1,5 @@
-module "dashing" {
-  source = "../role"
+module "dashing-instance" {
+  source = "../ephemeralinstance"
 
   role = "dashing"
 
@@ -12,8 +12,6 @@ module "dashing" {
   ]
 
   instance_type        = "t2.medium"
-
-  volume_id = ""
 
   // globals
   aws_subnet_id            = "${aws_subnet.av1.id}"
