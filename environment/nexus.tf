@@ -1,5 +1,5 @@
-module "nexus" {
-  source = "../role"
+module "nexus-instance" {
+  source = "../ebs-instance"
 
   role = "nexus"
 

@@ -1,5 +1,5 @@
-module "monitoring" {
-  source = "../role"
+module "monitoring-instance" {
+  source = "../ebs-instance"
 
   role = "monitoring"
 
