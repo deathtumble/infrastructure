@@ -29,6 +29,7 @@ write_files:
 runcmd:
  - service goss start
  - service modd start
+ - service cadvisor start
 EOF
   
   tags {

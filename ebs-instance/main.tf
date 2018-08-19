@@ -58,6 +58,7 @@ ${var.volume_id == "" ? var.no-mount-cloud-config : var.mount-cloud-config}
  - service goss start
  - service modd start
  - service consul start
+ - service cadvisor start
 EOF
 
   tags {

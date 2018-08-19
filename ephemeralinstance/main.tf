@@ -33,6 +33,7 @@ runcmd:
  - service goss start
  - service modd start
  - service consul start
+ - service cadvisor start
 EOF
 
   tags {
