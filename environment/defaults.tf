@@ -46,6 +46,11 @@ variable "monitoring_task_status" {
   default = "up"
 }
 
+variable "prometheus_task_status" {
+  type    = "string"
+  default = "up"
+}
+
 variable "consul_task_status" {
   type    = "string"
   default = "up"
