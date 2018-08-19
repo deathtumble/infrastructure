@@ -26,7 +26,7 @@ module "prometheus-ecs-alb" {
 
   elb_instance_port    = "9090"
   healthcheck_protocol = "HTTP"
-  healthcheck_path     = "/"
+  healthcheck_path     = "/graph"
   task_definition      = "prometheus-${local.environment}:${aws_ecs_task_definition.prometheus.revision}"
   task_status          = "${var.prometheus_task_status}"
   aws_lb_listener_default_arn = "${aws_alb_listener.default.arn}"
