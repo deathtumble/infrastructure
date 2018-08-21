@@ -52,7 +52,7 @@ data "template_file" "collectd-dashing" {
 
 resource "aws_ecs_task_definition" "dashing" {
   family       = "dashing-${local.environment}"
-  network_mode = "host"
+  network_mode = "bridge"
 
   volume {
     name      = "consul_config"
@@ -120,7 +120,7 @@ resource "aws_ecs_task_definition" "dashing" {
              ], 
             "portMappings": [
                 {
-                  "hostPort": 8080,
+                  "hostPort": 8081,
                   "containerPort": 8080,
                   "protocol": "tcp"
                 }

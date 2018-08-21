@@ -34,7 +34,7 @@ variable "secrets" {
 
 variable "ecs_ami_id" {
   type    = "string"
-  default = "ami-043e430ed343dbcc9"
+  default = "ami-0f4a2a0cb7c209a08"
 }
 
 variable "aws_proxy_docker_tag" {
@@ -44,7 +44,7 @@ variable "aws_proxy_docker_tag" {
 
 variable "dashing_docker_tag" {
   type    = "string"
-  default = "a3ed1fd"
+  default = "d886fdc"
 }
 
 variable "consul_docker_tag" {
@@ -55,6 +55,11 @@ variable "consul_docker_tag" {
 variable "concourse_docker_tag" {
   type    = "string"
   default = "70774e3"
+}
+
+variable "prometheus_docker_tag" {
+  type    = "string"
+  default = "4ff59b2"
 }
 
 variable "collectd_docker_tag" {
