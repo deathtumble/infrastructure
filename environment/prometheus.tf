@@ -8,6 +8,8 @@ module "prometheus" {
   vpc_security_group_ids = [
     "${aws_security_group.prometheus.id}",
     "${aws_security_group.ssh.id}",
+    "${aws_security_group.cadvisor.id}",
+    "${aws_security_group.goss.id}",
     "${aws_security_group.consul-client.id}",
   ]
 
@@ -50,9 +52,23 @@ resource "aws_ecs_task_definition" "prometheus" {
             "name": "prometheus",
             "cpu": 0,
             "essential": true,
-            "image": "quay.io/prometheus/prometheus",
+            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/prometheus:${var.prometheus_docker_tag}",
             "memory": 500,
             "dnsServers": ["127.0.0.1"],
+            "environment": [
+                {
+                    "Name": "AWS_ACCESS_KEY_ID",
+                    "Value": "${local.prometheus_access_id}"
+                },
+                {
+                    "Name": "AWS_SECRET_ACCESS_KEY",
+                    "Value": "${local.prometheus_secret_access_key}"
+                },
+                {
+                    "Name": "aws.region",
+                    "Value": "${var.region}"
+                }
+             ], 
             "portMappings": [
                 {
                   "hostPort": 9090,
