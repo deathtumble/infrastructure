@@ -11,6 +11,7 @@ resource "aws_instance" "consul" {
 
   vpc_security_group_ids = [
     "${aws_security_group.ssh.id}",
+    "${aws_security_group.cadvisor.id}",
     "${aws_security_group.consul.id}",
   ]
 

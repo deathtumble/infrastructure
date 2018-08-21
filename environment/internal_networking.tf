@@ -64,7 +64,26 @@ resource "aws_security_group" "goss" {
   }
 
   tags {
-    Name        = "ssh-${local.product}-${local.environment}"
+    Name        = "goss-${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
+  }
+}
+
+resource "aws_security_group" "cadvisor" {
+  name = "cadvisor-${local.product}-${local.environment}"
+
+  vpc_id = "${aws_vpc.default.id}"
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
+  tags {
+    Name        = "cadvisor-${local.product}-${local.environment}"
     Product     = "${local.product}"
     Environment = "${local.environment}"
   }
