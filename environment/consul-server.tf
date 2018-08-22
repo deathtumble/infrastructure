@@ -73,11 +73,10 @@ data "template_file" "collectd-consul" {
 
 resource "aws_ecs_task_definition" "consul" {
   family       = "consul-${local.environment}"
-  network_mode = "host"
+  network_mode = "bridge"
 
   container_definitions = <<DEFINITION
     [
-        ${data.template_file.collectd-consul.rendered},
         {
             "name": "consul",
             "cpu": 0,
