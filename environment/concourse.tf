@@ -36,15 +36,6 @@ module "concourse-ecs-alb" {
   root_domain_name                = "${local.root_domain_name}"
 }
 
-data "template_file" "collectd-concourse" {
-  template = "${file("${path.module}/files/collectd.tpl")}"
-
-  vars {
-    graphite_prefix     = "${local.product}.${local.environment}.concourse."
-    collectd_docker_tag = "${var.collectd_docker_tag}"
-  }
-}
-
 resource "aws_ecs_task_definition" "concourse" {
   family       = "concourse-${local.environment}"
   network_mode = "bridge"

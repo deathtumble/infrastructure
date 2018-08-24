@@ -75,15 +75,6 @@ module "consul-ecs-alb" {
   root_domain_name                = "${local.root_domain_name}"
 }
 
-data "template_file" "collectd-consul" {
-  template = "${file("${path.module}/files/collectd.tpl")}"
-
-  vars {
-    graphite_prefix     = "${local.product}.${local.environment}.consul."
-    collectd_docker_tag = "${var.collectd_docker_tag}"
-  }
-}
-
 resource "aws_ecs_task_definition" "consul" {
   family       = "consul-${local.environment}"
   network_mode = "bridge"

@@ -61,8 +61,3 @@ variable "prometheus_docker_tag" {
   type    = "string"
   default = "ba1ee87"
 }
-
-variable "collectd_docker_tag" {
-  type    = "string"
-  default = "0.1.1"
-}
