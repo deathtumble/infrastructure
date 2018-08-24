@@ -10,6 +10,7 @@ module "monitoring-instance" {
     "${aws_security_group.ssh.id}",
     "${aws_security_group.cadvisor.id}",
     "${aws_security_group.consul-client.id}",
+    "${aws_security_group.goss.id}",
   ]
 
   volume_id = "${local.monitoring_volume_id}"
@@ -41,15 +42,6 @@ module "monitoring-ecs-alb" {
   root_domain_name = "${local.root_domain_name}"
 }
 
-data "template_file" "collectd-monitoring" {
-  template = "${file("${path.module}/files/collectd.tpl")}"
-
-  vars {
-    graphite_prefix = "${local.product}.${local.environment}.monitoring."
-    collectd_docker_tag = "${var.collectd_docker_tag}"
-  }
-}
-
 resource "aws_ecs_task_definition" "monitoring" {
   family       = "monitoring-${local.environment}"
   network_mode = "host"
@@ -74,120 +66,9 @@ resource "aws_ecs_task_definition" "monitoring" {
     host_path = "/opt/mount1/grafana_logs"
   }
 
-  volume {
-    name      = "graphite_config"
-    host_path = "/opt/mount1/graphite/conf"
-  }
-
-  volume {
-    name      = "graphite_stats_storage"
-    host_path = "/opt/mount1/graphite/storage"
-  }
-
-  volume {
-    name      = "nginx_config"
-    host_path = "/opt/mount1/nginx_config"
-  }
-
-  volume {
-    name      = "statsd_config"
-    host_path = "/opt/mount1/statsd_config"
-  }
-
-  volume {
-    name      = "graphite_logrotate_config"
-    host_path = "/etc/logrotate.d"
-  }
-
-  volume {
-    name      = "graphite_log_files"
-    host_path = "/opt/mount1/graphite_log_files"
-  }
-
   container_definitions = <<DEFINITION
 	[
-		{
-		    "name": "graphite-statsd",
-		    "cpu": 0,
-		    "essential": true,
-		    "image": "graphiteapp/graphite-statsd:1.1.3",
-		    "memory": 400,
-		    "portMappings": [
-		        {
-		          "hostPort": 80,
-		          "containerPort": 80,
-		          "protocol": "tcp"
-		        },
-                {
-                  "hostPort": 82,
-                  "containerPort": 82,
-                  "protocol": "tcp"
-                },
-		        {
-		          "hostPort": 2003,
-		          "containerPort": 2003,
-		          "protocol": "tcp"
-		        },
-		        {
-		          "hostPort": 2004,
-		          "containerPort": 2004,
-		          "protocol": "tcp"
-		        },
-		        {
-		          "hostPort": 2023,
-		          "containerPort": 2023,
-		          "protocol": "tcp"
-		        },
-		        {
-		          "hostPort": 2024,
-		          "containerPort": 2024,
-		          "protocol": "tcp"
-		        },
-		        {
-		          "hostPort": 8125,
-		          "containerPort": 8125,
-		          "protocol": "udp"
-		        },
-		        {
-		          "hostPort": 8126,
-		          "containerPort": 8126,
-		          "protocol": "udp"
-		        }
-		    ],
-			"mountPoints": [
-                {
-                  "sourceVolume": "graphite_config",
-                  "containerPath": "/opt/graphite/conf",
-                  "readOnly": false
-                },
-                {
-                  "sourceVolume": "graphite_stats_storage",
-                  "containerPath": "/opt/graphite/storage",
-                  "readOnly": false
-                },
-                {
-                  "sourceVolume": "nginx_config",
-                  "containerPath": "/etc/nginx",
-                  "readOnly": false
-                },
-                {
-                  "sourceVolume": "statsd_config",
-                  "containerPath": "/opt/statsd",
-                  "readOnly": false
-                },
-                {
-                  "sourceVolume": "graphite_logrotate_config",
-                  "containerPath": "/etc/logrotate.d",
-                  "readOnly": false
-                },
-                {
-                  "sourceVolume": "graphite_log_files",
-                  "containerPath": "/var/log/graphite",
-                  "readOnly": false
-                }
-            ]
-        },
-		{
+    	{
 		    "name": "monitoring",
 		    "cpu": 0,
 		    "essential": true,
@@ -244,13 +125,6 @@ resource "aws_security_group" "graphite" {
   ingress {
     from_port   = 3000
     to_port     = 3000
-    protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}", "${local.admin_cidr}"]
-  }
-
-  ingress {
-    from_port   = 8082
-    to_port     = 8082
     protocol    = "tcp"
     cidr_blocks = ["${var.vpc_cidr}", "${local.admin_cidr}"]
   }
