@@ -1,6 +1,6 @@
 data "aws_subnet" "av" {
-    vpc_id            = "${var.vpc_id}"
-    availability_zone = "${var.availability_zone}"
+  vpc_id            = "${var.vpc_id}"
+  availability_zone = "${var.availability_zone}"
 }
 
 variable "mount-cloud-config" {
@@ -75,5 +75,3 @@ EOF
     Goss          = "true"
   }
 }
-
-

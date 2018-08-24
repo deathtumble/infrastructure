@@ -1,9 +1,11 @@
 module "concourse-instance" {
   source = "../ephemeralinstance"
 
-  role = "concourse"
-
-  globals = "${var.globals}"
+  role              = "concourse"
+  instance_type     = "t2.medium"
+  vpc_id            = "${aws_vpc.default.id}"
+  availability_zone = "${var.availability_zone_1}"
+  ami_id            = "${var.ecs_ami_id}"
 
   vpc_security_group_ids = [
     "${aws_security_group.concourse.id}",
@@ -12,38 +14,33 @@ module "concourse-instance" {
     "${aws_security_group.consul-client.id}",
   ]
 
-  instance_type        = "t2.medium"
-
-  // globals
-  vpc_id                   = "${aws_vpc.default.id}"
-  availability_zone        = "${var.availability_zone_1}"
-  ami_id                   = "${var.ecs_ami_id}"
+  globals = "${var.globals}"
 }
 
 module "concourse-ecs-alb" {
   source = "../ecs-alb"
 
-  elb_instance_port    = "8085"
-  healthcheck_protocol = "HTTP"
-  healthcheck_path     = "/public/images/favicon.png"
-  task_definition      = "concourse-${local.environment}:${aws_ecs_task_definition.concourse.revision}"
-  task_status          = "${var.concourse_task_status}"
-  aws_lb_listener_default_arn = "${aws_alb_listener.default.arn}"
-  aws_lb_listener_rule_priority = 98
-  aws_route53_environment_zone_id      = "${aws_route53_zone.environment.zone_id}"
-  aws_alb_default_dns_name = "${aws_alb.default.dns_name}"
-  vpc_id                   = "${aws_vpc.default.id}"
-  role = "concourse"
-  product = "${local.product}"
-  environment = "${local.environment}"
-  root_domain_name = "${local.root_domain_name}"
+  elb_instance_port               = "8085"
+  healthcheck_protocol            = "HTTP"
+  healthcheck_path                = "/public/images/favicon.png"
+  task_definition                 = "concourse-${local.environment}:${aws_ecs_task_definition.concourse.revision}"
+  task_status                     = "${var.concourse_task_status}"
+  aws_lb_listener_default_arn     = "${aws_alb_listener.default.arn}"
+  aws_lb_listener_rule_priority   = 98
+  aws_route53_environment_zone_id = "${aws_route53_zone.environment.zone_id}"
+  aws_alb_default_dns_name        = "${aws_alb.default.dns_name}"
+  vpc_id                          = "${aws_vpc.default.id}"
+  role                            = "concourse"
+  product                         = "${local.product}"
+  environment                     = "${local.environment}"
+  root_domain_name                = "${local.root_domain_name}"
 }
 
 data "template_file" "collectd-concourse" {
   template = "${file("${path.module}/files/collectd.tpl")}"
 
   vars {
-    graphite_prefix = "${local.product}.${local.environment}.concourse."
+    graphite_prefix     = "${local.product}.${local.environment}.concourse."
     collectd_docker_tag = "${var.collectd_docker_tag}"
   }
 }
@@ -51,7 +48,7 @@ data "template_file" "collectd-concourse" {
 resource "aws_ecs_task_definition" "concourse" {
   family       = "concourse-${local.environment}"
   network_mode = "bridge"
-  depends_on = ["aws_db_instance.concourse"]
+  depends_on   = ["aws_db_instance.concourse"]
 
   volume {
     name      = "consul_config"

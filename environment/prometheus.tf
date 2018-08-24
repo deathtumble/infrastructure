@@ -1,9 +1,11 @@
 module "prometheus" {
   source = "../ephemeralinstance"
 
-  role = "prometheus"
-
-  globals = "${var.globals}"
+  role              = "prometheus"
+  instance_type     = "t2.medium"
+  vpc_id            = "${aws_vpc.default.id}"
+  availability_zone = "${var.availability_zone_1}"
+  ami_id            = "${var.ecs_ami_id}"
 
   vpc_security_group_ids = [
     "${aws_security_group.prometheus.id}",
@@ -13,31 +15,26 @@ module "prometheus" {
     "${aws_security_group.consul-client.id}",
   ]
 
-  instance_type        = "t2.medium"
-
-  // globals
-  vpc_id                   = "${aws_vpc.default.id}"
-  availability_zone        = "${var.availability_zone_1}"
-  ami_id                   = "${var.ecs_ami_id}"
+  globals = "${var.globals}"
 }
 
 module "prometheus-ecs-alb" {
   source = "../ecs-alb"
 
-  elb_instance_port    = "9090"
-  healthcheck_protocol = "HTTP"
-  healthcheck_path     = "/graph"
-  task_definition      = "prometheus-${local.environment}:${aws_ecs_task_definition.prometheus.revision}"
-  task_status          = "${var.prometheus_task_status}"
-  aws_lb_listener_default_arn = "${aws_alb_listener.default.arn}"
-  aws_lb_listener_rule_priority = 93
-  aws_route53_environment_zone_id      = "${aws_route53_zone.environment.zone_id}"
-  aws_alb_default_dns_name = "${aws_alb.default.dns_name}"
-  vpc_id                   = "${aws_vpc.default.id}"
-  role = "prometheus"
-  product = "${local.product}"
-  environment = "${local.environment}"
-  root_domain_name = "${local.root_domain_name}"
+  elb_instance_port               = "9090"
+  healthcheck_protocol            = "HTTP"
+  healthcheck_path                = "/graph"
+  task_definition                 = "prometheus-${local.environment}:${aws_ecs_task_definition.prometheus.revision}"
+  task_status                     = "${var.prometheus_task_status}"
+  aws_lb_listener_default_arn     = "${aws_alb_listener.default.arn}"
+  aws_lb_listener_rule_priority   = 93
+  aws_route53_environment_zone_id = "${aws_route53_zone.environment.zone_id}"
+  aws_alb_default_dns_name        = "${aws_alb.default.dns_name}"
+  vpc_id                          = "${aws_vpc.default.id}"
+  role                            = "prometheus"
+  product                         = "${local.product}"
+  environment                     = "${local.environment}"
+  root_domain_name                = "${local.root_domain_name}"
 }
 
 resource "aws_ecs_task_definition" "prometheus" {

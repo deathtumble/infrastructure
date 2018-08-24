@@ -32,7 +32,7 @@ runcmd:
  - service cadvisor start
  - service node_exporter start
 EOF
-  
+
   tags {
     Name          = "consul-${lookup(var.consul_server_instance_names, count.index)}"
     Product       = "${local.product}"
@@ -45,28 +45,28 @@ EOF
 module "consul-ecs-alb" {
   source = "../ecs-alb"
 
-  elb_instance_port    = "8500"
-  healthcheck_protocol = "HTTP"
-  healthcheck_path     = "/v1/agent/checks"
-  task_definition      = "consul-${local.environment}:${aws_ecs_task_definition.consul.revision}"
-  task_status          = "${var.consul_task_status}"
-  desired_task_count   = "3"
-  aws_lb_listener_default_arn = "${aws_alb_listener.default.arn}"
-  aws_lb_listener_rule_priority = 94
-  aws_route53_environment_zone_id      = "${aws_route53_zone.environment.zone_id}"
-  aws_alb_default_dns_name = "${aws_alb.default.dns_name}"
-  vpc_id                   = "${aws_vpc.default.id}"
-  role = "consul"
-  product = "${local.product}"
-  environment = "${local.environment}"
-  root_domain_name = "${local.root_domain_name}"
+  elb_instance_port               = "8500"
+  healthcheck_protocol            = "HTTP"
+  healthcheck_path                = "/v1/agent/checks"
+  task_definition                 = "consul-${local.environment}:${aws_ecs_task_definition.consul.revision}"
+  task_status                     = "${var.consul_task_status}"
+  desired_task_count              = "3"
+  aws_lb_listener_default_arn     = "${aws_alb_listener.default.arn}"
+  aws_lb_listener_rule_priority   = 94
+  aws_route53_environment_zone_id = "${aws_route53_zone.environment.zone_id}"
+  aws_alb_default_dns_name        = "${aws_alb.default.dns_name}"
+  vpc_id                          = "${aws_vpc.default.id}"
+  role                            = "consul"
+  product                         = "${local.product}"
+  environment                     = "${local.environment}"
+  root_domain_name                = "${local.root_domain_name}"
 }
 
 data "template_file" "collectd-consul" {
   template = "${file("${path.module}/files/collectd.tpl")}"
 
   vars {
-    graphite_prefix = "${local.product}.${local.environment}.consul."
+    graphite_prefix     = "${local.product}.${local.environment}.consul."
     collectd_docker_tag = "${var.collectd_docker_tag}"
   }
 }

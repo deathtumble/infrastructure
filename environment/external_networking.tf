@@ -61,9 +61,9 @@ resource "aws_alb_target_group" "default" {
   vpc_id   = "${aws_vpc.default.id}"
 
   tags {
-    Name          = "default-${local.environment}"
-    Product       = "${local.product}"
-    Environment   = "${local.environment}"
+    Name        = "default-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
   }
 }
 
@@ -84,11 +84,12 @@ resource "aws_route53_record" "environment" {
   name    = "${local.environment}"
   type    = "NS"
   ttl     = 60
+
   records = [
     "${aws_route53_zone.environment.name_servers.0}",
     "${aws_route53_zone.environment.name_servers.1}",
     "${aws_route53_zone.environment.name_servers.2}",
-    "${aws_route53_zone.environment.name_servers.3}"
+    "${aws_route53_zone.environment.name_servers.3}",
   ]
 }
 
@@ -172,6 +173,5 @@ resource "aws_security_group" "alb" {
 variable "monitoring_cidrs" {
   type = "list"
 
-  default = [
-  ]
+  default = []
 }

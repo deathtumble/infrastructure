@@ -27,7 +27,7 @@ variable "task_status" {
 }
 
 variable "desired_task_count" {
-  type = "string"
+  type    = "string"
   default = "1"
 }
 
@@ -106,3 +106,4 @@ variable "desired_instance_count" {
 }
 
 */
+

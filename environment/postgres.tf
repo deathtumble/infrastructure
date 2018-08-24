@@ -1,6 +1,6 @@
 resource "aws_db_subnet_group" "default" {
-   name = "main-${local.environment}"
-   subnet_ids = ["${aws_subnet.av1.id}", "${aws_subnet.av2.id}"] 
+  name       = "main-${local.environment}"
+  subnet_ids = ["${aws_subnet.av1.id}", "${aws_subnet.av2.id}"]
 }
 
 resource "aws_security_group" "postgres" {
@@ -30,20 +30,18 @@ resource "aws_security_group" "postgres" {
   }
 }
 
-
 resource "aws_db_instance" "concourse" {
-  identifier = "${local.product}-${local.environment}" 
-  allocated_storage    = 20
-  storage_type         = "gp2"
-  engine               = "postgres"
-  engine_version       = "9.6.6"
-  instance_class       = "db.t2.micro"
-  name                 = "concourse"
-  username             = "concourse"
-  db_subnet_group_name = "${aws_db_subnet_group.default.name}"
-  password             = "${local.concourse_postgres_password}"
-  parameter_group_name = "default.postgres9.6"
+  identifier             = "${local.product}-${local.environment}"
+  allocated_storage      = 20
+  storage_type           = "gp2"
+  engine                 = "postgres"
+  engine_version         = "9.6.6"
+  instance_class         = "db.t2.micro"
+  name                   = "concourse"
+  username               = "concourse"
+  db_subnet_group_name   = "${aws_db_subnet_group.default.name}"
+  password               = "${local.concourse_postgres_password}"
+  parameter_group_name   = "default.postgres9.6"
   vpc_security_group_ids = ["${aws_security_group.postgres.id}"]
-  skip_final_snapshot = true
+  skip_final_snapshot    = true
 }
-

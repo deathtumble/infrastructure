@@ -24,15 +24,16 @@ variable "consul_task_status" {
 }
 
 variable "globals" {
-  type   = "map"
+  type = "map"
+
   default = {
-    product="" 
-    environment="" 
-    root_domain_name="" 
-    admin_cidr=""
-    nameTag=""
-    nexus_volume_id=""
-    monitoring_volume_id="" 
-    key_name=""
+    product              = ""
+    environment          = ""
+    root_domain_name     = ""
+    admin_cidr           = ""
+    nameTag              = ""
+    nexus_volume_id      = ""
+    monitoring_volume_id = ""
+    key_name             = ""
   }
 }

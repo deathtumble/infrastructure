@@ -38,6 +38,7 @@ variable "ecs_ami_id" {
   type    = "string"
   default = "ami-1f4749f5"
 }
+
 variable "concourse_task_status" {
   type    = "string"
   default = "up"
@@ -57,4 +58,3 @@ variable "monitoring_task_status" {
   type    = "string"
   default = "up"
 }
-

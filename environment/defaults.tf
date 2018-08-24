@@ -55,5 +55,3 @@ variable "consul_task_status" {
   type    = "string"
   default = "up"
 }
-
-

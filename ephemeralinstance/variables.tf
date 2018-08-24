@@ -1,11 +1,12 @@
 variable "globals" {
-  type   = "map"
+  type = "map"
+
   default = {
-    product="" 
-    environment="" 
-    admin_cidr=""
-    nameTag=""
-    key_name=""
+    product     = ""
+    environment = ""
+    admin_cidr  = ""
+    nameTag     = ""
+    key_name    = ""
   }
 }
 
@@ -39,7 +40,6 @@ variable "vpc_security_group_ids" {
 }
 
 variable "desired_instance_count" {
-  type = "string"
+  type    = "string"
   default = "1"
 }
-

@@ -15,14 +15,14 @@ resource "aws_alb_target_group" "this" {
   }
 
   tags {
-    Name          = "${var.role}-${var.environment}"
-    Product       = "${var.product}"
-    Environment   = "${var.environment}"
+    Name        = "${var.role}-${var.environment}"
+    Product     = "${var.product}"
+    Environment = "${var.environment}"
   }
- 
+
   lifecycle {
-     create_before_destroy = "true"
-  } 
+    create_before_destroy = "true"
+  }
 }
 
 resource "aws_route53_record" "this" {
@@ -63,12 +63,12 @@ resource "aws_ecs_service" "this" {
     container_name   = "${var.role}"
     container_port   = "${var.elb_instance_port}"
   }
-  
+
   depends_on = ["null_resource.alb_listener_exists"]
 }
 
 resource "null_resource" "alb_listener_exists" {
-   triggers {
-      listener_arn = "${var.aws_lb_listener_default_arn}"
-   }
+  triggers {
+    listener_arn = "${var.aws_lb_listener_default_arn}"
+  }
 }

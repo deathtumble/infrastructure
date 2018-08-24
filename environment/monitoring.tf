@@ -1,9 +1,11 @@
 module "monitoring-instance" {
   source = "../ebs-instance"
 
-  role = "monitoring"
-
-  globals = "${var.globals}"
+  role              = "monitoring"
+  vpc_id            = "${aws_vpc.default.id}"
+  availability_zone = "${var.availability_zone_1}"
+  ami_id            = "${var.ecs_ami_id}"
+  volume_id         = "${local.monitoring_volume_id}"
 
   vpc_security_group_ids = [
     "${aws_security_group.graphite.id}",
@@ -13,31 +15,26 @@ module "monitoring-instance" {
     "${aws_security_group.goss.id}",
   ]
 
-  volume_id = "${local.monitoring_volume_id}"
-
-  // globals
-  vpc_id                   = "${aws_vpc.default.id}"
-  availability_zone        = "${var.availability_zone_1}"
-  ami_id                   = "${var.ecs_ami_id}"
+  globals = "${var.globals}"
 }
 
 module "monitoring-ecs-alb" {
   source = "../ecs-alb"
 
-  elb_instance_port    = "3000"
-  healthcheck_protocol = "HTTP"
-  healthcheck_path     = "/api/health"
-  task_definition      = "monitoring-${local.environment}:${aws_ecs_task_definition.monitoring.revision}"
-  task_status          = "${var.monitoring_task_status}"
-  aws_lb_listener_default_arn = "${aws_alb_listener.default.arn}"
-  aws_lb_listener_rule_priority = 96
-  aws_route53_environment_zone_id      = "${aws_route53_zone.environment.zone_id}"
-  aws_alb_default_dns_name = "${aws_alb.default.dns_name}"
-  vpc_id                   = "${aws_vpc.default.id}"
-  role = "monitoring"
-  product = "${local.product}"
-  environment = "${local.environment}"
-  root_domain_name = "${local.root_domain_name}"
+  elb_instance_port               = "3000"
+  healthcheck_protocol            = "HTTP"
+  healthcheck_path                = "/api/health"
+  task_definition                 = "monitoring-${local.environment}:${aws_ecs_task_definition.monitoring.revision}"
+  task_status                     = "${var.monitoring_task_status}"
+  aws_lb_listener_default_arn     = "${aws_alb_listener.default.arn}"
+  aws_lb_listener_rule_priority   = 96
+  aws_route53_environment_zone_id = "${aws_route53_zone.environment.zone_id}"
+  aws_alb_default_dns_name        = "${aws_alb.default.dns_name}"
+  vpc_id                          = "${aws_vpc.default.id}"
+  role                            = "monitoring"
+  product                         = "${local.product}"
+  environment                     = "${local.environment}"
+  root_domain_name                = "${local.root_domain_name}"
 }
 
 resource "aws_ecs_task_definition" "monitoring" {

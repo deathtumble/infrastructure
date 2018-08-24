@@ -1,8 +1,7 @@
 data "aws_subnet" "av" {
-    vpc_id            = "${var.vpc_id}"
-    availability_zone = "${var.availability_zone}"
+  vpc_id            = "${var.vpc_id}"
+  availability_zone = "${var.availability_zone}"
 }
-
 
 resource "aws_instance" "this" {
   count                       = "${var.desired_instance_count}"
@@ -50,4 +49,3 @@ EOF
     Goss          = "true"
   }
 }
-
