@@ -1,4 +1,0 @@
-/output.json
-.terraform
-/terraform.tfstate
-/secrets.tf
