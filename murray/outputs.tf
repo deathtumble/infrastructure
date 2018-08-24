@@ -17,3 +17,7 @@ output "monitoring_task_count" {
 output "consul_task_count" {
    value = "${module.environment.consul_task_count}"
 }
+
+output "aws_alb_default_dns_name" {
+   value = "${module.environment.aws_alb_default_dns_name}"
+}
