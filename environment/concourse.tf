@@ -15,7 +15,6 @@ module "concourse-instance" {
   instance_type        = "t2.medium"
 
   // globals
-  aws_subnet_id            = "${aws_subnet.av1.id}"
   vpc_id                   = "${aws_vpc.default.id}"
   availability_zone        = "${var.availability_zone_1}"
   ami_id                   = "${var.ecs_ami_id}"

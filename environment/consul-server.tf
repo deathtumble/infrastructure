@@ -15,7 +15,6 @@ resource "aws_instance" "consul" {
     "${aws_security_group.consul.id}",
   ]
 
-  subnet_id                   = "${aws_subnet.av1.id}"
   associate_public_ip_address = "true"
   source_dest_check           = "true"
   iam_instance_profile        = "ecsinstancerole"

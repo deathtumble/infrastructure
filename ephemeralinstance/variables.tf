@@ -38,10 +38,6 @@ variable "vpc_security_group_ids" {
   type = "list"
 }
 
-variable "aws_subnet_id" {
-  type = "string"
-}
-
 variable "desired_instance_count" {
   type = "string"
   default = "1"

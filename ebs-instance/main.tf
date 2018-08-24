@@ -1,3 +1,8 @@
+data "aws_subnet" "av" {
+    vpc_id            = "${var.vpc_id}"
+    availability_zone = "${var.availability_zone}"
+}
+
 variable "mount-cloud-config" {
   type = "string"
 
@@ -34,7 +39,7 @@ resource "aws_instance" "this" {
   key_name                    = "${local.key_name}"
   monitoring                  = "false"
   vpc_security_group_ids      = ["${var.vpc_security_group_ids}"]
-  subnet_id                   = "${var.aws_subnet_id}"
+  subnet_id                   = "${data.aws_subnet.av.id}"
   associate_public_ip_address = "true"
   source_dest_check           = "true"
   iam_instance_profile        = "ecsinstancerole"
