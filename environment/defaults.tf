@@ -1,16 +1,3 @@
-variable "consul_server_count" {
-  type    = "string"
-  default = "3"
-}
-
-variable "consul_server_instance_names" {
-  default = {
-    "0" = "0"
-    "1" = "1"
-    "2" = "2"
-  }
-}
-
 variable "region" {
   type    = "string"
   default = "eu-west-1"

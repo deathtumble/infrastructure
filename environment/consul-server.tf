@@ -1,3 +1,16 @@
+variable "consul_server_count" {
+  type    = "string"
+  default = "3"
+}
+
+variable "consul_server_instance_names" {
+  default = {
+    "0" = "0"
+    "1" = "1"
+    "2" = "2"
+  }
+}
+
 resource "aws_instance" "consul" {
   count                   = "${var.consul_server_count}"
   ami                     = "${var.ecs_ami_id}"
