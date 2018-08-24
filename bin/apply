@@ -12,7 +12,7 @@ else
     $directory/support/slack terraform apply to ${environment} has failed
 fi    
 
-terraform output -json > output.json1
+terraform output -json > output.json
 
 address=$(jq ".aws_alb_default_dns_name.value" output.json -r ) 
 
