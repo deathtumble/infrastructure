@@ -20,7 +20,6 @@ module "nexus-instance" {
   // globals
   aws_subnet_id            = "${aws_subnet.av1.id}"
   vpc_id                   = "${aws_vpc.default.id}"
-  gateway_id               = "${aws_internet_gateway.default.id}"
   availability_zone        = "${var.availability_zone_1}"
   ami_id                   = "${var.ecs_ami_id}"
 }

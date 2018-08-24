@@ -38,10 +38,6 @@ variable "vpc_security_group_ids" {
   type = "list"
 }
 
-variable "gateway_id" {
-  type = "string"
-}
-
 variable "aws_subnet_id" {
   type = "string"
 }
