@@ -1,5 +1,5 @@
 data "aws_route53_zone" "selected" {
-  zone_id = "${local.aws_route53_zone_id}"
+  name = "${local.root_domain_name}."
 }
 
 variable "vpc_cidr" {

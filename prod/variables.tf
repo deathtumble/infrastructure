@@ -24,7 +24,6 @@ variable "globals" {
     product="" 
     environment="" 
     root_domain_name="" 
-    aws_route53_zone_id="" 
     admin_cidr=""
     nameTag=""
     nexus_volume_id=""

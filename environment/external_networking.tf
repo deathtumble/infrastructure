@@ -80,7 +80,7 @@ resource "aws_alb_listener" "default" {
 
 resource "aws_route53_record" "environment" {
   count   = "1"
-  zone_id = "${local.aws_route53_zone_id}"
+  zone_id = "${data.aws_route53_zone.selected.zone_id}"
   name    = "${local.environment}"
   type    = "NS"
   ttl     = 60
