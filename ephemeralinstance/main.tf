@@ -34,6 +34,7 @@ runcmd:
  - service modd start
  - service consul start
  - service cadvisor start
+ - service node_exporter start
 EOF
 
   tags {
