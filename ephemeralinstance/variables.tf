@@ -3,7 +3,6 @@ variable "globals" {
   default = {
     product="" 
     environment="" 
-    root_domain_name="" 
     admin_cidr=""
     nameTag=""
     key_name=""
