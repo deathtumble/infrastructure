@@ -82,6 +82,13 @@ resource "aws_security_group" "cadvisor" {
     cidr_blocks = ["${var.vpc_cidr}"]
   }
 
+  ingress {
+    from_port   = 9100
+    to_port     = 9100
+    protocol    = "tcp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
   tags {
     Name        = "cadvisor-${local.product}-${local.environment}"
     Product     = "${local.product}"
