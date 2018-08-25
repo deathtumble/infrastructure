@@ -40,10 +40,19 @@ resource "aws_ecs_task_definition" "dashing" {
             "essential": true,
             "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/smashing:${var.dashing_docker_tag}",
             "memory": 200,
+            "dnsServers": ["127.0.0.1"],
             "environment": [
                 {
                     "Name": "PORT",
                     "Value": "80"
+                },
+                {
+                    "Name": "AWS_PROXY_HOST",
+                    "Value": "aws_proxy.service.consul"
+                },
+                {
+                    "Name": "AWS_PROXY_PORT",
+                    "Value": "8081"
                 }
              ], 
             "portMappings": [
