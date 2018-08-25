@@ -1,7 +1,7 @@
 module "concourse-ecs-alb" {
   source = "../ecs-alb"
 
-  elb_instance_port               = "8085"
+  elb_instance_port               = "8080"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/public/images/favicon.png"
   task_definition                 = "concourse-${local.environment}:${aws_ecs_task_definition.concourse.revision}"
@@ -44,8 +44,8 @@ resource "aws_ecs_task_definition" "concourse" {
             "dnsServers": ["127.0.0.1"],
             "portMappings": [
                 {
-                  "hostPort": 8085,
-                  "containerPort": 8085,
+                  "hostPort": 8080,
+                  "containerPort": 8080,
                   "protocol": "tcp"
                 },
                 {
