@@ -25,8 +25,8 @@ variable "environment_cidr" {
  *                                    |___/   |___/                |_|        
  */
 
-resource "aws_security_group" "ssh" {
-  name = "ssh-${local.product}-${local.environment}"
+resource "aws_security_group" "os" {
+  name = "os-${local.product}-${local.environment}"
 
   vpc_id = "${aws_vpc.default.id}"
 
@@ -36,44 +36,6 @@ resource "aws_security_group" "ssh" {
     protocol    = "tcp"
     cidr_blocks = ["${var.vpc_cidr}", "${local.admin_cidr}"]
   }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags {
-    Name        = "ssh-${local.product}-${local.environment}"
-    Product     = "${local.product}"
-    Environment = "${local.environment}"
-  }
-}
-
-resource "aws_security_group" "goss" {
-  name = "goss-${local.product}-${local.environment}"
-
-  vpc_id = "${aws_vpc.default.id}"
-
-  ingress {
-    from_port   = 8082
-    to_port     = 8082
-    protocol    = "tcp"
-    cidr_blocks = ["${local.admin_cidr}", "${var.vpc_cidr}"]
-  }
-
-  tags {
-    Name        = "goss-${local.product}-${local.environment}"
-    Product     = "${local.product}"
-    Environment = "${local.environment}"
-  }
-}
-
-resource "aws_security_group" "cadvisor" {
-  name = "cadvisor-${local.product}-${local.environment}"
-
-  vpc_id = "${aws_vpc.default.id}"
 
   ingress {
     from_port   = 8080
@@ -89,11 +51,64 @@ resource "aws_security_group" "cadvisor" {
     cidr_blocks = ["${var.vpc_cidr}"]
   }
 
+  ingress {
+    from_port   = 8082
+    to_port     = 8082
+    protocol    = "tcp"
+    cidr_blocks = ["${local.admin_cidr}", "${var.vpc_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8301
+    to_port     = 8301
+    protocol    = "tcp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8301
+    to_port     = 8301
+    protocol    = "udp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8500
+    to_port     = 8500
+    protocol    = "tcp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8600
+    to_port     = 8600
+    protocol    = "tcp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
+  ingress {
+    from_port   = 8600
+    to_port     = 8600
+    protocol    = "udp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   tags {
-    Name        = "cadvisor-${local.product}-${local.environment}"
+    Name        = "os-${local.product}-${local.environment}"
     Product     = "${local.product}"
     Environment = "${local.environment}"
   }
+  
+  lifecycle {
+    create_before_destroy = true
+  }  
 }
 
 

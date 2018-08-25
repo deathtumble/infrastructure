@@ -24,8 +24,7 @@ resource "aws_instance" "consul" {
   subnet_id               = "${aws_subnet.av1.id}"
 
   vpc_security_group_ids = [
-    "${aws_security_group.ssh.id}",
-    "${aws_security_group.cadvisor.id}",
+    "${aws_security_group.os.id}",
     "${aws_security_group.consul.id}",
   ]
 
@@ -231,53 +230,6 @@ resource "aws_security_group" "consul" {
 
   tags {
     Name        = "consul-${local.product}-${local.environment}"
-    Product     = "${local.product}"
-    Environment = "${local.environment}"
-  }
-}
-
-resource "aws_security_group" "consul-client" {
-  name = "consul-client-${local.product}-${local.environment}"
-
-  vpc_id = "${aws_vpc.default.id}"
-
-  ingress {
-    from_port   = 8301
-    to_port     = 8301
-    protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  ingress {
-    from_port   = 8301
-    to_port     = 8301
-    protocol    = "udp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  ingress {
-    from_port   = 8500
-    to_port     = 8500
-    protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  ingress {
-    from_port   = 8600
-    to_port     = 8600
-    protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  ingress {
-    from_port   = 8600
-    to_port     = 8600
-    protocol    = "udp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  tags {
-    Name        = "consul-client-${local.product}-${local.environment}"
     Product     = "${local.product}"
     Environment = "${local.environment}"
   }

@@ -14,9 +14,7 @@ module "default-instance" {
     "${aws_security_group.aws-proxy.id}",
     "${aws_security_group.dashing.id}",
     "${aws_security_group.concourse.id}",
-    "${aws_security_group.ssh.id}",
-    "${aws_security_group.cadvisor.id}",
-    "${aws_security_group.consul-client.id}",
+    "${aws_security_group.os.id}",
   ]
 
   globals = "${var.globals}"

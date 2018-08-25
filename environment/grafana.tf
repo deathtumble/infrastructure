@@ -9,10 +9,7 @@ module "grafana-instance" {
   volume_id         = "${local.grafana_volume_id}"
 
   vpc_security_group_ids = [
-    "${aws_security_group.ssh.id}",
-    "${aws_security_group.cadvisor.id}",
-    "${aws_security_group.consul-client.id}",
-    "${aws_security_group.goss.id}",
+    "${aws_security_group.os.id}",
     "${aws_security_group.grafana.id}",
   ]
 

@@ -11,10 +11,7 @@ module "nexus-instance" {
   
   vpc_security_group_ids = [
     "${aws_security_group.nexus.id}",
-    "${aws_security_group.ssh.id}",
-    "${aws_security_group.consul-client.id}",
-    "${aws_security_group.cadvisor.id}",
-    "${aws_security_group.goss.id}",
+    "${aws_security_group.os.id}",
   ]
 
   globals = "${var.globals}"
