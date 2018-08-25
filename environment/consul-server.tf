@@ -21,6 +21,7 @@ resource "aws_instance" "consul" {
   instance_type           = "t2.small"
   key_name                = "${local.key_name}"
   monitoring              = "false"
+  subnet_id               = "${aws_subnet.av1.id}"
 
   vpc_security_group_ids = [
     "${aws_security_group.ssh.id}",
