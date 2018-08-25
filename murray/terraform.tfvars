@@ -6,5 +6,5 @@ globals = {
   root_domain_name="urbanfortress.uk" 
   admin_cidr="0.0.0.0/0"
   nexus_volume_id="vol-0c80683f4a8142d69"
-  monitoring_volume_id="vol-0a53b71d35611d427" 
+  grafana_volume_id="vol-0a53b71d35611d427" 
 }

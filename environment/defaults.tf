@@ -28,7 +28,7 @@ variable "dashing_task_status" {
   default = "up"
 }
 
-variable "monitoring_task_status" {
+variable "grafana_task_status" {
   type    = "string"
   default = "up"
 }

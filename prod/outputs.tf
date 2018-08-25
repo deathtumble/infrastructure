@@ -10,8 +10,8 @@ output "concourse_task_count" {
   value = "${module.prod.concourse_task_count}"
 }
 
-output "monitoring_task_count" {
-  value = "${module.prod.monitoring_task_count}"
+output "grafana_task_count" {
+  value = "${module.prod.grafana_task_count}"
 }
 
 output "consul_task_count" {

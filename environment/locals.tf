@@ -1,6 +1,6 @@
 locals {
   nexus_volume_id      = "${var.globals["nexus_volume_id"]}"
-  monitoring_volume_id = "${var.globals["monitoring_volume_id"]}"
+  grafana_volume_id    = "${var.globals["grafana_volume_id"]}"
   key_name             = "${var.globals["key_name"]}"
   root_domain_name     = "${var.globals["root_domain_name"]}"
   product              = "${var.globals["product"]}"

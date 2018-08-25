@@ -13,7 +13,7 @@ variable "dashing_task_status" {
   default = "up"
 }
 
-variable "monitoring_task_status" {
+variable "grafana_task_status" {
   type    = "string"
   default = "up"
 }
@@ -33,7 +33,7 @@ variable "globals" {
     admin_cidr           = ""
     nameTag              = ""
     nexus_volume_id      = ""
-    monitoring_volume_id = ""
+    grafana_volume_id    = ""
     key_name             = ""
   }
 }

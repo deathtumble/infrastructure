@@ -10,8 +10,8 @@ output "concourse_task_count" {
   value = "${module.concourse-ecs-alb.task_count}"
 }
 
-output "monitoring_task_count" {
-  value = "${module.monitoring-ecs-alb.task_count}"
+output "grafana_task_count" {
+  value = "${module.grafana-ecs-alb.task_count}"
 }
 
 output "consul_task_count" {

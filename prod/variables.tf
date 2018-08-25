@@ -28,7 +28,7 @@ variable "globals" {
     admin_cidr           = ""
     nameTag              = ""
     nexus_volume_id      = ""
-    monitoring_volume_id = ""
+    grafana_volume_id    = ""
     key_name             = ""
   }
 }

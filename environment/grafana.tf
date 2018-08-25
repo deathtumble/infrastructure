@@ -1,14 +1,13 @@
-module "monitoring-instance" {
+module "grafana-instance" {
   source = "../ebs-instance"
 
-  role              = "monitoring"
+  role              = "grafana"
   vpc_id            = "${aws_vpc.default.id}"
   availability_zone = "${var.availability_zone_1}"
   ami_id            = "${var.ecs_ami_id}"
-  volume_id         = "${local.monitoring_volume_id}"
+  volume_id         = "${local.grafana_volume_id}"
 
   vpc_security_group_ids = [
-    "${aws_security_group.graphite.id}",
     "${aws_security_group.ssh.id}",
     "${aws_security_group.cadvisor.id}",
     "${aws_security_group.consul-client.id}",
@@ -18,27 +17,27 @@ module "monitoring-instance" {
   globals = "${var.globals}"
 }
 
-module "monitoring-ecs-alb" {
+module "grafana-ecs-alb" {
   source = "../ecs-alb"
 
   elb_instance_port               = "3000"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/api/health"
-  task_definition                 = "monitoring-${local.environment}:${aws_ecs_task_definition.monitoring.revision}"
-  task_status                     = "${var.monitoring_task_status}"
+  task_definition                 = "grafana-${local.environment}:${aws_ecs_task_definition.grafana.revision}"
+  task_status                     = "${var.grafana_task_status}"
   aws_lb_listener_default_arn     = "${aws_alb_listener.default.arn}"
   aws_lb_listener_rule_priority   = 96
   aws_route53_environment_zone_id = "${aws_route53_zone.environment.zone_id}"
   aws_alb_default_dns_name        = "${aws_alb.default.dns_name}"
   vpc_id                          = "${aws_vpc.default.id}"
-  role                            = "monitoring"
+  role                            = "grafana"
   product                         = "${local.product}"
   environment                     = "${local.environment}"
   root_domain_name                = "${local.root_domain_name}"
 }
 
-resource "aws_ecs_task_definition" "monitoring" {
-  family       = "monitoring-${local.environment}"
+resource "aws_ecs_task_definition" "grafana" {
+  family       = "grafana-${local.environment}"
   network_mode = "host"
 
   volume {
@@ -64,7 +63,7 @@ resource "aws_ecs_task_definition" "monitoring" {
   container_definitions = <<DEFINITION
 	[
     	{
-		    "name": "monitoring",
+		    "name": "grafana",
 		    "cpu": 0,
 		    "essential": true,
 		    "image": "grafana/grafana:5.1.0",
@@ -96,39 +95,6 @@ resource "aws_ecs_task_definition" "monitoring" {
       	}
 	]
     DEFINITION
-}
-
-resource "aws_security_group" "graphite" {
-  name = "graphite-${local.product}-${local.environment}"
-
-  vpc_id = "${aws_vpc.default.id}"
-
-  ingress {
-    from_port   = 2003
-    to_port     = 2003
-    protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  ingress {
-    from_port   = 3000
-    to_port     = 3000
-    protocol    = "udp"
-    cidr_blocks = ["${var.vpc_cidr}", "${local.admin_cidr}"]
-  }
-
-  ingress {
-    from_port   = 3000
-    to_port     = 3000
-    protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}", "${local.admin_cidr}"]
-  }
-
-  tags {
-    Name        = "graphite-${local.product}-${local.environment}"
-    Product     = "${local.product}"
-    Environment = "${local.environment}"
-  }
 }
 
 resource "aws_security_group" "grafana" {
