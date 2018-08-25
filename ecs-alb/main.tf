@@ -48,13 +48,9 @@ resource "aws_lb_listener_rule" "host_based_routing" {
   }
 }
 
-resource "aws_ecs_cluster" "this" {
-  name = "${var.role}-${var.environment}"
-}
-
 resource "aws_ecs_service" "this" {
   name            = "${var.role}-${var.environment}"
-  cluster         = "${var.role}-${var.environment}"
+  cluster         = "${var.cluster_name}-${var.environment}"
   task_definition = "${var.task_definition}"
   desired_count   = "${var.task_status == "down" ? 0 : var.desired_task_count}"
 

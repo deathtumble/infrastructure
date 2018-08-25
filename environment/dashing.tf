@@ -1,22 +1,3 @@
-module "dashing-instance" {
-  source = "../ephemeralinstance"
-
-  role              = "dashing"
-  instance_type     = "t2.medium"
-  vpc_id            = "${aws_vpc.default.id}"
-  availability_zone = "${var.availability_zone_1}"
-  ami_id            = "${var.ecs_ami_id}"
-
-  vpc_security_group_ids = [
-    "${aws_security_group.dashing.id}",
-    "${aws_security_group.ssh.id}",
-    "${aws_security_group.cadvisor.id}",
-    "${aws_security_group.consul-client.id}",
-  ]
-
-  globals = "${var.globals}"
-}
-
 module "dashing-ecs-alb" {
   source = "../ecs-alb"
 
@@ -34,6 +15,7 @@ module "dashing-ecs-alb" {
   product                         = "${local.product}"
   environment                     = "${local.environment}"
   root_domain_name                = "${local.root_domain_name}"
+  cluster_name                    = "default"
 }
 
 resource "aws_ecs_task_definition" "dashing" {
@@ -83,46 +65,6 @@ resource "aws_ecs_task_definition" "dashing" {
                   "readOnly": false
                 }
             ]
-        },
-        {
-            "name": "aws-proxy",
-            "cpu": 0,
-            "essential": false,
-            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/aws-proxy:${var.aws_proxy_docker_tag}",
-            "memory": 500,
-            "environment": [
-                {
-                    "Name": "AWS_ACCESS_KEY_ID",
-                    "Value": "${local.aws-proxy_access_id}"
-                },
-                {
-                    "Name": "AWS_SECRET_ACCESS_KEY",
-                    "Value": "${local.aws-proxy_secret_access_key}"
-                },
-                {
-                    "Name": "aws.region",
-                    "Value": "${var.region}"
-                }
-             ], 
-            "portMappings": [
-                {
-                  "hostPort": 8081,
-                  "containerPort": 8080,
-                  "protocol": "tcp"
-                }
-            ],
-            "mountPoints": [
-                {
-                  "sourceVolume": "consul_config",
-                  "containerPath": "/etc/consul",
-                  "readOnly": false
-                },
-                {
-                  "sourceVolume": "goss_config",
-                  "containerPath": "/etc/goss",
-                  "readOnly": false
-                }
-            ]
         }
     ]
     DEFINITION
@@ -139,13 +81,6 @@ resource "aws_security_group" "dashing" {
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 8082
-    to_port     = 8082
-    protocol    = "tcp"
-    cidr_blocks = ["${local.admin_cidr}", "${var.vpc_cidr}"]
   }
 
   egress {

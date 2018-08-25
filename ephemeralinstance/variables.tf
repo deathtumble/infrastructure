@@ -10,6 +10,15 @@ variable "globals" {
   }
 }
 
+variable "count" {
+  type = "string"
+  default = "1" 
+}
+
+variable "cluster_name" {
+  type = "string" 
+}
+
 variable "region" {
   type    = "string"
   default = "eu-west-1"
@@ -37,9 +46,4 @@ variable "vpc_id" {
 
 variable "vpc_security_group_ids" {
   type = "list"
-}
-
-variable "desired_instance_count" {
-  type    = "string"
-  default = "1"
 }

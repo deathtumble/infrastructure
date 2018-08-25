@@ -5,6 +5,7 @@ module "grafana-instance" {
   vpc_id            = "${aws_vpc.default.id}"
   availability_zone = "${var.availability_zone_1}"
   ami_id            = "${var.ecs_ami_id}"
+  cluster_name      = "grafana"
   volume_id         = "${local.grafana_volume_id}"
 
   vpc_security_group_ids = [
@@ -12,6 +13,7 @@ module "grafana-instance" {
     "${aws_security_group.cadvisor.id}",
     "${aws_security_group.consul-client.id}",
     "${aws_security_group.goss.id}",
+    "${aws_security_group.grafana.id}",
   ]
 
   globals = "${var.globals}"
@@ -34,6 +36,11 @@ module "grafana-ecs-alb" {
   product                         = "${local.product}"
   environment                     = "${local.environment}"
   root_domain_name                = "${local.root_domain_name}"
+  cluster_name                    = "grafana"
+}
+
+resource "aws_ecs_cluster" "grafana" {
+  name = "grafana-${local.environment}"
 }
 
 resource "aws_ecs_task_definition" "grafana" {
@@ -104,8 +111,8 @@ resource "aws_security_group" "grafana" {
   vpc_id      = "${aws_vpc.default.id}"
 
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 3000
+    to_port     = 3000
     protocol    = "tcp"
     cidr_blocks = ["${local.admin_cidr}"]
   }

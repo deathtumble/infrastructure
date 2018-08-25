@@ -1,22 +1,3 @@
-module "concourse-instance" {
-  source = "../ephemeralinstance"
-
-  role              = "concourse"
-  instance_type     = "t2.medium"
-  vpc_id            = "${aws_vpc.default.id}"
-  availability_zone = "${var.availability_zone_1}"
-  ami_id            = "${var.ecs_ami_id}"
-
-  vpc_security_group_ids = [
-    "${aws_security_group.concourse.id}",
-    "${aws_security_group.ssh.id}",
-    "${aws_security_group.cadvisor.id}",
-    "${aws_security_group.consul-client.id}",
-  ]
-
-  globals = "${var.globals}"
-}
-
 module "concourse-ecs-alb" {
   source = "../ecs-alb"
 
@@ -25,8 +6,8 @@ module "concourse-ecs-alb" {
   healthcheck_path                = "/public/images/favicon.png"
   task_definition                 = "concourse-${local.environment}:${aws_ecs_task_definition.concourse.revision}"
   task_status                     = "${var.concourse_task_status}"
-  aws_lb_listener_default_arn     = "${aws_alb_listener.default.arn}"
   aws_lb_listener_rule_priority   = 98
+  aws_lb_listener_default_arn     = "${aws_alb_listener.default.arn}"
   aws_route53_environment_zone_id = "${aws_route53_zone.environment.zone_id}"
   aws_alb_default_dns_name        = "${aws_alb.default.dns_name}"
   vpc_id                          = "${aws_vpc.default.id}"
@@ -34,11 +15,12 @@ module "concourse-ecs-alb" {
   product                         = "${local.product}"
   environment                     = "${local.environment}"
   root_domain_name                = "${local.root_domain_name}"
+  cluster_name                    = "default"
 }
 
 resource "aws_ecs_task_definition" "concourse" {
   family       = "concourse-${local.environment}"
-  network_mode = "bridge"
+  network_mode = "host"
   depends_on   = ["aws_db_instance.concourse"]
 
   volume {
@@ -138,24 +120,17 @@ resource "aws_security_group" "concourse" {
   }
 
   ingress {
-    from_port   = 8082
-    to_port     = 8082
-    protocol    = "tcp"
-    cidr_blocks = ["${local.admin_cidr}", "${var.vpc_cidr}"]
-  }
-
-  ingress {
     from_port   = 2222
     to_port     = 2222
     protocol    = "tcp"
-    cidr_blocks = ["${local.admin_cidr}", "${var.vpc_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}"]
   }
 
   ingress {
     from_port   = 2222
     to_port     = 2222
     protocol    = "udp"
-    cidr_blocks = ["${local.admin_cidr}", "${var.vpc_cidr}"]
+    cidr_blocks = ["${var.vpc_cidr}"]
   }
 
   egress {

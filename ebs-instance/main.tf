@@ -1,3 +1,14 @@
+variable "server_instance_names" {
+  default = {
+    "0" = "0"
+    "1" = "1"
+    "2" = "2"
+    "3" = "3"
+    "4" = "4"
+    "5" = "5"
+  }
+}
+
 data "aws_subnet" "av" {
   vpc_id            = "${var.vpc_id}"
   availability_zone = "${var.availability_zone}"
@@ -49,7 +60,7 @@ resource "aws_instance" "this" {
 #cloud-config
 hostname: ${var.role}    
 write_files:
- - content: ECS_CLUSTER=${var.role}-${local.environment}
+ - content: ECS_CLUSTER=${var.cluster_name}-${local.environment}
    path: /etc/ecs/ecs.config   
    permissions: '0644'
  - content: |
@@ -68,10 +79,10 @@ ${var.volume_id == "" ? var.no-mount-cloud-config : var.mount-cloud-config}
 EOF
 
   tags {
-    Name          = "${var.role}"
+    Name          = "${var.role}-${lookup(var.server_instance_names, count.index)}"
     Product       = "${local.product}"
     Environment   = "${local.environment}"
-    ConsulCluster = "${var.role}"
+    ConsulCluster = "${local.product}-${local.environment}"
     Goss          = "true"
   }
 }

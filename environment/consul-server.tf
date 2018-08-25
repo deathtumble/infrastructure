@@ -48,7 +48,7 @@ runcmd:
 EOF
 
   tags {
-    Name          = "consul-${lookup(var.consul_server_instance_names, count.index)}"
+    Name          = "consul-${lookup(var.server_instance_names, count.index)}"
     Product       = "${local.product}"
     Environment   = "${local.environment}"
     ConsulCluster = "${local.product}-${local.environment}"
@@ -74,11 +74,16 @@ module "consul-ecs-alb" {
   product                         = "${local.product}"
   environment                     = "${local.environment}"
   root_domain_name                = "${local.root_domain_name}"
+  cluster_name                    = "consul"
+}
+
+resource "aws_ecs_cluster" "consul" {
+  name = "consul-${local.environment}"
 }
 
 resource "aws_ecs_task_definition" "consul" {
   family       = "consul-${local.environment}"
-  network_mode = "bridge"
+  network_mode = "host"
 
   container_definitions = <<DEFINITION
     [

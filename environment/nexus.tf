@@ -6,7 +6,8 @@ module "nexus-instance" {
   vpc_id            = "${aws_vpc.default.id}"
   availability_zone = "${var.availability_zone_1}"
   ami_id            = "${var.ecs_ami_id}"
-  volume_id = "${local.nexus_volume_id}"
+  cluster_name      = "nexus"
+  volume_id         = "${local.nexus_volume_id}"
   
   vpc_security_group_ids = [
     "${aws_security_group.nexus.id}",
@@ -36,6 +37,11 @@ module "nexus-ecs-alb" {
   product                         = "${local.product}"
   environment                     = "${local.environment}"
   root_domain_name                = "${local.root_domain_name}"
+  cluster_name                    = "nexus"
+}
+
+resource "aws_ecs_cluster" "nexus" {
+  name = "nexus-${local.environment}"
 }
 
 resource "aws_ecs_task_definition" "nexus" {

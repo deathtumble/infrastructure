@@ -6,6 +6,7 @@ module "prometheus" {
   vpc_id            = "${aws_vpc.default.id}"
   availability_zone = "${var.availability_zone_1}"
   ami_id            = "${var.ecs_ami_id}"
+  cluster_name      = "prometheus"
 
   vpc_security_group_ids = [
     "${aws_security_group.prometheus.id}",
@@ -35,6 +36,11 @@ module "prometheus-ecs-alb" {
   product                         = "${local.product}"
   environment                     = "${local.environment}"
   root_domain_name                = "${local.root_domain_name}"
+  cluster_name                    = "prometheus"
+}
+
+resource "aws_ecs_cluster" "prometheus" {
+  name = "prometheus-${local.environment}"
 }
 
 resource "aws_ecs_task_definition" "prometheus" {

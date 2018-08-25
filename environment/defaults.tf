@@ -28,6 +28,11 @@ variable "dashing_task_status" {
   default = "up"
 }
 
+variable "aws_proxy_task_status" {
+  type    = "string"
+  default = "up"
+}
+
 variable "grafana_task_status" {
   type    = "string"
   default = "up"
@@ -42,3 +47,15 @@ variable "consul_task_status" {
   type    = "string"
   default = "up"
 }
+
+variable "server_instance_names" {
+  default = {
+    "0" = "0"
+    "1" = "1"
+    "2" = "2"
+    "3" = "3"
+    "4" = "4"
+    "5" = "5"
+  }
+}
+
