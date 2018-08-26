@@ -1,5 +1,5 @@
 module "grafana" {
-  source = "../grafana"
+  source = "../modules/grafana"
   
   docker_tag                   = "${var.grafana_docker_tag}"
   task_status                  = "${var.grafana_task_status}"

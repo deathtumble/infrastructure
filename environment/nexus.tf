@@ -1,5 +1,5 @@
 module "nexus-instance" {
-  source = "../ebs-instance"
+  source = "../modules/ebs-instance"
 
   instance_type     = "t2.medium"
   vpc_id            = "${aws_vpc.default.id}"
@@ -18,7 +18,7 @@ module "nexus-instance" {
 }
 
 module "nexus-ecs-alb" {
-  source = "../ecs-alb"
+  source = "../modules/ecs-alb"
 
   elb_instance_port               = "8081"
   healthcheck_protocol            = "HTTP"

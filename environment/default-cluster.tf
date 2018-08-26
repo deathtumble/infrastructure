@@ -1,6 +1,6 @@
 
 module "default-instance" {
-  source = "../no-ebs-instance"
+  source = "../modules/no-ebs-instance"
 
   count             = "3"
   instance_type     = "t2.medium"

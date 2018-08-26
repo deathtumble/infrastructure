@@ -1,5 +1,5 @@
 module "concourse_web" {
-  source = "../concourse-web"
+  source = "../modules/concourse-web"
   
   docker_tag                        = "${var.concourse_docker_tag}"
   task_status                       = "${var.concourse_task_status}"

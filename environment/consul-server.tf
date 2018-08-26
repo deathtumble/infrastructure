@@ -1,5 +1,5 @@
 module "consul-instance" {
-  source = "../no-ebs-instance"
+  source = "../modules/no-ebs-instance"
 
   count             = "3"
   instance_type     = "t2.small"
@@ -19,7 +19,7 @@ module "consul-instance" {
 }
 
 module "consul-ecs-alb" {
-  source = "../ecs-alb"
+  source = "../modules/ecs-alb"
 
   elb_instance_port               = "8500"
   healthcheck_protocol            = "HTTP"

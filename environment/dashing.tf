@@ -1,5 +1,5 @@
 module "dashing" {
-  source = "../dashing"
+  source = "../modules/dashing"
   
   docker_tag  = "${var.dashing_docker_tag}"
   task_status = "${var.dashing_task_status}"

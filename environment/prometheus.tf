@@ -1,5 +1,5 @@
 module "prometheus" {
-  source = "../prometheus"
+  source = "../modules/prometheus"
   
   prometheus_secret_access_key = "${local.prometheus_secret_access_key}"
   prometheus_access_id         = "${local.prometheus_access_id}"
