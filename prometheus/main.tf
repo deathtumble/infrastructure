@@ -2,15 +2,15 @@ module "prometheus-instance" {
   source = "../ephemeralinstance"
 
   instance_type     = "t2.medium"
-  vpc_id            = "${var.vpc_id}"
-  availability_zone = "${var.availability_zone}"
-  subnet_id         = "${var.subnet_id}"
-  ami_id            = "${var.ecs_ami_id}"
+  vpc_id            = "${local.vpc_id}"
+  availability_zone = "${local.availability_zone}"
+  subnet_id         = "${local.subnet_id}"
+  ami_id            = "${local.ecs_ami_id}"
   cluster_name      = "prometheus"
 
   vpc_security_group_ids = [
     "${aws_security_group.prometheus.id}",
-    "${var.aws_security_group_os_id}",
+    "${local.aws_security_group_os_id}",
   ]
 
   globals = "${var.globals}"
@@ -24,11 +24,11 @@ module "prometheus-ecs-alb" {
   healthcheck_path                = "/graph"
   task_definition                 = "prometheus-${local.environment}:${aws_ecs_task_definition.prometheus.revision}"
   task_status                     = "${var.task_status}"
-  aws_lb_listener_default_arn     = "${var.aws_lb_listener_default_arn}"
+  aws_lb_listener_default_arn     = "${local.aws_lb_listener_default_arn}"
   aws_lb_listener_rule_priority   = 93
-  aws_route53_environment_zone_id = "${var.aws_route53_environment_zone_id}"
-  aws_alb_default_dns_name        = "${var.aws_alb_default_dns_name}"
-  vpc_id                          = "${var.vpc_id}"
+  aws_route53_environment_zone_id = "${local.aws_route53_environment_zone_id}"
+  aws_alb_default_dns_name        = "${local.aws_alb_default_dns_name}"
+  vpc_id                          = "${local.vpc_id}"
   product                         = "${local.product}"
   environment                     = "${local.environment}"
   root_domain_name                = "${local.root_domain_name}"
@@ -75,7 +75,7 @@ resource "aws_ecs_task_definition" "prometheus" {
                 },
                 {
                     "Name": "aws.region",
-                    "Value": "${var.region}"
+                    "Value": "${local.region}"
                 }
              ], 
             "portMappings": [
@@ -106,7 +106,7 @@ resource "aws_security_group" "prometheus" {
   name = "prometheus"
 
   description = "prometheus security group"
-  vpc_id      = "${var.vpc_id}"
+  vpc_id      = "${local.vpc_id}"
 
   ingress {
     from_port   = 9090

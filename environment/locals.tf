@@ -20,4 +20,19 @@ locals {
   concourse_session_signing_key_value    = "${var.secrets["concourse_session_signing_key_value"]}"
   concourse_tsa_public_key_value         = "${var.secrets["concourse_tsa_public_key_value"]}"
   concourse_tsa_worker_private_key_value = "${var.secrets["concourse_tsa_worker_private_key_value"]}"
+  
+  vpc = {
+      region                          = "${var.region}"
+      aws_security_group_os_id        = "${aws_security_group.os.id}"
+      aws_route53_environment_zone_id = "${aws_route53_zone.environment.zone_id}"
+      aws_lb_listener_default_arn     = "${aws_alb_listener.default.arn}"
+      aws_alb_default_dns_name        = "${aws_alb.default.dns_name}"
+      vpc_id                          = "${aws_vpc.default.id}"
+      ecs_ami_id                      = "${var.ecs_ami_id}"
+  }
+  
+  az1 = {
+      availability_zone               = "${var.availability_zone_1}"
+      subnet_id                       = "${aws_subnet.av1.id}"
+  }
 }
