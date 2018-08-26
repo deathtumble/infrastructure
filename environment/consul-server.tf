@@ -1,58 +1,21 @@
-variable "consul_server_count" {
-  type    = "string"
-  default = "3"
-}
+module "consul-instance" {
+  source = "../ephemeralinstance"
 
-variable "consul_server_instance_names" {
-  default = {
-    "0" = "0"
-    "1" = "1"
-    "2" = "2"
-  }
-}
-
-resource "aws_instance" "consul" {
-  count                   = "${var.consul_server_count}"
-  ami                     = "${var.ecs_ami_id}"
-  availability_zone       = "${var.availability_zone_1}"
-  tenancy                 = "default"
-  ebs_optimized           = "false"
-  disable_api_termination = "false"
-  instance_type           = "t2.small"
-  key_name                = "${local.key_name}"
-  monitoring              = "false"
-  subnet_id               = "${aws_subnet.av1.id}"
+  count             = "3"
+  instance_type     = "t2.small"
+  vpc_id            = "${aws_vpc.default.id}"
+  availability_zone = "${var.availability_zone_1}"
+  subnet_id         = "${aws_subnet.av1.id}"
+  ami_id            = "${var.ecs_ami_id}"
+  cluster_name      = "consul"
+  consul-service    = "no"
 
   vpc_security_group_ids = [
     "${aws_security_group.os.id}",
     "${aws_security_group.consul.id}",
   ]
 
-  associate_public_ip_address = "true"
-  source_dest_check           = "true"
-  iam_instance_profile        = "ecsinstancerole"
-  ipv6_address_count          = "0"
-
-  user_data = <<EOF
-#cloud-config
-write_files:
- - content: ECS_CLUSTER=consul-${local.environment}
-   path: /etc/ecs/ecs.config   
-   permissions: '0644'
-runcmd:
- - service goss start
- - service modd start
- - service cadvisor start
- - service node_exporter start
-EOF
-
-  tags {
-    Name          = "consul-${lookup(var.server_instance_names, count.index)}"
-    Product       = "${local.product}"
-    Environment   = "${local.environment}"
-    ConsulCluster = "${local.product}-${local.environment}"
-    Goss          = "true"
-  }
+  globals = "${var.globals}"
 }
 
 module "consul-ecs-alb" {
