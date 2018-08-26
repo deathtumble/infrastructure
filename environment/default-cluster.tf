@@ -7,6 +7,7 @@ module "default-instance" {
   instance_type     = "t2.medium"
   vpc_id            = "${aws_vpc.default.id}"
   availability_zone = "${var.availability_zone_1}"
+  subnet_id         = "${aws_subnet.av1.id}"
   ami_id            = "${var.ecs_ami_id}"
   cluster_name      = "default"
 

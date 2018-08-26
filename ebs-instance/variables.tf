@@ -31,6 +31,10 @@ variable "availability_zone" {
   type = "string"
 }
 
+variable "subnet_id" {
+  type = "string"
+}
+
 variable "instance_type" {
   default = "t2.small"
 }
