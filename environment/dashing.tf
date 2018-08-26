@@ -20,7 +20,7 @@ module "dashing-ecs-alb" {
 
 resource "aws_ecs_task_definition" "dashing" {
   family       = "dashing-${local.environment}"
-  network_mode = "bridge"
+  network_mode = "host"
 
   volume {
     name      = "consul_config"
