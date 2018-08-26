@@ -1,5 +1,5 @@
 module "consul-instance" {
-  source = "../ephemeralinstance"
+  source = "../no-ebs-instance"
 
   count             = "3"
   instance_type     = "t2.small"

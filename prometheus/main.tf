@@ -1,5 +1,5 @@
 module "prometheus-instance" {
-  source = "../ephemeralinstance"
+  source = "../no-ebs-instance"
 
   instance_type     = "t2.medium"
   vpc_id            = "${local.vpc_id}"
