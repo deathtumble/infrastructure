@@ -59,5 +59,5 @@ variable "concourse_docker_tag" {
 
 variable "prometheus_docker_tag" {
   type    = "string"
-  default = "ba1ee87"
+  default = "8a983d4"
 }
