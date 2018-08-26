@@ -156,7 +156,7 @@ resource "aws_security_group" "concourse" {
 
 resource "aws_db_subnet_group" "concourse_db" {
   name       = "concourse-db-${local.environment}"
-  subnet_ids = ["${var.aws_subnet_av1_id}", "${var.aws_subnet_av2_id}"]
+  subnet_ids = ["${var.subnet_ids}"]
 }
 
 resource "aws_security_group" "concourse_db" {

@@ -6,12 +6,8 @@ variable "task_status" {
   type = "string"
 }
 
-variable "aws_subnet_av1_id" {
-  type = "string"
-}
-
-variable "aws_subnet_av2_id" {
-  type = "string"
+variable "subnet_ids" {
+  type = "list"
 }
 
 variable "concourse_password" {
