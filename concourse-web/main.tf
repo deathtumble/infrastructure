@@ -32,6 +32,8 @@ resource "aws_ecs_task_definition" "concourse" {
     name      = "goss_config"
     host_path = "/etc/goss"
   }
+  
+  depends_on = ["aws_db_instance.concourse"]
 
   container_definitions = <<DEFINITION
     [
@@ -70,7 +72,7 @@ resource "aws_ecs_task_definition" "concourse" {
                 }, 
                 {
                     "Name": "CONCOURSE_POSTGRES_HOST",
-                    "Value": "${var.aws_db_instance_concourse_address}"
+                    "Value": "${aws_db_instance.concourse.address}"
                 }, 
                 {
                     "Name": "CONCOURSE_POSTGRES_USER",
@@ -151,3 +153,52 @@ resource "aws_security_group" "concourse" {
     create_before_destroy = "true"
   }
 }
+
+resource "aws_db_subnet_group" "concourse_db" {
+  name       = "concourse-db-${local.environment}"
+  subnet_ids = ["${var.aws_subnet_av1_id}", "${var.aws_subnet_av2_id}"]
+}
+
+resource "aws_security_group" "concourse_db" {
+  name = "concourse-db-${local.environment}"
+
+  description = "dashing security group"
+  vpc_id      = "${local.vpc_id}"
+
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["${local.vpc_cidr}"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags {
+    Name        = "postgres-${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
+  }
+}
+
+resource "aws_db_instance" "concourse" {
+  identifier             = "${local.product}-${local.environment}"
+  allocated_storage      = 20
+  storage_type           = "gp2"
+  engine                 = "postgres"
+  engine_version         = "9.6.6"
+  instance_class         = "db.t2.micro"
+  name                   = "concourse"
+  username               = "concourse"
+  db_subnet_group_name   = "${aws_db_subnet_group.concourse_db.name}"
+  password               = "${var.concourse_postgres_password}"
+  parameter_group_name   = "default.postgres9.6"
+  vpc_security_group_ids = ["${aws_security_group.concourse_db.id}"]
+  skip_final_snapshot    = true
+}
+

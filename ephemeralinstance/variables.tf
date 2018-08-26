@@ -32,6 +32,12 @@ variable "availability_zone" {
   type = "string"
 }
 
+variable "consul-service" {
+  type = "string"
+  default = "yes"
+}
+
+
 variable "subnet_id" {
   type = "string"
 }

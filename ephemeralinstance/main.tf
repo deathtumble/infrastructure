@@ -9,6 +9,17 @@ variable "server_instance_names" {
   }
 }
 
+variable "no-consul-service-config" {
+  type = "string"
+
+  default = ""
+}
+
+variable "consul-service-config" {
+  type    = "string"
+  default = " - service consul start"
+}
+
 resource "aws_instance" "this" {
   count                       = "${var.count}"
   ami                         = "${var.ami_id}"
@@ -42,9 +53,9 @@ write_files:
 runcmd:
  - service goss start
  - service modd start
- - service consul start
  - service cadvisor start
  - service node_exporter start
+${var.consul-service == "yes" ? var.consul-service-config : var.no-consul-service-config}
 EOF
 
   tags {

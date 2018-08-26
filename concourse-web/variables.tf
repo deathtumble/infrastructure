@@ -6,7 +6,11 @@ variable "task_status" {
   type = "string"
 }
 
-variable "aws_db_instance_concourse_address" {
+variable "aws_subnet_av1_id" {
+  type = "string"
+}
+
+variable "aws_subnet_av2_id" {
   type = "string"
 }
 
