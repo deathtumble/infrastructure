@@ -53,7 +53,7 @@ resource "aws_instance" "this" {
 
   user_data = <<EOF
 #cloud-config
-hostname: ${var.role}    
+hostname: ${var.cluster_name}    
 write_files:
  - content: ECS_CLUSTER=${var.cluster_name}-${local.environment}
    path: /etc/ecs/ecs.config   
@@ -74,7 +74,7 @@ ${var.volume_id == "" ? var.no-mount-cloud-config : var.mount-cloud-config}
 EOF
 
   tags {
-    Name          = "${var.role}-${lookup(var.server_instance_names, count.index)}"
+    Name          = "${var.cluster_name}-${lookup(var.server_instance_names, count.index)}"
     Product       = "${local.product}"
     Environment   = "${local.environment}"
     ConsulCluster = "${local.product}-${local.environment}"

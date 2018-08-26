@@ -30,7 +30,6 @@ module "prometheus-ecs-alb" {
   aws_route53_environment_zone_id = "${aws_route53_zone.environment.zone_id}"
   aws_alb_default_dns_name        = "${aws_alb.default.dns_name}"
   vpc_id                          = "${aws_vpc.default.id}"
-  role                            = "prometheus"
   product                         = "${local.product}"
   environment                     = "${local.environment}"
   root_domain_name                = "${local.root_domain_name}"

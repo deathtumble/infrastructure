@@ -1,7 +1,6 @@
 module "nexus-instance" {
   source = "../ebs-instance"
 
-  role              = "nexus"
   instance_type     = "t2.medium"
   vpc_id            = "${aws_vpc.default.id}"
   availability_zone = "${var.availability_zone_1}"
@@ -31,11 +30,11 @@ module "nexus-ecs-alb" {
   aws_route53_environment_zone_id = "${aws_route53_zone.environment.zone_id}"
   aws_alb_default_dns_name        = "${aws_alb.default.dns_name}"
   vpc_id                          = "${aws_vpc.default.id}"
-  role                            = "nexus"
   product                         = "${local.product}"
   environment                     = "${local.environment}"
   root_domain_name                = "${local.root_domain_name}"
   ecs_iam_role                    = "${local.ecs_iam_role}"
+  role                            = "nexus"
   cluster_name                    = "nexus"
 }
 

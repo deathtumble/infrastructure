@@ -3,7 +3,6 @@ module "default-instance" {
   source = "../ephemeralinstance"
 
   count             = "3"
-  role              = "default"
   instance_type     = "t2.medium"
   vpc_id            = "${aws_vpc.default.id}"
   availability_zone = "${var.availability_zone_1}"

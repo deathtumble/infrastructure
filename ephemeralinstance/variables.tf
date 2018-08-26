@@ -24,10 +24,6 @@ variable "region" {
   default = "eu-west-1"
 }
 
-variable "role" {
-  type = "string"
-}
-
 variable "ami_id" {
   type = "string"
 }
