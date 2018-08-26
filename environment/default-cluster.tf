@@ -13,7 +13,7 @@ module "default-instance" {
   vpc_security_group_ids = [
     "${aws_security_group.aws-proxy.id}",
     "${module.dashing.aws_security_group_id}",
-    "${aws_security_group.concourse.id}",
+    "${module.concourse_web.aws_security_group_id}",
     "${aws_security_group.os.id}",
   ]
 

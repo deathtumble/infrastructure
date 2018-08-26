@@ -29,6 +29,7 @@ locals {
       aws_alb_default_dns_name        = "${aws_alb.default.dns_name}"
       vpc_id                          = "${aws_vpc.default.id}"
       ecs_ami_id                      = "${var.ecs_ami_id}"
+      vpc_cidr                        = "${var.vpc_cidr}"
   }
   
   az1 = {

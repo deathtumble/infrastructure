@@ -6,8 +6,8 @@ module "dashing-ecs-alb" {
   healthcheck_path                = "/favicon.ico"
   task_definition                 = "dashing-${local.environment}:${aws_ecs_task_definition.dashing.revision}"
   task_status                     = "${var.task_status}"
-  aws_lb_listener_default_arn     = "${local.aws_lb_listener_default_arn}"
   aws_lb_listener_rule_priority   = 97
+  aws_lb_listener_default_arn     = "${local.aws_lb_listener_default_arn}"
   aws_route53_environment_zone_id = "${local.aws_route53_environment_zone_id}"
   aws_alb_default_dns_name        = "${local.aws_alb_default_dns_name}"
   vpc_id                          = "${local.vpc_id}"
