@@ -35,5 +35,6 @@ variable "globals" {
     nexus_volume_id      = ""
     grafana_volume_id    = ""
     key_name             = ""
+    "ecs_iam_role"       = ""
   }
 }

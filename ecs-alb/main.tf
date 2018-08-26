@@ -63,6 +63,15 @@ resource "aws_ecs_service" "this" {
   depends_on = ["null_resource.alb_listener_exists"]
 }
 
+resource "aws_appautoscaling_target" "ecs_target" {
+  max_capacity       = "${var.task_status == "down" ? 0 : var.desired_task_count}"
+  min_capacity       = "${var.task_status == "down" ? 0 : var.desired_task_count}"
+  resource_id        = "service/${var.cluster_name}-${var.environment}/${var.role}-${var.environment}"
+  role_arn           = "${var.ecs_iam_role}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace  = "ecs"
+}
+
 resource "null_resource" "alb_listener_exists" {
   triggers {
     listener_arn = "${var.aws_lb_listener_default_arn}"

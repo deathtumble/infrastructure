@@ -15,6 +15,7 @@ module "dashing-ecs-alb" {
   product                         = "${local.product}"
   environment                     = "${local.environment}"
   root_domain_name                = "${local.root_domain_name}"
+  ecs_iam_role                    = "${local.ecs_iam_role}"
   cluster_name                    = "default"
 }
 

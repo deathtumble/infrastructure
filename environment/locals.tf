@@ -7,6 +7,7 @@ locals {
   environment          = "${var.globals["environment"]}"
   nameTag              = "${var.globals["nameTag"]}"
   admin_cidr           = "${var.globals["admin_cidr"]}"
+  ecs_iam_role         = "${var.globals["ecs_iam_role"]}"
 
   concourse_postgres_password            = "${var.secrets["concourse_postgres_password"]}"
   concourse_password                     = "${var.secrets["concourse_password"]}"
