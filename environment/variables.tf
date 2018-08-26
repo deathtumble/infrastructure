@@ -52,6 +52,11 @@ variable "consul_docker_tag" {
   default = "139d617"
 }
 
+variable "grafana_docker_tag" {
+  type    = "string"
+  default = "5.1.0"
+}
+
 variable "concourse_docker_tag" {
   type    = "string"
   default = "2395dbb"
