@@ -72,6 +72,7 @@ resource "aws_ecs_task_definition" "grafana" {
 		    "essential": true,
 		    "image": "grafana/grafana:5.1.0",
 		    "memory": 500,
+            "dnsServers": ["127.0.0.1"],
 		    "portMappings": [
 		        {
 		          "hostPort": 3000,

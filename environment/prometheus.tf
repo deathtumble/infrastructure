@@ -1,4 +1,4 @@
-module "prometheus" {
+module "prometheus-instance" {
   source = "../ephemeralinstance"
 
   role              = "prometheus"
@@ -44,6 +44,16 @@ resource "aws_ecs_task_definition" "prometheus" {
   family       = "prometheus-${local.environment}"
   network_mode = "host"
 
+  volume {
+    name      = "consul_config"
+    host_path = "/etc/consul"
+  }
+
+  volume {
+    name      = "goss_config"
+    host_path = "/etc/goss"
+  }
+
   container_definitions = <<DEFINITION
     [
         {
@@ -72,6 +82,18 @@ resource "aws_ecs_task_definition" "prometheus" {
                   "hostPort": 9090,
                   "containerPort": 9090,
                   "protocol": "tcp"
+                }     
+             ], 
+            "mountPoints": [
+                {
+                  "sourceVolume": "consul_config",
+                  "containerPath": "/etc/consul",
+                  "readOnly": false
+                },
+                {
+                  "sourceVolume": "goss_config",
+                  "containerPath": "/etc/goss",
+                  "readOnly": false
                 }
             ]
         }
