@@ -5,9 +5,8 @@ directory=`dirname $0`
 
 environment=${PWD##*/} 
 
-terraform output -json > output.json1
+terraform output -json > output.json
 
 address=$(jq ".aws_alb_default_dns_name.value" output.json -r ) 
 
-echo $address
-dig $address
+dig $address | grep "amazonaws\.com\. [0-9][0-9]*"
