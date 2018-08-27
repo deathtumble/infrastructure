@@ -1,11 +1,11 @@
 variable "server_instance_names" {
   default = {
-    "0" = "0"
-    "1" = "1"
-    "2" = "2"
-    "3" = "3"
-    "4" = "4"
-    "5" = "5"
+    "0" = "-0"
+    "1" = "-1"
+    "2" = "-2"
+    "3" = "-3"
+    "4" = "-4"
+    "5" = "-5"
   }
 }
 
@@ -74,7 +74,7 @@ ${var.volume_id == "" ? var.no-mount-cloud-config : var.mount-cloud-config}
 EOF
 
   tags {
-    Name          = "${var.cluster_name}-${lookup(var.server_instance_names, count.index)}"
+    Name          = "${var.cluster_name}${var.desired_instance_count == 1 ? "" : lookup(var.server_instance_names, count.index)}"
     Product       = "${local.product}"
     Environment   = "${local.environment}"
     ConsulCluster = "${local.product}-${local.environment}"

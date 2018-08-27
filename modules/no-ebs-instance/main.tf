@@ -1,11 +1,11 @@
 variable "server_instance_names" {
   default = {
-    "0" = "0"
-    "1" = "1"
-    "2" = "2"
-    "3" = "3"
-    "4" = "4"
-    "5" = "5"
+    "0" = "-0"
+    "1" = "-1"
+    "2" = "-2"
+    "3" = "-3"
+    "4" = "-4"
+    "5" = "-5"
   }
 }
 
@@ -58,8 +58,8 @@ runcmd:
 ${var.consul-service == "yes" ? var.consul-service-config : var.no-consul-service-config}
 EOF
 
-  tags {
-    Name          = "${var.cluster_name}-${lookup(var.server_instance_names, count.index)}"
+  tags {  
+    Name          = "${var.cluster_name}${var.count == 1 ? "" : lookup(var.server_instance_names, count.index)}"
     Product       = "${local.product}"
     Environment   = "${local.environment}"
     ConsulCluster = "${local.product}-${local.environment}"
