@@ -66,10 +66,6 @@ resource "aws_ecs_task_definition" "consul" {
                     "Value": "eth0"
                 }, 
                 {
-                    "Name": "CONSUL_CLIENT_INTERFACE",
-                    "Value": "eth0"
-                },
-                {
                     "Name": "CONSUL_ALLOW_PRIVILEGED_PORTS",
                     "Value": ""
                 }
@@ -80,6 +76,7 @@ resource "aws_ecs_task_definition" "consul" {
                 "-dns-port=53",
                 "-recursor=${var.dns_ip}",
                 "-bootstrap-expect=3",
+                "-client=0.0.0.0",
                 "-retry-join",
                 "provider=aws tag_key=ConsulCluster tag_value=${local.product}-${local.environment}",
                 "-ui"
