@@ -16,7 +16,7 @@ module "concourse_web" {
   
   docker_tag                        = "${var.concourse_docker_tag}"
   task_status                       = "${var.concourse_task_status}"
-  subnet_ids                        = ["${aws_subnet.av2.id}", "${aws_subnet.av1.id}"] 
+  subnet_ids                        = ["${module.vpc.az1_subnet_id}", "${module.vpc.az2_subnet_id}"] 
   
   concourse_password                = "${local.concourse_password}"
   concourse_postgres_password       = "${local.concourse_postgres_password}"

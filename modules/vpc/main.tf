@@ -1,3 +1,71 @@
+resource "aws_vpc" "default" {
+  cidr_block                       = "${var.vpc_cidr}"
+  instance_tenancy                 = "default"
+  enable_dns_support               = true
+  enable_dns_hostnames             = true
+  enable_classiclink               = false
+  assign_generated_ipv6_cidr_block = false
+
+  tags {
+    Name        = "${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
+  }
+}
+
+resource "aws_internet_gateway" "default" {
+  vpc_id = "${aws_vpc.default.id}"
+
+  tags {
+    Name        = "${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
+  }
+}
+
+resource "aws_network_acl" "default" {
+  vpc_id = "${aws_vpc.default.id}"
+
+  egress {
+    protocol   = "-1"
+    rule_no    = "100"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = "0"
+    to_port    = "0"
+  }
+
+  ingress {
+    protocol   = "-1"
+    rule_no    = "100"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = "0"
+    to_port    = "0"
+  }
+
+  tags {
+    Name        = "${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
+  }
+}
+
+resource "aws_route_table" "main" {
+  vpc_id = "${aws_vpc.default.id}"
+
+  tags {
+    Name        = "main-${local.product}-${local.environment}"
+    Product     = "${local.product}"
+    Environment = "${local.environment}"
+  }
+}
+
+resource "aws_main_route_table_association" "default" {
+  vpc_id         = "${aws_vpc.default.id}"
+  route_table_id = "${aws_route_table.main.id}"
+}
+
 resource "aws_subnet" "av1" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "10.0.0.0/25"
@@ -43,7 +111,7 @@ resource "aws_route_table_association" "default" {
 resource "aws_alb" "default" {
   name            = "${local.product}-${local.environment}"
   internal        = false
-  security_groups = ["${aws_security_group.alb.id}"]
+  security_groups = ["${var.aws_security_group_alb_id}"]
   subnets         = ["${aws_subnet.av1.id}", "${aws_subnet.av2.id}"]
   idle_timeout    = 4000
 
@@ -101,77 +169,7 @@ resource "aws_route53_zone" "environment" {
   }
 }
 
-resource "aws_security_group" "alb" {
-  name = "alb"
-
-  description = "alb security group"
-  vpc_id      = "${aws_vpc.default.id}"
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 8081
-    to_port     = 8081
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 8082
-    to_port     = 8082
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 8500
-    to_port     = 8500
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 3000
-    to_port     = 3000
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 9090
-    to_port     = 9090
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags {
-    Name        = "alb-${local.product}-${local.environment}"
-    Product     = "${local.product}"
-    Environment = "${local.environment}"
-  }
+data "aws_route53_zone" "selected" {
+  name = "${local.root_domain_name}."
 }
 
-variable "monitoring_cidrs" {
-  type = "list"
-
-  default = []
-}
