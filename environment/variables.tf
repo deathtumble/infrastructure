@@ -57,9 +57,15 @@ variable "grafana_docker_tag" {
   default = "5.1.0"
 }
 
+
 variable "concourse_docker_tag" {
   type    = "string"
   default = "2395dbb"
+}
+
+variable "nexus_docker_tag" {
+  type    = "string"
+  default = "3.10.0"
 }
 
 variable "prometheus_docker_tag" {
