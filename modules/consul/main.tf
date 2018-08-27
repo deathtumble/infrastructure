@@ -56,6 +56,7 @@ resource "aws_ecs_task_definition" "consul" {
             "essential": true,
             "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/consul:${var.docker_tag}",
             "memory": 500,
+            "privileged": true,
             "environment": [
                 {
                     "Name": "CONSUL_LOCAL_CONFIG",

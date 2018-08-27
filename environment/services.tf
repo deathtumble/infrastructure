@@ -86,3 +86,11 @@ module "prometheus" {
   az               = "${local.az1}"
 }
 
+resource "aws_route53_record" "ssh" {
+  zone_id = "${module.vpc.aws_route53_environment_zone_id}"
+  name    = "ssh.${local.environment}.${local.root_domain_name}"
+  type    = "A"
+  ttl     = 60
+  records = ["${module.prometheus.public_ip}"]
+}
+
