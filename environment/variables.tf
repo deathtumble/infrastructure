@@ -94,7 +94,7 @@ variable "secrets" {
 
 variable "ecs_ami_id" {
   type    = "string"
-  default = "ami-069fc5ce535f1da38"
+  default = "ami-00e01a477f0969001"
 }
 
 variable "aws_proxy_docker_tag" {
