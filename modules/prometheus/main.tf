@@ -74,6 +74,10 @@ resource "aws_ecs_task_definition" "prometheus" {
                     "Value": "${var.prometheus_secret_access_key}"
                 },
                 {
+                    "Name": "ENVIRONMENT",
+                    "Value": "${local.environment}"
+                },
+                {
                     "Name": "aws.region",
                     "Value": "${local.region}"
                 }
