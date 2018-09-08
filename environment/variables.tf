@@ -99,12 +99,12 @@ variable "ecs_ami_id" {
 
 variable "aws_proxy_docker_tag" {
   type    = "string"
-  default = "c881c50"
+  default = "0fe535f"
 }
 
 variable "dashing_docker_tag" {
   type    = "string"
-  default = "5f1f139"
+  default = "313380c"
 }
 
 variable "consul_docker_tag" {
