@@ -104,7 +104,7 @@ variable "aws_proxy_docker_tag" {
 
 variable "dashing_docker_tag" {
   type    = "string"
-  default = "3f32444"
+  default = "5f1f139"
 }
 
 variable "consul_docker_tag" {
