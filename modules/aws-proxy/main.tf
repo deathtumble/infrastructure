@@ -44,7 +44,7 @@ resource "aws_ecs_task_definition" "aws-proxy" {
             "portMappings": [
                 {
                   "hostPort": 8081,
-                  "containerPort": 8080,
+                  "containerPort": 8081,
                   "protocol": "tcp"
                 }
             ],
@@ -66,7 +66,7 @@ resource "aws_ecs_task_definition" "aws-proxy" {
 }
 
 resource "aws_security_group" "aws-proxy" {
-  name = "aws-proxy-${local.product}-${local.environment}"
+  name = "aws-proxy"
 
   description = "aws-proxy security group"
   vpc_id      = "${local.vpc_id}"
