@@ -10,7 +10,7 @@ variable "server_instance_names" {
 }
 
 resource "aws_instance" "this" {
-  count                       = "${var.desired_instance_count}"
+  count                       = "${var.count}"
   ami                         = "${var.ami_id}"
   availability_zone           = "${var.availability_zone}"
   tenancy                     = "default"
@@ -52,7 +52,7 @@ runcmd:
 EOF
 
   tags {
-    Name          = "${var.cluster_name}${var.desired_instance_count == 1 ? "" : lookup(var.server_instance_names, count.index)}"
+    Name          = "${var.cluster_name}${var.count == 1 ? "" : lookup(var.server_instance_names, count.index)}"
     Product       = "${local.product}"
     Environment   = "${local.environment}"
     ConsulCluster = "${local.product}-${local.environment}"

@@ -1,6 +1,3 @@
-output "public_ip" {
-  value = "${module.prometheus-instance.public_ip}"
+output "aws_security_group_id" {
+  value = "${aws_security_group.prometheus.id}"
 }
-
-
- 

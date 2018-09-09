@@ -89,6 +89,6 @@ resource "aws_route53_record" "ssh" {
   name    = "ssh.${local.environment}.${local.root_domain_name}"
   type    = "A"
   ttl     = 60
-  records = ["${module.prometheus.public_ip}"]
+  records = ["${module.default-efs-instance.public_ip}"]
 }
 

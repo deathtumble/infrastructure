@@ -1,22 +1,3 @@
-module "prometheus-instance" {
-  source = "../ebs-instance"
-
-  instance_type     = "t2.medium"
-  vpc_id            = "${local.vpc_id}"
-  availability_zone = "${local.availability_zone}"
-  subnet_id         = "${local.subnet_id}"
-  ami_id            = "${local.ecs_ami_id}"
-  efs_id            = "${local.efs_id}"
-  cluster_name      = "prometheus"
-
-  vpc_security_group_ids = [
-    "${aws_security_group.prometheus.id}",
-    "${local.aws_security_group_os_id}",
-  ]
-
-  globals = "${var.globals}"
-}
-
 module "prometheus-ecs-alb" {
   source = "../ecs-alb"
 
@@ -35,11 +16,7 @@ module "prometheus-ecs-alb" {
   root_domain_name                = "${local.root_domain_name}"
   ecs_iam_role                    = "${local.ecs_iam_role}"
   role                            = "prometheus"
-  cluster_name                    = "prometheus"
-}
-
-resource "aws_ecs_cluster" "prometheus" {
-  name = "prometheus-${local.environment}"
+  cluster_name                    = "default-efs"
 }
 
 resource "aws_ecs_task_definition" "prometheus" {

@@ -13,10 +13,37 @@ module "default-instance" {
     "${module.aws-proxy.aws_security_group_id}",
     "${module.dashing.aws_security_group_id}",
     "${module.concourse_web.aws_security_group_id}",
-    "${aws_security_group.os.id}",
+    "${aws_security_group.os.id}"
   ]
 
   globals = "${var.globals}"
+}
+
+module "default-efs-instance" {
+  source = "../modules/ebs-instance"
+
+  count             = "3"
+  instance_type     = "t2.medium"
+  vpc_id            = "${module.vpc.vpc_id}"
+  availability_zone = "${module.vpc.az1_availability_zone}"
+  subnet_id         = "${module.vpc.az1_subnet_id}"
+  ami_id            = "${var.ecs_ami_id}"
+  efs_id            = "${local.efs_id}"
+  cluster_name      = "default-efs"
+
+  vpc_security_group_ids = [
+    "${module.prometheus.aws_security_group_id}",
+    "${module.nexus.aws_security_group_id}",
+    "${module.grafana.aws_security_group_id}",
+    "${aws_security_group.os.id}"
+  ]
+
+  globals = "${var.globals}"
+}
+
+
+resource "aws_ecs_cluster" "default-efs" {
+  name = "default-efs-${local.environment}"
 }
 
 resource "aws_ecs_cluster" "default" {

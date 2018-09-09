@@ -3,6 +3,11 @@ variable "globals" {
 
 }
 
+variable "count" {
+  type = "string"
+  default = "1" 
+}
+
 variable "cluster_name" {
   type = "string" 
 }
