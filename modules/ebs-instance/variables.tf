@@ -1,13 +1,6 @@
 variable "globals" {
   type = "map"
 
-  default = {
-    product     = ""
-    environment = ""
-    admin_cidr  = ""
-    nameTag     = ""
-    key_name    = ""
-  }
 }
 
 variable "cluster_name" {
@@ -33,10 +26,6 @@ variable "subnet_id" {
 
 variable "instance_type" {
   default = "t2.small"
-}
-
-variable "volume_id" {
-  default = ""
 }
 
 variable "efs_id" {

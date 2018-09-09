@@ -8,7 +8,6 @@ module "nexus-instance" {
   ami_id                    = "${local.ecs_ami_id}"
   efs_id                    = "${local.efs_id}"
   cluster_name              = "nexus"
-  volume_id                 = "${var.volume_id}"
   
   vpc_security_group_ids = [
     "${aws_security_group.nexus.id}",

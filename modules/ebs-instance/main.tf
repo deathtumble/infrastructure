@@ -9,31 +9,6 @@ variable "server_instance_names" {
   }
 }
 
-variable "mount-cloud-config" {
-  type = "string"
-
-  default = <<EOF
- - mkdir /opt/mount1
- - sleep 18
- - sudo mount /dev/xvdh /opt/mount1
- - sudo echo /dev/xvdh  /opt/mount1 ext4 defaults,nofail 0 2 >> /etc/fstab
- - sudo mount -a
-EOF
-}
-
-variable "no-mount-cloud-config" {
-  type    = "string"
-  default = ""
-}
-
-resource "aws_volume_attachment" "this" {
-  count        = "${var.volume_id == "" ? 0 : 1}"
-  device_name  = "/dev/sdh"
-  volume_id    = "${var.volume_id}"
-  instance_id  = "${aws_instance.this.id}"
-  force_detach = true
-}
-
 resource "aws_instance" "this" {
   count                       = "${var.desired_instance_count}"
   ami                         = "${var.ami_id}"

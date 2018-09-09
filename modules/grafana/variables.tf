@@ -6,10 +6,6 @@ variable "task_status" {
   type = "string"
 }
 
-variable "volume_id" {
-  type = "string"
-}
-
 variable "vpc" {
   type = "map"
 }

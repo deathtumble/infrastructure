@@ -54,7 +54,6 @@ module "grafana" {
   
   docker_tag                   = "${var.grafana_docker_tag}"
   task_status                  = "${var.grafana_task_status}"
-  volume_id   = "${local.grafana_volume_id}"
 
   globals          = "${var.globals}"
   vpc              = "${local.vpc}"
@@ -66,7 +65,6 @@ module "nexus" {
   
   docker_tag                   = "${var.nexus_docker_tag}"
   task_status                  = "${var.nexus_task_status}"
-  volume_id                    = "${local.nexus_volume_id}"
 
   globals          = "${var.globals}"
   vpc              = "${local.vpc}"
