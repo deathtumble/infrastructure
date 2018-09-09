@@ -1,4 +1,5 @@
 locals {
+  efs_id               = "${var.globals["efs_id"]}"
   key_name             = "${var.globals["key_name"]}"
   root_domain_name     = "${var.globals["root_domain_name"]}"
   product              = "${var.globals["product"]}"
