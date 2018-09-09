@@ -12,6 +12,7 @@ resource "aws_alb_target_group" "this" {
     protocol            = "${var.healthcheck_protocol}"
     port                = "${var.elb_instance_port}"
     interval            = 5
+    matcher             = "200,401"
   }
 
   tags {
