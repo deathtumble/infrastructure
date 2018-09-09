@@ -65,7 +65,10 @@ write_files:
    path: /etc/consul/setenv.sh   
    permissions: '0644'
 runcmd:
-${var.volume_id == "" ? var.no-mount-cloud-config : var.mount-cloud-config}    
+ - mkdir /opt/mount1
+ - sleep 18
+ - sudo echo ${var.efs_id}:/  /opt/mount1 efs defaults,_netdev 0 0 >> /etc/fstab
+ - sudo mount -a
  - service goss start
  - service modd start
  - service consul start

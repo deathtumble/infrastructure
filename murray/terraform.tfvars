@@ -1,4 +1,5 @@
 globals = {
+  efs_id="fs-95ebc95c"
   product="poc" 
   environment="murray" 
   nameTag="poc-murray"

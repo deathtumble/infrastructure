@@ -39,6 +39,9 @@ variable "volume_id" {
   default = ""
 }
 
+variable "efs_id" {
+}
+
 variable "vpc_id" {
   type = "string"
 }

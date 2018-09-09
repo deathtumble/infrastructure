@@ -1,4 +1,5 @@
 locals {
+  efs_id               = "${var.globals["efs_id"]}"
   nexus_volume_id      = "${var.globals["nexus_volume_id"]}"
   grafana_volume_id    = "${var.globals["grafana_volume_id"]}"
   key_name             = "${var.globals["key_name"]}"

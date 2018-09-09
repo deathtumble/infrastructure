@@ -1,12 +1,13 @@
 module "grafana-instance" {
   source = "../ebs-instance"
 
-  vpc_id            = "${local.vpc_id}"
-  availability_zone = "${local.availability_zone}"
-  subnet_id         = "${local.subnet_id}"
-  ami_id            = "${local.ecs_ami_id}"
-  cluster_name      = "grafana"
-  volume_id         = "${var.volume_id}"
+  vpc_id                    = "${local.vpc_id}"
+  availability_zone         = "${local.availability_zone}"
+  subnet_id                 = "${local.subnet_id}"
+  ami_id                    = "${local.ecs_ami_id}"
+  efs_id                    = "${local.efs_id}"
+  cluster_name              = "grafana"
+  volume_id                 = "${var.volume_id}"
 
   vpc_security_group_ids = [
     "${aws_security_group.grafana.id}",
