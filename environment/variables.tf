@@ -104,5 +104,5 @@ variable "nexus_docker_tag" {
 
 variable "prometheus_docker_tag" {
   type    = "string"
-  default = "96ddc9d"
+  default = "2b1e455"
 }

@@ -56,6 +56,11 @@ resource "aws_ecs_task_definition" "prometheus" {
     host_path = "/etc/goss"
   }
 
+  volume {
+    name      = "prometheus-data"
+    host_path = "/opt/mount1/prometheus"
+  }
+
   container_definitions = <<DEFINITION
     [
         {
@@ -99,6 +104,11 @@ resource "aws_ecs_task_definition" "prometheus" {
                 {
                   "sourceVolume": "goss_config",
                   "containerPath": "/etc/goss",
+                  "readOnly": false
+                },
+                {
+                  "sourceVolume": "prometheus-data",
+                  "containerPath": "/prometheus",
                   "readOnly": false
                 }
             ]
