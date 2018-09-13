@@ -23,6 +23,11 @@ variable "availability_zone_2" {
   default = "eu-west-1b"
 }
 
+variable "elasticsearch_task_status" {
+  type    = "string"
+  default = "up"
+}
+
 variable "concourse_task_status" {
   type    = "string"
   default = "up"
@@ -68,7 +73,7 @@ variable "secrets" {
 
 variable "ecs_ami_id" {
   type    = "string"
-  default = "ami-0ef65c2aa06226f32"
+  default = "ami-0646e0dc7c3aac6a6"
 }
 
 variable "aws_proxy_docker_tag" {
