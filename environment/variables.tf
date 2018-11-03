@@ -78,7 +78,7 @@ variable "ecs_ami_id" {
 
 variable "aws_proxy_docker_tag" {
   type    = "string"
-  default = "1b2184b"
+  default = "1958bf7"
 }
 
 variable "dashing_docker_tag" {
@@ -109,5 +109,5 @@ variable "nexus_docker_tag" {
 
 variable "prometheus_docker_tag" {
   type    = "string"
-  default = "2b1e455"
+  default = "2ea91a1"
 }
