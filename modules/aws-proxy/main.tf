@@ -26,7 +26,7 @@ resource "aws_ecs_task_definition" "aws-proxy" {
             "cpu": 0,
             "essential": true,
             "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/aws-proxy:${var.docker_tag}",
-            "memory": 500,
+            "memory": 2000,
             "environment": [
                 {
                     "Name": "AWS_ACCESS_KEY_ID",
