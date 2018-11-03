@@ -72,3 +72,8 @@ variable "ecs_iam_role" {
   type = "string"
 }
 
+
+variable "healthchecks" {
+  type = "list"
+}
+

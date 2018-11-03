@@ -1,6 +1,23 @@
+variable "healthchecks" {
+   type = "list"
+   default = [
+      {
+        healthy_threshold   = 2
+        unhealthy_threshold = 2
+        timeout             = 3
+        path                = "/api/health"
+        protocol            = "HTTP"
+        port                = "3000"
+        interval            = 5
+        matcher             = "200,401,302"
+      }
+   ]
+}
+
 module "grafana-ecs-alb" {
   source = "../ecs-alb"
 
+  healthchecks                    = "${var.healthchecks}"
   elb_instance_port               = "3000"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/api/health"

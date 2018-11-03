@@ -1,7 +1,24 @@
+variable "healthchecks" {
+   type = "list"
+   default = [
+      {
+        healthy_threshold   = 2
+        unhealthy_threshold = 2
+        timeout             = 3
+        path                = "/public/images/favicon.png"
+        protocol            = "HTTP"
+        port                = "8080"
+        interval            = 5
+        matcher             = "200,401,302"
+      }
+   ]
+}
+
 module "concourse-ecs-alb" {
   source = "../ecs-alb"
 
-  elb_instance_port               = "8080"
+  healthchecks                    = "${var.healthchecks}"
+   elb_instance_port               = "8080"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/public/images/favicon.png"
   task_definition                 = "concourse-${local.environment}:${aws_ecs_task_definition.concourse.revision}"

@@ -4,16 +4,7 @@ resource "aws_alb_target_group" "this" {
   protocol = "HTTP"
   vpc_id   = "${var.vpc_id}"
 
-  health_check {
-    healthy_threshold   = 2
-    unhealthy_threshold = 2
-    timeout             = 3
-    path                = "${var.healthcheck_path}"
-    protocol            = "${var.healthcheck_protocol}"
-    port                = "${var.elb_instance_port}"
-    interval            = 5
-    matcher             = "200,401"
-  }
+  health_check = "${var.healthchecks}"
 
   tags {
     Name        = "${var.role}-${var.environment}"
