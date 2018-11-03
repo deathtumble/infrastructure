@@ -38,7 +38,7 @@ module "prometheus-ecs-alb" {
 
 resource "aws_ecs_task_definition" "prometheus" {
   family       = "prometheus-${local.environment}"
-  network_mode = "host"
+  network_mode = "bridge"
 
   volume {
     name      = "consul_config"
@@ -62,7 +62,7 @@ resource "aws_ecs_task_definition" "prometheus" {
             "cpu": 0,
             "essential": true,
             "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/prometheus:${var.docker_tag}",
-            "memory": 500,
+            "memory": 2000,
             "dnsServers": ["127.0.0.1"],
             "environment": [
                 {
