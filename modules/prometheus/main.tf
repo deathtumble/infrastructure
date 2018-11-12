@@ -38,7 +38,7 @@ module "prometheus-ecs-alb" {
 
 resource "aws_ecs_task_definition" "prometheus" {
   family       = "prometheus-${local.environment}"
-  network_mode = "bridge"
+  network_mode = "host"
 
   volume {
     name      = "consul_config"
