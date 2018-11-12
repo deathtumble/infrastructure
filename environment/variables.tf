@@ -33,7 +33,17 @@ variable "concourse_task_status" {
   default = "up"
 }
 
-variable "nexus_task_status" {
+variable "nexus_task_status" {variable "logstash_task_status" {
+  type    = "string"
+  default = "up"
+}
+
+variable "kibana_task_status" {
+  type    = "string"
+  default = "up"
+}
+
+
   type    = "string"
   default = "up"
 }
