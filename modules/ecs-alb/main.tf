@@ -3,6 +3,7 @@ resource "aws_alb_target_group" "this" {
   port     = "${var.elb_instance_port}"
   protocol = "HTTP"
   vpc_id   = "${var.vpc_id}"
+  deregistration_delay = "3"
 
   health_check = "${var.healthchecks}"
 
