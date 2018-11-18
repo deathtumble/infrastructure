@@ -22,7 +22,7 @@ module "default-instance" {
 module "default-efs-instance" {
   source = "../modules/ebs-instance"
 
-  count             = "3"
+  count             = "4"
   instance_type     = "t2.medium"
   vpc_id            = "${module.vpc.vpc_id}"
   availability_zone = "${module.vpc.az1_availability_zone}"
@@ -125,6 +125,27 @@ resource "aws_security_group" "os" {
     cidr_blocks = ["${var.vpc_cidr}"]
   }
 
+  ingress {
+    from_port   = 5601
+    to_port     = 5601
+    protocol    = "tcp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
+  ingress {
+    from_port   = 9200
+    to_port     = 9200
+    protocol    = "tcp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
+  ingress {
+    from_port   = 9300
+    to_port     = 9300
+    protocol    = "tcp"
+    cidr_blocks = ["${var.vpc_cidr}"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -194,6 +215,13 @@ resource "aws_security_group" "alb" {
   ingress {
     from_port   = 9090
     to_port     = 9090
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 5601
+    to_port     = 5601
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
