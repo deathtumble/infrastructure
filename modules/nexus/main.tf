@@ -8,7 +8,7 @@ variable "healthchecks" {
         path                = "/service/metrics/healthcheck"
         protocol            = "HTTP"
         port                = "8081"
-        interval            = 5
+        interval            = 300
         matcher             = "200,401,302"
       }
    ]
