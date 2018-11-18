@@ -30,8 +30,26 @@ resource "aws_ecs_task_definition" "elasticsearch" {
             "name": "elasticsearch",
             "cpu": 0,
             "essential": true,
-            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/elasticsearch:b42c851",
+            "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/elasticsearch:${var.elasticsearch_docker_tag}",
             "memory": 2000,
+            "environment": [
+                {
+                    "Name": "cluster.name",
+                    "Value": "${local.environment}"
+                },
+                {
+                    "Name": "AWS_ACCESS_KEY_ID",
+                    "Value": "${local.elasticsearch_access_id}"
+                },
+                {
+                    "Name": "AWS_SECRET_ACCESS_KEY",
+                    "Value": "${local.elasticsearch_secret_access_key}"
+                },
+                {
+                    "Name": "REGION",
+                    "Value": "${var.region}"
+                }
+             ],
             "portMappings": [
                 {
                   "hostPort": 9200,
@@ -74,7 +92,7 @@ resource "aws_ecs_task_definition" "elasticsearch" {
 }
 
 resource "aws_security_group" "elasticsearch" {
-  name = "elastic"
+  name = "elasticsearch"
 
   description = "elasticsearch security group"
   vpc_id      = "${module.vpc.vpc_id}"

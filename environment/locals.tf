@@ -14,6 +14,8 @@ locals {
   aws-proxy_secret_access_key            = "${var.secrets["aws-proxy_secret_access_key"]}"
   prometheus_access_id                   = "${var.secrets["prometheus_access_id"]}"
   prometheus_secret_access_key           = "${var.secrets["prometheus_secret_access_key"]}"
+  elasticsearch_access_id                = "${var.secrets["elasticsearch_access_id"]}"
+  elasticsearch_secret_access_key        = "${var.secrets["elasticsearch_secret_access_key"]}"
   concourse_tsa_host_key_value           = "${var.secrets["concourse_tsa_host_key_value"]}"
   concourse_tsa_authorized_keys_value    = "${var.secrets["concourse_tsa_authorized_keys_value"]}"
   concourse_session_signing_key_value    = "${var.secrets["concourse_session_signing_key_value"]}"

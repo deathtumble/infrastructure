@@ -9,6 +9,9 @@ module "environment" {
   dashing_task_status    = "${var.dashing_task_status}"
   nexus_task_status      = "${var.nexus_task_status}"
   consul_task_status     = "${var.consul_task_status}"
+  
+  elasticsearch_docker_tag = "${var.elasticsearch_docker_tag}"
+  logstash_docker_tag = "${var.logstash_docker_tag}"
 }
 
 terraform {

@@ -33,17 +33,7 @@ variable "concourse_task_status" {
   default = "up"
 }
 
-variable "nexus_task_status" {variable "logstash_task_status" {
-  type    = "string"
-  default = "up"
-}
-
-variable "kibana_task_status" {
-  type    = "string"
-  default = "up"
-}
-
-
+variable "nexus_task_status" {
   type    = "string"
   default = "up"
 }
@@ -91,6 +81,14 @@ variable "aws_proxy_docker_tag" {
   default = "1958bf7"
 }
 
+variable "elasticsearch_docker_tag" {
+  type    = "string"
+}
+
+variable "logstash_docker_tag" {
+  type    = "string"
+}
+
 variable "dashing_docker_tag" {
   type    = "string"
   default = "313380c"
@@ -107,6 +105,16 @@ variable "grafana_docker_tag" {
 }
 
 
+variable "logstash_task_status" {
+  type    = "string"
+  default = "up"
+}
+
+variable "kibana_task_status" {
+  type    = "string"
+  default = "up"
+}
+
 variable "concourse_docker_tag" {
   type    = "string"
   default = "2395dbb"
@@ -120,4 +128,9 @@ variable "nexus_docker_tag" {
 variable "prometheus_docker_tag" {
   type    = "string"
   default = "2ea91a1"
+}
+
+variable "no_ebs_instance_module_version" {
+  type    = "string"
+  default = "1bc0597"
 }

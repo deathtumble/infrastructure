@@ -57,5 +57,6 @@ EOF
     Environment   = "${local.environment}"
     ConsulCluster = "${local.product}-${local.environment}"
     Goss          = "true"
+    ElasticSearchCluster = "${local.environment}"
   }
 }

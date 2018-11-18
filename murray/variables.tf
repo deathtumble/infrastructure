@@ -1,3 +1,11 @@
+variable "elasticsearch_docker_tag" {
+  type    = "string"
+}
+
+variable "logstash_docker_tag" {
+  type    = "string"
+}
+
 variable "concourse_task_status" {
   type    = "string"
   default = "up"
