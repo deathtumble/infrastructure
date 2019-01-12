@@ -22,7 +22,7 @@ module "default-instance" {
 module "default-efs-instance" {
   source = "../modules/ebs-instance"
 
-  count             = "4"
+  count             = "5"
   instance_type     = "t2.medium"
   vpc_id            = "${module.vpc.vpc_id}"
   availability_zone = "${module.vpc.az1_availability_zone}"
@@ -35,6 +35,7 @@ module "default-efs-instance" {
     "${module.prometheus.aws_security_group_id}",
     "${module.nexus.aws_security_group_id}",
     "${module.grafana.aws_security_group_id}",
+    "${aws_security_group.logstash.id}",
     "${aws_security_group.os.id}"
   ]
 
