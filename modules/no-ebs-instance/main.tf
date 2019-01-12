@@ -55,6 +55,7 @@ runcmd:
  - service modd start
  - service cadvisor start
  - service node_exporter start
+ - sudo /usr/bin/monit
 ${var.consul-service == "yes" ? var.consul-service-config : var.no-consul-service-config}
 EOF
 

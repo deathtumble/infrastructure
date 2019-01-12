@@ -49,6 +49,7 @@ runcmd:
  - service consul start
  - service cadvisor start
  - service node_exporter start
+ - sudo /usr/bin/monit
 EOF
 
   tags {
