@@ -16,7 +16,7 @@ resource "aws_ecs_task_definition" "logstash" {
 
   volume {
     name      = "goss_config"
-    host_path = "/goss/consul"
+    host_path = "/etc/goss"
   }
 
   container_definitions = <<DEFINITION
@@ -43,10 +43,6 @@ resource "aws_ecs_task_definition" "logstash" {
                 {
                     "Name": "ELASTICSEARCH_URL",
                     "Value": "http://elasticsearch.service.consul:9200"
-                },
-                {
-                    "Name": "XPACK_MONITORING_ENABLED",
-                    "Value": "false"
                 }
              ], 
             "mountPoints": [

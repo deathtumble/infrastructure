@@ -21,7 +21,7 @@ resource "aws_ecs_task_definition" "elasticsearch" {
 
   volume {
     name      = "goss_config"
-    host_path = "/goss/consul"
+    host_path = "/etc/goss"
   }
 
   container_definitions = <<DEFINITION
