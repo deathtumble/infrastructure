@@ -73,7 +73,7 @@ variable "secrets" {
 
 variable "ecs_ami_id" {
   type    = "string"
-  default = "ami-0646e0dc7c3aac6a6"
+  default = "ami-01c6f37e16b6e3006"
 }
 
 variable "aws_proxy_docker_tag" {
@@ -83,10 +83,12 @@ variable "aws_proxy_docker_tag" {
 
 variable "elasticsearch_docker_tag" {
   type    = "string"
+  default = "e7499ed"
 }
 
 variable "logstash_docker_tag" {
   type    = "string"
+  default = "2cd0b80"
 }
 
 variable "dashing_docker_tag" {
