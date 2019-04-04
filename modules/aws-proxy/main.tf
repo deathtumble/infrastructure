@@ -30,11 +30,11 @@ resource "aws_ecs_task_definition" "aws-proxy" {
             "environment": [
                 {
                     "Name": "AWS_ACCESS_KEY_ID",
-                    "Value": "${var.aws-proxy_access_id}"
+                    "Value": "${aws_iam_access_key.aws_proxy.id}"
                 },
                 {
                     "Name": "AWS_SECRET_ACCESS_KEY",
-                    "Value": "${var.aws-proxy_secret_access_key}"
+                    "Value": "${aws_iam_access_key.aws_proxy.encrypted_secret}"
                 },
                 {
                     "Name": "aws.region",
@@ -92,3 +92,18 @@ resource "aws_security_group" "aws-proxy" {
     Layer       = "aws-proxy"
   }
 }
+
+resource "aws_iam_user" "aws_proxy" {
+  name = "aws-proxy-${local.product}-${local.environment}"
+
+  tags {
+    Name        = "aws-proxy-${local.product}-${local.environment}"
+    Environment = "${local.environment}"
+    Layer       = "aws-proxy"
+  }
+}
+
+resource "aws_iam_access_key" "aws_proxy" {
+  user = "${aws_iam_user.aws_proxy.name}"
+}
+

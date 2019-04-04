@@ -1,9 +1,11 @@
 variable "elasticsearch_docker_tag" {
   type    = "string"
+  default = "e7499ed"
 }
 
 variable "logstash_docker_tag" {
   type    = "string"
+  default = "2cd0b80"
 }
 
 variable "concourse_task_status" {
