@@ -34,7 +34,7 @@ resource "aws_ecs_task_definition" "aws-proxy" {
                 },
                 {
                     "Name": "AWS_SECRET_ACCESS_KEY",
-                    "Value": "${aws_iam_access_key.aws_proxy.encrypted_secret}"
+                    "Value": "${aws_iam_access_key.aws_proxy.secret}"
                 },
                 {
                     "Name": "aws.region",
@@ -95,15 +95,47 @@ resource "aws_security_group" "aws-proxy" {
 
 resource "aws_iam_user" "aws_proxy" {
   name = "aws-proxy-${local.product}-${local.environment}"
-
-  tags {
-    Name        = "aws-proxy-${local.product}-${local.environment}"
-    Environment = "${local.environment}"
-    Layer       = "aws-proxy"
-  }
+  path = "/"
 }
 
 resource "aws_iam_access_key" "aws_proxy" {
   user = "${aws_iam_user.aws_proxy.name}"
+}
+
+resource "aws_iam_user_policy" "aws_proxy" {
+  name = "aws_proxy"
+  
+  user = "${aws_iam_user.aws_proxy.name}"
+  
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DescribeInstances",
+                "ecs:ListClusters",
+                "ecs:ListServices",
+                "ecs:DescribeServices",
+                "elasticloadbalancing:DescribeTargetGroups",
+                "elasticloadbalancing:DescribeTags",
+                "elasticloadbalancing:DescribeTargetHealth"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "elasticloadbalancing:DescribeLoadBalancers",
+                "elasticloadbalancing:DescribeTargetGroups",
+                "elasticloadbalancing:DescribeTags",
+                "elasticloadbalancing:DescribeTargetHealth"
+            ],
+            "Resource": "arn:aws:elasticloadbalancing:eu-west-1:453254632971:loadbalancer/app/*"
+        }
+    ]
+}
+EOF
 }
 

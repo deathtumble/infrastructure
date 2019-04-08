@@ -10,8 +10,6 @@ locals {
 
   concourse_postgres_password            = "${var.secrets["concourse_postgres_password"]}"
   concourse_password                     = "${var.secrets["concourse_password"]}"
-  aws-proxy_access_id                    = "${var.secrets["aws-proxy_access_id"]}"
-  aws-proxy_secret_access_key            = "${var.secrets["aws-proxy_secret_access_key"]}"
   prometheus_access_id                   = "${var.secrets["prometheus_access_id"]}"
   prometheus_secret_access_key           = "${var.secrets["prometheus_secret_access_key"]}"
   elasticsearch_access_id                = "${var.secrets["elasticsearch_access_id"]}"

@@ -18,8 +18,6 @@ module "murray" {
 
   concourse_postgres_password            = "${var.concourse_postgres_password}"
   concourse_password                     = "${var.concourse_password}"
-  aws-proxy_access_id                    = "${var.aws-proxy_access_id}"
-  aws-proxy_secret_access_key            = "${var.aws-proxy_secret_access_key}"
   concourse_tsa_host_key_value           = "${var.concourse_tsa_host_key_value}"
   concourse_tsa_authorized_keys_value    = "${var.concourse_tsa_authorized_keys_value}"
   concourse_session_signing_key_value    = "${var.concourse_session_signing_key_value}"

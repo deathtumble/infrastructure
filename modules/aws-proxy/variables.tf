@@ -6,14 +6,6 @@ variable "task_status" {
   type = "string"
 }
 
-variable "aws-proxy_secret_access_key" {
-  type = "string"
-}
-
-variable "aws-proxy_access_id" {
-  type = "string"
-}
-
 variable "vpc" {
   type = "map"
 }
