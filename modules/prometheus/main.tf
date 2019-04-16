@@ -67,11 +67,11 @@ resource "aws_ecs_task_definition" "prometheus" {
             "environment": [
                 {
                     "Name": "AWS_ACCESS_KEY_ID",
-                    "Value": "${var.prometheus_access_id}"
+                    "Value": "${aws_iam_access_key.prometheus.id}"
                 },
                 {
                     "Name": "AWS_SECRET_ACCESS_KEY",
-                    "Value": "${var.prometheus_secret_access_key}"
+                    "Value": "${replace(aws_iam_access_key.prometheus.secret, "/", "\\/")}"
                 },
                 {
                     "Name": "ENVIRONMENT",
@@ -131,3 +131,33 @@ resource "aws_security_group" "prometheus" {
     Layer       = "prometheus"
   }
 }
+
+resource "aws_iam_user" "prometheus" {
+  name = "prometheus-${local.product}-${local.environment}"
+  path = "/"
+}
+
+resource "aws_iam_access_key" "prometheus" {
+  user = "${aws_iam_user.prometheus.name}"
+}
+
+resource "aws_iam_user_policy" "prometheus" {
+  name = "prometheus"
+  
+  user = "${aws_iam_user.prometheus.name}"
+  
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "ec2:Describe*",
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
+

@@ -2,14 +2,6 @@ variable "docker_tag" {
   type = "string"
 }
 
-variable "prometheus_access_id" {
-  type = "string"
-}
-
-variable "prometheus_secret_access_key" {
-  type = "string"
-}
-
 variable "task_status" {
   type = "string"
 }
