@@ -10,11 +10,7 @@ locals {
 
   concourse_postgres_password            = "${var.secrets["concourse_postgres_password"]}"
   concourse_password                     = "${var.secrets["concourse_password"]}"
-  prometheus_access_id                   = "${var.secrets["prometheus_access_id"]}"
-  prometheus_secret_access_key           = "${var.secrets["prometheus_secret_access_key"]}"
-  elasticsearch_access_id                = "${var.secrets["elasticsearch_access_id"]}"
-  elasticsearch_secret_access_key        = "${var.secrets["elasticsearch_secret_access_key"]}"
-  
+ 
   vpc = {
       region                          = "${var.region}"
       aws_security_group_os_id        = "${aws_security_group.os.id}"

@@ -31,7 +31,7 @@ resource "aws_ecs_task_definition" "elasticsearch" {
             "cpu": 0,
             "essential": true,
             "image": "453254632971.dkr.ecr.eu-west-1.amazonaws.com/elasticsearch:${var.elasticsearch_docker_tag}",
-            "memory": 2000,
+            "memory": 3000,
             "environment": [
                 {
                     "Name": "cluster.name",
@@ -39,11 +39,11 @@ resource "aws_ecs_task_definition" "elasticsearch" {
                 },
                 {
                     "Name": "AWS_ACCESS_KEY_ID",
-                    "Value": "${local.elasticsearch_access_id}"
+                    "Value": "${aws_iam_access_key.elastic.id}"
                 },
                 {
                     "Name": "AWS_SECRET_ACCESS_KEY",
-                    "Value": "${local.elasticsearch_secret_access_key}"
+                    "Value": "${aws_iam_access_key.elastic.secret}"
                 },
                 {
                     "Name": "REGION",
@@ -84,7 +84,7 @@ resource "aws_ecs_task_definition" "elasticsearch" {
                   "sourceVolume": "goss_config",
                   "containerPath": "/etc/goss",
                   "readOnly": false
-                }
+  	               }
             ]
         }
     ]
@@ -125,3 +125,52 @@ resource "aws_security_group" "elasticsearch" {
     Layer       = "elasticsearch"
   }
 }
+
+resource "aws_iam_user" "elastic" {
+  name = "elastic-${local.product}-${local.environment}"
+  path = "/"
+}
+
+resource "aws_iam_access_key" "elastic" {
+  user = "${aws_iam_user.elastic.name}"
+}
+
+resource "aws_iam_user_policy" "elastic" {
+  name = "elastic"
+  
+  user = "${aws_iam_user.elastic.name}"
+  
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "ec2:Describe*",
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "elasticloadbalancing:Describe*",
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cloudwatch:ListMetrics",
+                "cloudwatch:GetMetricStatistics",
+                "cloudwatch:Describe*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "autoscaling:Describe*",
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
+
