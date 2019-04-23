@@ -1,15 +1,3 @@
-variable "globals" {
-  type = map(string)
-
-  default = {
-    product     = ""
-    environment = ""
-    admin_cidr  = ""
-    nameTag     = ""
-    key_name    = ""
-  }
-}
-
 variable "instance_count" {
   type    = string
   default = "1"
@@ -53,3 +41,29 @@ variable "vpc_security_group_ids" {
   type = list(string)
 }
 
+variable "context" {
+  type = object({
+    aws_account_id = string
+    region = object({
+      name   = string
+      efs_id = string 
+    })
+    environment = object({
+      name = string
+      key_name = string
+    })
+    product = object({
+      name = string
+      root_domain_name = string    
+    })
+    vpcs = map(object({
+      name   = string
+      cidr   = string
+      dns_ip = string
+      azs = map(object({
+        name   = string
+        subnet = string 
+      }))    
+    }))
+  })    
+} 

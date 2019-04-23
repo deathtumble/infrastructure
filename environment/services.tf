@@ -4,9 +4,12 @@ module "aws-proxy" {
   docker_tag  = var.aws_proxy_docker_tag
   task_status = var.aws_proxy_task_status
 
-  globals = var.globals
-  vpc     = local.vpc
-  az      = local.az1
+  context = var.context
+  vpc_id  = module.vpc.vpc_id
+  ecs_iam_role = var.ecs_iam_role
+  aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
+  aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
+  aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
 }
 
 module "concourse_web" {
@@ -16,12 +19,15 @@ module "concourse_web" {
   task_status = var.concourse_task_status
   subnet_ids  = [module.vpc.az1_subnet_id, module.vpc.az2_subnet_id]
 
-  concourse_password          = local.concourse_password
-  concourse_postgres_password = local.concourse_postgres_password
+  concourse_password          = var.secrets.concourse_password
+  concourse_postgres_password = var.secrets.concourse_postgres_password
 
-  globals = var.globals
-  vpc     = local.vpc
-  az      = local.az1
+  context = var.context
+  vpc_id  = module.vpc.vpc_id
+  ecs_iam_role = var.ecs_iam_role
+  aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
+  aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
+  aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
 }
 
 module "consul" {
@@ -29,11 +35,16 @@ module "consul" {
 
   docker_tag  = var.consul_docker_tag
   task_status = var.consul_task_status
-  dns_ip      = var.dns_ip
 
-  globals = var.globals
-  vpc     = local.vpc
-  az      = local.az1
+  context = var.context
+  vpc = var.context.vpcs["primary"]
+  vpc_id  = module.vpc.vpc_id
+  
+  aws_security_group_os_id = aws_security_group.os.id
+  ecs_iam_role = var.ecs_iam_role
+  aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
+  aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
+  aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
 }
 
 module "dashing" {
@@ -42,9 +53,12 @@ module "dashing" {
   docker_tag  = var.dashing_docker_tag
   task_status = var.dashing_task_status
 
-  globals = var.globals
-  vpc     = local.vpc
-  az      = local.az1
+  context = var.context
+  vpc_id  = module.vpc.vpc_id
+  ecs_iam_role = var.ecs_iam_role
+  aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
+  aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
+  aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
 }
 
 module "grafana" {
@@ -53,9 +67,12 @@ module "grafana" {
   docker_tag  = var.grafana_docker_tag
   task_status = var.grafana_task_status
 
-  globals = var.globals
-  vpc     = local.vpc
-  az      = local.az1
+  context = var.context
+  vpc_id  = module.vpc.vpc_id
+  ecs_iam_role = var.ecs_iam_role
+  aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
+  aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
+  aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
 }
 
 module "nexus" {
@@ -64,9 +81,12 @@ module "nexus" {
   docker_tag  = var.nexus_docker_tag
   task_status = var.nexus_task_status
 
-  globals = var.globals
-  vpc     = local.vpc
-  az      = local.az1
+  context = var.context
+  vpc_id  = module.vpc.vpc_id
+  ecs_iam_role = var.ecs_iam_role
+  aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
+  aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
+  aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
 }
 
 module "prometheus" {
@@ -75,24 +95,20 @@ module "prometheus" {
   docker_tag  = var.prometheus_docker_tag
   task_status = var.prometheus_task_status
 
-  globals = var.globals
-  vpc     = local.vpc
-  az      = local.az1
+  context = var.context
+  vpc_id  = module.vpc.vpc_id
+  ecs_iam_role = var.ecs_iam_role
+  aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
+  aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
+  aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
 }
 
 resource "aws_route53_record" "ssh" {
   zone_id = module.vpc.aws_route53_environment_zone_id
-  name    = "ssh.${local.environment}.${local.root_domain_name}"
+  name    = "ssh.${var.context.environment.name}.${var.context.product.root_domain_name}"
   type    = "A"
   ttl     = 60
-  # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
-  # force an interpolation expression to be interpreted as a list by wrapping it
-  # in an extra set of list brackets. That form was supported for compatibilty in
-  # v0.11, but is no longer supported in Terraform v0.12.
-  #
-  # If the expression in the following list itself returns a list, remove the
-  # brackets to avoid interpretation as a list of lists. If the expression
-  # returns a single list item then leave it as-is and remove this TODO comment.
+
   records = [module.default-efs-instance.public_ip]
 }
 

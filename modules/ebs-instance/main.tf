@@ -17,7 +17,7 @@ resource "aws_instance" "this" {
   ebs_optimized               = "false"
   disable_api_termination     = "false"
   instance_type               = var.instance_type
-  key_name                    = local.key_name
+  key_name                    = var.context.environment.key_name
   monitoring                  = "false"
   vpc_security_group_ids      = var.vpc_security_group_ids
   subnet_id                   = var.subnet_id
@@ -30,13 +30,13 @@ resource "aws_instance" "this" {
 #cloud-config
 hostname: ${var.cluster_name}    
 write_files:
- - content: ECS_CLUSTER=${var.cluster_name}-${local.environment}
+ - content: ECS_CLUSTER=${var.cluster_name}-${var.context.environment.name}
    path: /etc/ecs/ecs.config   
    permissions: '0644'
  - content: |
       RECURSOR=10.0.0.2
       REGION=${var.region}
-      CONSUL_CLUSTER=${local.product}-${local.environment}
+      CONSUL_CLUSTER=${var.context.product.name}-${var.context.environment.name}
    path: /etc/consul/setenv.sh   
    permissions: '0644'
 runcmd:
@@ -55,11 +55,11 @@ EOF
 
   tags = {
     Name = "${var.cluster_name}${var.instance_count == 1 ? "" : var.server_instance_names[count.index]}"
-    Product = local.product
-    Environment = local.environment
-    ConsulCluster = "${local.product}-${local.environment}"
+    Product = var.context.product.name
+    Environment = var.context.environment.name
+    ConsulCluster = "${var.context.product.name}-${var.context.environment.name}"
     Goss = "true"
-    ElasticSearchCluster = local.environment
+    ElasticSearchCluster = var.context.environment.name
   }
 }
 

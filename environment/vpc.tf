@@ -1,27 +1,26 @@
 module "vpc" {
   source                    = "../modules/vpc"
-  vpc_cidr                  = var.vpc_cidr
-  dns_ip                    = var.dns_ip
+  vpc_name                  = "primary"
+  context                   = var.context
   aws_security_group_alb_id = aws_security_group.alb.id
-  globals                   = var.globals
 }
 
 resource "aws_efs_mount_target" "az1" {
-  file_system_id = local.efs_id
+  file_system_id = var.context.region.efs_id
   subnet_id      = module.vpc.az1_subnet_id
 
   security_groups = [aws_security_group.efs.id]
 }
 
 resource "aws_efs_mount_target" "az2" {
-  file_system_id = local.efs_id
+  file_system_id = var.context.region.efs_id
   subnet_id      = module.vpc.az2_subnet_id
 
   security_groups = [aws_security_group.efs.id]
 }
 
 resource "aws_security_group" "efs" {
-  name = "efs-${local.product}-${local.environment}"
+  name = "efs-${var.context.product.name}-${var.context.environment.name}"
 
   vpc_id = module.vpc.vpc_id
 

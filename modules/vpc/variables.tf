@@ -1,36 +1,37 @@
-variable "vpc_cidr" {
-  type = string
-}
-
-variable "dns_ip" {
-  type = string
-}
-
 variable "aws_security_group_alb_id" {
   type = string
 }
 
-variable "environment_cidr" {
-  type    = string
-  default = "10.0.16.0/20"
+variable "vpc_name" {
+   type = string
 }
 
-variable "region" {
-  type    = string
-  default = "eu-west-1"
-}
+variable "context" {
+  type = object({
+    aws_account_id = string
+    region = object({
+      name   = string
+      efs_id = string 
+    })
+    environment = object({
+      name = string
+      key_name = string
+    })
+    product = object({
+      name = string
+      root_domain_name = string    
+    })
+    vpcs = map(object({
+      name   = string
+      cidr   = string
+      dns_ip = string
+      azs = map(object({
+        name   = string
+        subnet = string 
+      }))    
+    }))
+  })    
+} 
 
-variable "availability_zone_1" {
-  type    = string
-  default = "eu-west-1c"
-}
 
-variable "availability_zone_2" {
-  type    = string
-  default = "eu-west-1b"
-}
-
-variable "globals" {
-  type = map(string)
-}
 

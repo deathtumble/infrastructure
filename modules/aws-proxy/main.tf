@@ -1,12 +1,12 @@
 resource "aws_ecs_service" "aws-proxy" {
-  name            = "aws_proxy-${local.environment}"
-  cluster         = "default-${local.environment}"
-  task_definition = "aws-proxy-${local.environment}:${aws_ecs_task_definition.aws-proxy.revision}"
+  name            = "aws_proxy-${var.context.environment.name}"
+  cluster         = "default-${var.context.environment.name}"
+  task_definition = "aws-proxy-${var.context.environment.name}:${aws_ecs_task_definition.aws-proxy.revision}"
   desired_count   = var.task_status == "down" ? 0 : 1
 }
 
 resource "aws_ecs_task_definition" "aws-proxy" {
-  family       = "aws-proxy-${local.environment}"
+  family       = "aws-proxy-${var.context.environment.name}"
   network_mode = "bridge"
 
   volume {
@@ -38,7 +38,7 @@ resource "aws_ecs_task_definition" "aws-proxy" {
                 },
                 {
                     "Name": "aws.region",
-                    "Value": "${local.region}"
+                    "Value": "${var.context.region.name}"
                 }
              ], 
             "portMappings": [
@@ -71,13 +71,13 @@ resource "aws_security_group" "aws-proxy" {
   name = "aws-proxy"
 
   description = "aws-proxy security group"
-  vpc_id = local.vpc_id
+  vpc_id = var.vpc_id
 
   ingress {
     from_port = 8081
     to_port = 8081
     protocol = "tcp"
-    cidr_blocks = [local.admin_cidr, local.vpc_cidr]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -88,15 +88,15 @@ resource "aws_security_group" "aws-proxy" {
   }
 
   tags = {
-    Name = "aws-proxy-${local.product}-${local.environment}"
-    Product = local.product
-    Environment = local.environment
+    Name = "aws-proxy-${var.context.product.name}-${var.context.environment.name}"
+    Product = var.context.product.name
+    Environment = var.context.environment.name
     Layer = "aws-proxy"
   }
 }
 
 resource "aws_iam_user" "aws_proxy" {
-  name = "aws-proxy-${local.product}-${local.environment}"
+  name = "aws-proxy-${var.context.product.name}-${var.context.environment.name}"
   path = "/"
 }
 

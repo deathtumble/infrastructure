@@ -21,23 +21,23 @@ module "nexus-ecs-alb" {
   elb_instance_port               = "8081"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/service/metrics/healthcheck"
-  task_definition                 = "nexus-${local.environment}:${aws_ecs_task_definition.nexus.revision}"
+  task_definition                 = "nexus-${var.context.environment.name}:${aws_ecs_task_definition.nexus.revision}"
   task_status                     = var.task_status
   aws_lb_listener_rule_priority   = 95
-  aws_lb_listener_default_arn     = local.aws_lb_listener_default_arn
-  aws_route53_environment_zone_id = local.aws_route53_environment_zone_id
-  aws_alb_default_dns_name        = local.aws_alb_default_dns_name
-  vpc_id                          = local.vpc_id
-  product                         = local.product
-  environment                     = local.environment
-  root_domain_name                = local.root_domain_name
-  ecs_iam_role                    = local.ecs_iam_role
+  aws_lb_listener_default_arn     = var.aws_lb_listener_default_arn
+  aws_route53_environment_zone_id = var.aws_route53_environment_zone_id
+  aws_alb_default_dns_name        = var.aws_alb_default_dns_name
+  vpc_id                          = var.vpc_id
+  product                         = var.context.product.name
+  environment                     = var.context.environment.name
+  root_domain_name                = var.context.product.root_domain_name
+  ecs_iam_role                    = var.ecs_iam_role
   role                            = "nexus"
   cluster_name                    = "default-efs"
 }
 
 resource "aws_ecs_task_definition" "nexus" {
-  family       = "nexus-${local.environment}"
+  family       = "nexus-${var.context.environment.name}"
   network_mode = "bridge"
 
   volume {
@@ -83,13 +83,13 @@ resource "aws_security_group" "nexus" {
   name = "nexus"
 
   description = "nexus security group"
-  vpc_id = local.vpc_id
+  vpc_id = var.vpc_id
 
   ingress {
     from_port = 80
     to_port = 80
     protocol = "tcp"
-    cidr_blocks = [local.admin_cidr]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
@@ -107,9 +107,9 @@ resource "aws_security_group" "nexus" {
   }
 
   tags = {
-    Name = "nexus-${local.product}-${local.environment}"
-    Product = local.product
-    Environment = local.environment
+    Name = "nexus-${var.context.product.name}-${var.context.environment.name}"
+    Product = var.context.product.name
+    Environment = var.context.environment.name
     Layer = "nexus"
   }
 }

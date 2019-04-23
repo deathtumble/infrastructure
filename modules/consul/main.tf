@@ -1,23 +1,3 @@
-module "consul-instance" {
-  source = "../no-ebs-instance"
-
-  count             = "3"
-  instance_type     = "t2.small"
-  vpc_id            = local.vpc_id
-  availability_zone = local.availability_zone
-  subnet_id         = local.subnet_id
-  ami_id            = local.ecs_ami_id
-  cluster_name      = "consul"
-  consul-service    = "no"
-
-  vpc_security_group_ids = [
-    aws_security_group.consul.id,
-    local.aws_security_group_os_id,
-  ]
-
-  globals = var.globals
-}
-
 variable "healthchecks" {
   type = list(map(string))
   default = [
@@ -41,28 +21,28 @@ module "consul-ecs-alb" {
   elb_instance_port               = "8500"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/v1/agent/checks"
-  task_definition                 = "consul-${local.environment}:${aws_ecs_task_definition.consul.revision}"
+  task_definition                 = "consul-${var.context.environment.name}:${aws_ecs_task_definition.consul.revision}"
   task_status                     = var.task_status
   desired_task_count              = "3"
   aws_lb_listener_rule_priority   = 94
-  aws_lb_listener_default_arn     = local.aws_lb_listener_default_arn
-  aws_route53_environment_zone_id = local.aws_route53_environment_zone_id
-  aws_alb_default_dns_name        = local.aws_alb_default_dns_name
-  vpc_id                          = local.vpc_id
-  product                         = local.product
-  environment                     = local.environment
-  root_domain_name                = local.root_domain_name
-  ecs_iam_role                    = local.ecs_iam_role
+  aws_lb_listener_default_arn     = var.aws_lb_listener_default_arn
+  aws_route53_environment_zone_id = var.aws_route53_environment_zone_id
+  aws_alb_default_dns_name        = var.aws_alb_default_dns_name
+  vpc_id                          = var.vpc_id
+  product                         = var.context.product.name
+  environment                     = var.context.environment.name
+  root_domain_name                = var.context.product.root_domain_name
+  ecs_iam_role                    = var.ecs_iam_role
   role                            = "consul"
   cluster_name                    = "consul"
 }
 
 resource "aws_ecs_cluster" "consul" {
-  name = "consul-${local.environment}"
+  name = "consul-${var.context.environment.name}"
 }
 
 resource "aws_ecs_task_definition" "consul" {
-  family       = "consul-${local.environment}"
+  family       = "consul-${var.context.environment.name}"
   network_mode = "host"
 
   container_definitions = <<DEFINITION
@@ -77,7 +57,7 @@ resource "aws_ecs_task_definition" "consul" {
             "environment": [
                 {
                     "Name": "CONSUL_LOCAL_CONFIG",
-                    "Value": "{\"skip_leave_on_interrupt\": true, \"telemetry\": {\"metrics_prefix\":\"${local.product}.${local.environment}.consul.server\"}}"
+                    "Value": "{\"skip_leave_on_interrupt\": true, \"telemetry\": {\"metrics_prefix\":\"${var.context.product.name}.${var.context.environment.name}.consul.server\"}}"
                 },
                 {
                     "Name": "CONSUL_BIND_INTERFACE",
@@ -92,11 +72,11 @@ resource "aws_ecs_task_definition" "consul" {
                 "agent",
                 "-server",
                 "-dns-port=53",
-                "-recursor=${var.dns_ip}",
+                "-recursor=${var.vpc.dns_ip}",
                 "-bootstrap-expect=3",
                 "-client=0.0.0.0",
                 "-retry-join",
-                "provider=aws tag_key=ConsulCluster tag_value=${local.product}-${local.environment}",
+                "provider=aws tag_key=ConsulCluster tag_value=${var.context.product.name}-${var.context.environment.name}",
                 "-ui"
             ],
             "portMappings": [
@@ -149,70 +129,70 @@ DEFINITION
 }
 
 resource "aws_security_group" "consul" {
-  name = "consul-${local.product}-${local.environment}"
+  name = "consul-${var.context.product.name}-${var.context.environment.name}"
 
-  vpc_id = local.vpc_id
+  vpc_id = var.vpc_id
 
   ingress {
     from_port = 8082
     to_port = 8082
     protocol = "tcp"
-    cidr_blocks = [local.admin_cidr, local.vpc_cidr]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
     from_port = 8301
     to_port = 8301
     protocol = "tcp"
-    cidr_blocks = [local.vpc_cidr]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
     from_port = 8301
     to_port = 8301
     protocol = "udp"
-    cidr_blocks = [local.vpc_cidr]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
     from_port = 8300
     to_port = 8300
     protocol = "tcp"
-    cidr_blocks = [local.vpc_cidr]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
     from_port = 8302
     to_port = 8302
     protocol = "tcp"
-    cidr_blocks = [local.vpc_cidr]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
     from_port = 8500
     to_port = 8500
     protocol = "tcp"
-    cidr_blocks = [local.vpc_cidr, local.admin_cidr]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
     from_port = 8302
     to_port = 8302
     protocol = "udp"
-    cidr_blocks = [local.vpc_cidr]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
     from_port = 80
     to_port = 80
     protocol = "tcp"
-    cidr_blocks = [local.vpc_cidr, local.admin_cidr]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
-    Name = "consul-${local.product}-${local.environment}"
-    Product = local.product
-    Environment = local.environment
+    Name = "consul-${var.context.product.name}-${var.context.environment.name}"
+    Product = var.context.product.name
+    Environment = var.context.environment.name
   }
 }
 

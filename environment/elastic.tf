@@ -1,12 +1,12 @@
 resource "aws_ecs_service" "elasticsearch" {
-  name            = "elasticsearch-${local.environment}"
-  cluster         = "default-efs-${local.environment}"
-  task_definition = "elasticsearch-${local.environment}:${aws_ecs_task_definition.elasticsearch.revision}"
+  name            = "elasticsearch-${var.context.environment.name}"
+  cluster         = "default-efs-${var.context.environment.name}"
+  task_definition = "elasticsearch-${var.context.environment.name}:${aws_ecs_task_definition.elasticsearch.revision}"
   desired_count   = var.elasticsearch_task_status == "down" ? 0 : 1
 }
 
 resource "aws_ecs_task_definition" "elasticsearch" {
-  family       = "elasticsearch-${local.environment}"
+  family       = "elasticsearch-${var.context.environment.name}"
   network_mode = "bridge"
 
   volume {
@@ -35,7 +35,7 @@ resource "aws_ecs_task_definition" "elasticsearch" {
             "environment": [
                 {
                     "Name": "cluster.name",
-                    "Value": "${local.environment}"
+                    "Value": "${var.context.environment.name}"
                 },
                 {
                     "Name": "AWS_ACCESS_KEY_ID",
@@ -103,7 +103,7 @@ resource "aws_security_group" "elasticsearch" {
     from_port = 9200
     to_port = 9200
     protocol = "tcp"
-    cidr_blocks = [local.admin_cidr]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
@@ -121,15 +121,15 @@ resource "aws_security_group" "elasticsearch" {
   }
 
   tags = {
-    Name = "elasticsearch-${local.product}-${local.environment}"
-    Product = local.product
-    Environment = local.environment
+    Name = "elasticsearch-${var.context.product.name}-${var.context.environment.name}"
+    Product = var.context.product.name
+    Environment = var.context.environment.name
     Layer = "elasticsearch"
   }
 }
 
 resource "aws_iam_user" "elastic" {
-  name = "elastic-${local.product}-${local.environment}"
+  name = "elastic-${var.context.product.name}-${var.context.environment.name}"
   path = "/"
 }
 

@@ -21,23 +21,23 @@ module "kibana-ecs-alb" {
   elb_instance_port               = "5601"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/status"
-  task_definition                 = "kibana-${local.environment}:${aws_ecs_task_definition.kibana.revision}"
+  task_definition                 = "kibana-${var.context.environment.name}:${aws_ecs_task_definition.kibana.revision}"
   task_status                     = var.kibana_task_status
   aws_lb_listener_rule_priority   = 90
   aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
   aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
   aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
   vpc_id                          = module.vpc.vpc_id
-  product                         = local.product
-  environment                     = local.environment
-  root_domain_name                = local.root_domain_name
-  ecs_iam_role                    = local.ecs_iam_role
+  product                         = var.context.product.name
+  environment                     = var.context.environment.name
+  root_domain_name                = var.context.product.root_domain_name
+  ecs_iam_role                    = var.ecs_iam_role
   role                            = "kibana"
   cluster_name                    = "default-efs"
 }
 
 resource "aws_ecs_task_definition" "kibana" {
-  family       = "kibana-${local.environment}"
+  family       = "kibana-${var.context.environment.name}"
   network_mode = "host"
 
   volume {
@@ -126,7 +126,7 @@ resource "aws_security_group" "kibana" {
     from_port = 5601
     to_port = 5601
     protocol = "tcp"
-    cidr_blocks = [local.admin_cidr]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -137,9 +137,9 @@ resource "aws_security_group" "kibana" {
   }
 
   tags = {
-    Name = "kibana-${local.product}-${local.environment}"
-    Product = local.product
-    Environment = local.environment
+    Name = "kibana-${var.context.product.name}-${var.context.environment.name}"
+    Product = var.context.product.name
+    Environment = var.context.environment.name
     Layer = "kibana"
   }
 }

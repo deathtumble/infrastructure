@@ -1,5 +1,5 @@
 resource "aws_vpc" "default" {
-  cidr_block                       = var.vpc_cidr
+  cidr_block                       = var.context.vpcs[var.vpc_name].cidr
   instance_tenancy                 = "default"
   enable_dns_support               = true
   enable_dns_hostnames             = true
@@ -7,9 +7,9 @@ resource "aws_vpc" "default" {
   assign_generated_ipv6_cidr_block = false
 
   tags = {
-    Name        = "${local.product}-${local.environment}"
-    Product     = local.product
-    Environment = local.environment
+    Name        = "${var.context.product.name}-${var.context.environment.name}"
+    Product     = var.context.product.name
+    Environment = var.context.environment.name
   }
 }
 
@@ -17,9 +17,9 @@ resource "aws_internet_gateway" "default" {
   vpc_id = aws_vpc.default.id
 
   tags = {
-    Name        = "${local.product}-${local.environment}"
-    Product     = local.product
-    Environment = local.environment
+    Name        = "${var.context.product.name}-${var.context.environment.name}"
+    Product     = var.context.product.name
+    Environment = var.context.environment.name
   }
 }
 
@@ -45,9 +45,9 @@ resource "aws_network_acl" "default" {
   }
 
   tags = {
-    Name        = "${local.product}-${local.environment}"
-    Product     = local.product
-    Environment = local.environment
+    Name        = "${var.context.product.name}-${var.context.environment.name}"
+    Product     = var.context.product.name
+    Environment = var.context.environment.name
   }
 }
 
@@ -55,9 +55,9 @@ resource "aws_route_table" "main" {
   vpc_id = aws_vpc.default.id
 
   tags = {
-    Name        = "main-${local.product}-${local.environment}"
-    Product     = local.product
-    Environment = local.environment
+    Name        = "${var.context.product.name}-${var.context.environment.name}"
+    Product     = var.context.product.name
+    Environment = var.context.environment.name
   }
 }
 
@@ -68,21 +68,21 @@ resource "aws_main_route_table_association" "default" {
 
 resource "aws_subnet" "av1" {
   vpc_id            = aws_vpc.default.id
-  cidr_block        = "10.0.0.0/25"
-  availability_zone = var.availability_zone_1
+  cidr_block        = var.context.vpcs[var.vpc_name].azs["1st"].subnet
+  availability_zone = var.context.vpcs[var.vpc_name].azs["1st"].name
 
   tags = {
-    Name = "av1-${local.product}-${local.environment}"
+    Name = "av1-${var.context.product.name}-${var.context.environment.name}"
   }
 }
 
 resource "aws_subnet" "av2" {
   vpc_id            = aws_vpc.default.id
-  cidr_block        = "10.0.0.128/25"
-  availability_zone = var.availability_zone_2
+  cidr_block        = var.context.vpcs[var.vpc_name].azs["2nd"].subnet
+  availability_zone = var.context.vpcs[var.vpc_name].azs["2nd"].name
 
   tags = {
-    Name = "av1-${local.product}-${local.environment}"
+    Name = "av1-${var.context.product.name}-${var.context.environment.name}"
   }
 }
 
@@ -90,9 +90,9 @@ resource "aws_route_table" "default" {
   vpc_id = aws_vpc.default.id
 
   tags = {
-    Name        = "consul-${local.product}-${local.environment}"
-    Product     = local.product
-    Environment = local.environment
+    Name        = "consul-${var.context.product.name}-${var.context.environment.name}"
+    Product     = var.context.product.name
+    Environment = var.context.environment.name
     Layer       = "consul"
   }
 }
@@ -109,7 +109,7 @@ resource "aws_route_table_association" "default" {
 }
 
 resource "aws_alb" "default" {
-  name            = "${local.product}-${local.environment}"
+  name            = "${var.context.product.name}-${var.context.environment.name}"
   internal        = false
   security_groups = [var.aws_security_group_alb_id]
   subnets         = [aws_subnet.av1.id, aws_subnet.av2.id]
@@ -123,15 +123,15 @@ resource "aws_alb" "default" {
 }
 
 resource "aws_alb_target_group" "default" {
-  name     = "default-${local.environment}"
+  name     = "default-${var.context.environment.name}"
   port     = "80"
   protocol = "HTTP"
   vpc_id   = aws_vpc.default.id
 
   tags = {
-    Name        = "default-${local.environment}"
-    Product     = local.product
-    Environment = local.environment
+    Name        = "default-${var.context.environment.name}"
+    Product     = var.context.product.name
+    Environment = var.context.environment.name
   }
 }
 
@@ -149,7 +149,7 @@ resource "aws_alb_listener" "default" {
 resource "aws_route53_record" "environment" {
   count   = "1"
   zone_id = data.aws_route53_zone.selected.zone_id
-  name    = local.environment
+  name    = var.context.environment.name
   type    = "NS"
   ttl     = 60
 
@@ -162,14 +162,14 @@ resource "aws_route53_record" "environment" {
 }
 
 resource "aws_route53_zone" "environment" {
-  name = "${local.environment}.${local.root_domain_name}"
+  name = "${var.context.environment.name}.${var.context.product.root_domain_name}"
 
   tags = {
-    Environment = local.environment
+    Environment = var.context.environment.name
   }
 }
 
 data "aws_route53_zone" "selected" {
-  name = "${local.root_domain_name}."
+  name = "${var.context.product.root_domain_name}."
 }
 

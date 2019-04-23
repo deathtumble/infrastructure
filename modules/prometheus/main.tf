@@ -21,23 +21,23 @@ module "prometheus-ecs-alb" {
   elb_instance_port               = "9090"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/graph"
-  task_definition                 = "prometheus-${local.environment}:${aws_ecs_task_definition.prometheus.revision}"
+  task_definition                 = "prometheus-${var.context.environment.name}:${aws_ecs_task_definition.prometheus.revision}"
   task_status                     = var.task_status
   aws_lb_listener_rule_priority   = 93
-  aws_lb_listener_default_arn     = local.aws_lb_listener_default_arn
-  aws_route53_environment_zone_id = local.aws_route53_environment_zone_id
-  aws_alb_default_dns_name        = local.aws_alb_default_dns_name
-  vpc_id                          = local.vpc_id
-  product                         = local.product
-  environment                     = local.environment
-  root_domain_name                = local.root_domain_name
-  ecs_iam_role                    = local.ecs_iam_role
+  aws_lb_listener_default_arn     = var.aws_lb_listener_default_arn
+  aws_route53_environment_zone_id = var.aws_route53_environment_zone_id
+  aws_alb_default_dns_name        = var.aws_alb_default_dns_name
+  vpc_id                          = var.vpc_id
+  product                         = var.context.product.name
+  environment                     = var.context.environment.name
+  root_domain_name                = var.context.product.root_domain_name
+  ecs_iam_role                    = var.ecs_iam_role
   role                            = "prometheus"
   cluster_name                    = "default-efs"
 }
 
 resource "aws_ecs_task_definition" "prometheus" {
-  family       = "prometheus-${local.environment}"
+  family       = "prometheus-${var.context.environment.name}"
   network_mode = "host"
 
   volume {
@@ -75,11 +75,11 @@ resource "aws_ecs_task_definition" "prometheus" {
                 },
                 {
                     "Name": "ENVIRONMENT",
-                    "Value": "${local.environment}"
+                    "Value": "${var.context.environment.name}"
                 },
                 {
                     "Name": "aws.region",
-                    "Value": "${local.region}"
+                    "Value": "${var.context.region.name}"
                 }
              ], 
             "portMappings": [
@@ -117,7 +117,7 @@ resource "aws_security_group" "prometheus" {
   name = "prometheus"
 
   description = "prometheus security group"
-  vpc_id = local.vpc_id
+  vpc_id = var.vpc_id
 
   ingress {
     from_port = 9090
@@ -127,15 +127,15 @@ resource "aws_security_group" "prometheus" {
   }
 
   tags = {
-    Name = "prometheus-${local.product}-${local.environment}"
-    Product = local.product
-    Environment = local.environment
+    Name = "prometheus-${var.context.product.name}-${var.context.environment.name}"
+    Product = var.context.product.name
+    Environment = var.context.environment.name
     Layer = "prometheus"
   }
 }
 
 resource "aws_iam_user" "prometheus" {
-  name = "prometheus-${local.product}-${local.environment}"
+  name = "prometheus-${var.context.product.name}-${var.context.environment.name}"
   path = "/"
 }
 

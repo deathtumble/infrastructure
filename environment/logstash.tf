@@ -1,12 +1,12 @@
 resource "aws_ecs_service" "logstash" {
-  name            = "logstash-${local.environment}"
-  cluster         = "default-efs-${local.environment}"
-  task_definition = "logstash-${local.environment}:${aws_ecs_task_definition.logstash.revision}"
+  name            = "logstash-${var.context.environment.name}"
+  cluster         = "default-efs-${var.context.environment.name}"
+  task_definition = "logstash-${var.context.environment.name}:${aws_ecs_task_definition.logstash.revision}"
   desired_count   = var.logstash_task_status == "down" ? 0 : 1
 }
 
 resource "aws_ecs_task_definition" "logstash" {
-  family       = "logstash-${local.environment}"
+  family       = "logstash-${var.context.environment.name}"
   network_mode = "host"
 
   volume {
@@ -74,7 +74,7 @@ resource "aws_security_group" "logstash" {
     from_port = 9600
     to_port = 9600
     protocol = "tcp"
-    cidr_blocks = [local.admin_cidr]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
@@ -92,9 +92,9 @@ resource "aws_security_group" "logstash" {
   }
 
   tags = {
-    Name = "logstash-${local.product}-${local.environment}"
-    Product = local.product
-    Environment = local.environment
+    Name = "logstash-${var.context.product.name}-${var.context.environment.name}"
+    Product = var.context.product.name
+    Environment = var.context.environment.name
     Layer = "logstash"
   }
 }

@@ -21,23 +21,23 @@ module "dashing-ecs-alb" {
   elb_instance_port               = "80"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/favicon.ico"
-  task_definition                 = "dashing-${local.environment}:${aws_ecs_task_definition.dashing.revision}"
+  task_definition                 = "dashing-${var.context.environment.name}:${aws_ecs_task_definition.dashing.revision}"
   task_status                     = var.task_status
   aws_lb_listener_rule_priority   = 97
-  aws_lb_listener_default_arn     = local.aws_lb_listener_default_arn
-  aws_route53_environment_zone_id = local.aws_route53_environment_zone_id
-  aws_alb_default_dns_name        = local.aws_alb_default_dns_name
-  vpc_id                          = local.vpc_id
-  product                         = local.product
-  environment                     = local.environment
-  root_domain_name                = local.root_domain_name
-  ecs_iam_role                    = local.ecs_iam_role
+  aws_lb_listener_default_arn     = var.aws_lb_listener_default_arn
+  aws_route53_environment_zone_id = var.aws_route53_environment_zone_id
+  aws_alb_default_dns_name        = var.aws_alb_default_dns_name
+  vpc_id                          = var.vpc_id
+  product                         = var.context.product.name
+  environment                     = var.context.environment.name
+  root_domain_name                = var.context.product.root_domain_name
+  ecs_iam_role                    = var.ecs_iam_role
   role                            = "dashing"
   cluster_name                    = "default"
 }
 
 resource "aws_ecs_task_definition" "dashing" {
-  family       = "dashing-${local.environment}"
+  family       = "dashing-${var.context.environment.name}"
   network_mode = "host"
 
   volume {
@@ -103,7 +103,7 @@ resource "aws_security_group" "dashing" {
   name = "dashing"
 
   description = "dashing security group"
-  vpc_id = local.vpc_id
+  vpc_id = var.vpc_id
 
   ingress {
     from_port = 80
@@ -120,9 +120,9 @@ resource "aws_security_group" "dashing" {
   }
 
   tags = {
-    Name = "dashing-${local.product}-${local.environment}"
-    Product = local.product
-    Environment = local.environment
+    Name = "dashing-${var.context.product.name}-${var.context.environment.name}"
+    Product = var.context.product.name
+    Environment = var.context.environment.name
     Layer = "dashing"
   }
 

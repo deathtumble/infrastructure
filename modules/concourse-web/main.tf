@@ -21,23 +21,23 @@ module "concourse-ecs-alb" {
   elb_instance_port               = "8080"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/public/images/favicon.png"
-  task_definition                 = "concourse-${local.environment}:${aws_ecs_task_definition.concourse.revision}"
+  task_definition                 = "concourse-${var.context.environment.name}:${aws_ecs_task_definition.concourse.revision}"
   task_status                     = var.task_status
   aws_lb_listener_rule_priority   = 98
-  aws_lb_listener_default_arn     = local.aws_lb_listener_default_arn
-  aws_route53_environment_zone_id = local.aws_route53_environment_zone_id
-  aws_alb_default_dns_name        = local.aws_alb_default_dns_name
-  vpc_id                          = local.vpc_id
-  product                         = local.product
-  environment                     = local.environment
-  root_domain_name                = local.root_domain_name
-  ecs_iam_role                    = local.ecs_iam_role
+  aws_lb_listener_default_arn     = var.aws_lb_listener_default_arn
+  aws_route53_environment_zone_id = var.aws_route53_environment_zone_id
+  aws_alb_default_dns_name        = var.aws_alb_default_dns_name
+  vpc_id                          = var.vpc_id
+  product                         = var.context.product.name
+  environment                     = var.context.environment.name
+  root_domain_name                = var.context.product.root_domain_name
+  ecs_iam_role                    = var.ecs_iam_role
   role                            = "concourse"
   cluster_name                    = "default"
 }
 
 resource "aws_ecs_task_definition" "concourse" {
-  family       = "concourse-${local.environment}"
+  family       = "concourse-${var.context.environment.name}"
   network_mode = "host"
 
   volume {
@@ -85,7 +85,7 @@ resource "aws_ecs_task_definition" "concourse" {
                 }, 
                 {
                     "Name": "CONCOURSE_EXTERNAL_URL",
-                    "Value": "http://concourse.${local.environment}.${local.root_domain_name}"
+                    "Value": "http://concourse.${var.context.environment.name}.${var.aws_alb_default_dns_name}"
                 }, 
                 {
                     "Name": "CONCOURSE_POSTGRES_HOST",
@@ -131,7 +131,7 @@ resource "aws_security_group" "concourse" {
   name = "concourse"
 
   description = "concourse security group"
-  vpc_id = local.vpc_id
+  vpc_id = var.vpc_id
 
   ingress {
     from_port = 8080
@@ -144,14 +144,14 @@ resource "aws_security_group" "concourse" {
     from_port = 2222
     to_port = 2222
     protocol = "tcp"
-    cidr_blocks = [local.vpc_cidr]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
     from_port = 2222
     to_port = 2222
     protocol = "udp"
-    cidr_blocks = [local.vpc_cidr]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -162,9 +162,9 @@ resource "aws_security_group" "concourse" {
   }
 
   tags = {
-    Name = "concourse-${local.product}-${local.environment}"
-    Product = local.product
-    Environment = local.environment
+    Name = "concourse-${var.context.product.name}-${var.context.environment.name}"
+    Product = var.context.product.name
+    Environment = var.context.environment.name
     Layer = "concourse"
   }
 
@@ -174,21 +174,21 @@ resource "aws_security_group" "concourse" {
 }
 
 resource "aws_db_subnet_group" "concourse_db" {
-  name = "concourse-db-${local.environment}"
+  name = "concourse-db-${var.context.environment.name}"
   subnet_ids = var.subnet_ids
 }
 
 resource "aws_security_group" "concourse_db" {
-  name = "concourse-db-${local.environment}"
+  name = "concourse-db-${var.context.environment.name}"
 
   description = "dashing security group"
-  vpc_id = local.vpc_id
+  vpc_id = var.vpc_id
 
   ingress {
     from_port = 5432
     to_port = 5432
     protocol = "tcp"
-    cidr_blocks = [local.vpc_cidr]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -199,14 +199,14 @@ resource "aws_security_group" "concourse_db" {
   }
 
   tags = {
-    Name = "postgres-${local.product}-${local.environment}"
-    Product = local.product
-    Environment = local.environment
+    Name = "postgres-${var.context.product.name}-${var.context.environment.name}"
+    Product = var.context.product.name
+    Environment = var.context.environment.name
   }
 }
 
 resource "aws_db_instance" "concourse" {
-  identifier = "${local.product}-${local.environment}"
+  identifier = "${var.context.product.name}-${var.context.environment.name}"
   allocated_storage = 20
   storage_type = "gp2"
   engine = "postgres"

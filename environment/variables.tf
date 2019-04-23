@@ -1,3 +1,35 @@
+variable "context" {
+  type = object({
+    aws_account_id = string
+    region = object({
+      name   = string
+      efs_id = string 
+    })
+    environment = object({
+      name = string
+      key_name = string
+    })
+    product = object({
+      name = string
+      root_domain_name = string    
+    })
+    vpcs = map(object({
+      name   = string
+      cidr   = string
+      dns_ip = string
+      azs = map(object({
+        name   = string
+        subnet = string 
+      }))    
+    }))
+  })    
+} 
+
+variable "ecs_iam_role" {
+  type = "string"
+  default = "arn:aws:iam::453254632971:role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService"
+}
+
 variable "vpc_cidr" {
   type    = string
   default = "10.0.0.0/16"
@@ -63,14 +95,13 @@ variable "consul_task_status" {
   default = "up"
 }
 
-variable "globals" {
-  type = map(string)
-}
-
 variable "secrets" {
   type = map(string)
+  default = {
+    concourse_postgres_password = "cfeasgfdsercfsde"
+    concourse_password          = "admin"
+  }
 }
-
 variable "ecs_ami_id" {
   type    = string
   default = "ami-01c6f37e16b6e3006"
@@ -135,4 +166,7 @@ variable "no_ebs_instance_module_version" {
   type    = string
   default = "1bc0597"
 }
+
+
+
 

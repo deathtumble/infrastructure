@@ -8,6 +8,7 @@ module "default-instance" {
   subnet_id         = module.vpc.az1_subnet_id
   ami_id            = var.ecs_ami_id
   cluster_name      = "default"
+  context           = var.context
 
   vpc_security_group_ids = [
     module.aws-proxy.aws_security_group_id,
@@ -15,8 +16,6 @@ module "default-instance" {
     module.concourse_web.aws_security_group_id,
     aws_security_group.os.id,
   ]
-
-  globals = var.globals
 }
 
 module "default-efs-instance" {
@@ -28,8 +27,9 @@ module "default-efs-instance" {
   availability_zone = module.vpc.az1_availability_zone
   subnet_id         = module.vpc.az1_subnet_id
   ami_id            = var.ecs_ami_id
-  efs_id            = local.efs_id
-  cluster_name      = "default-efs"
+  efs_id            = var.context.region.efs_id
+  cluster_name      = "default-efs"	
+  context = var.context
 
   vpc_security_group_ids = [
     module.prometheus.aws_security_group_id,
@@ -38,20 +38,37 @@ module "default-efs-instance" {
     aws_security_group.logstash.id,
     aws_security_group.os.id,
   ]
+}
 
-  globals = var.globals
+module "consul-instance" {
+  source = "../modules/no-ebs-instance"
+
+  instance_count    = "3"
+  instance_type     = "t2.small"
+  vpc_id            = module.vpc.vpc_id
+  availability_zone = module.vpc.az1_availability_zone
+  subnet_id         = module.vpc.az1_subnet_id
+  ami_id            = var.ecs_ami_id
+  cluster_name      = "consul"
+  consul-service    = "no"
+  context           = var.context
+
+  vpc_security_group_ids = [
+    module.consul.aws_security_group_id,
+    aws_security_group.os.id,
+  ]
 }
 
 resource "aws_ecs_cluster" "default-efs" {
-  name = "default-efs-${local.environment}"
+  name = "default-efs-${var.context.environment.name}"
 }
 
 resource "aws_ecs_cluster" "default" {
-  name = "default-${local.environment}"
+  name = "default-${var.context.environment.name}"
 }
 
 resource "aws_security_group" "os" {
-  name = "os-${local.product}-${local.environment}"
+  name = "os-${var.context.product.name}-${var.context.environment.name}"
 
   vpc_id = module.vpc.vpc_id
 
@@ -59,7 +76,7 @@ resource "aws_security_group" "os" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.vpc_cidr, local.admin_cidr]
+    cidr_blocks = [var.vpc_cidr, "0.0.0.0/0"]
   }
 
   ingress {
@@ -87,7 +104,7 @@ resource "aws_security_group" "os" {
     from_port   = 8082
     to_port     = 8082
     protocol    = "tcp"
-    cidr_blocks = [local.admin_cidr, var.vpc_cidr]
+    cidr_blocks = ["0.0.0.0/0", var.vpc_cidr]
   }
 
   ingress {
@@ -154,9 +171,9 @@ resource "aws_security_group" "os" {
   }
 
   tags = {
-    Name        = "os-${local.product}-${local.environment}"
-    Product     = local.product
-    Environment = local.environment
+    Name        = "os-${var.context.product.name}-${var.context.environment.name}"
+    Product     = var.context.product.name
+    Environment = var.context.environment.name
   }
 
   lifecycle {
@@ -234,9 +251,9 @@ resource "aws_security_group" "alb" {
   }
 
   tags = {
-    Name        = "alb-${local.product}-${local.environment}"
-    Product     = local.product
-    Environment = local.environment
+    Name        = "alb-${var.context.product.name}-${var.context.environment.name}"
+    Product     = var.context.product.name
+    Environment = var.context.environment.name
   }
 
   lifecycle {

@@ -38,19 +38,39 @@ variable "prometheus_task_status" {
   default = "up"
 }
 
-variable "globals" {
-  type = map(string)
+variable "context" {
+  type = object({
+    aws_account_id = string
+    region = object({
+      name   = string
+      efs_id = string 
+    })
+    environment = object({
+      name = string
+      key_name = string
+    })
+    product = object({
+      name = string
+      root_domain_name = string    
+    })
+    vpcs = map(object({
+      name   = string
+      cidr   = string
+      dns_ip = string
+      azs = map(object({
+        name   = string
+        subnet = string 
+      }))    
+    }))
+  })    
+} 
 
-  default = {
-    product           = ""
-    environment       = ""
-    root_domain_name  = ""
-    admin_cidr        = ""
-    nameTag           = ""
-    nexus_volume_id   = ""
-    grafana_volume_id = ""
-    key_name          = ""
-    "ecs_iam_role"    = ""
-  }
-}
-
+variable "services" {
+  type = map(object({
+    name          = string
+    desired_count = string
+    docker_tag    = string     
+    task_status   = string
+  }))
+}    
+ 

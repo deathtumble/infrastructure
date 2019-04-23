@@ -15,7 +15,7 @@ output "vpc_id" {
 }
 
 output "az1_availability_zone" {
-  value = var.availability_zone_1
+  value = var.context.vpcs[var.vpc_name].azs["1st"].name
 }
 
 output "az1_subnet_id" {
@@ -23,7 +23,7 @@ output "az1_subnet_id" {
 }
 
 output "az2_availability_zone" {
-  value = var.availability_zone_2
+  value = var.context.vpcs[var.vpc_name].azs["2nd"].name
 }
 
 output "az2_subnet_id" {
