@@ -8,10 +8,6 @@ resource "aws_alb_target_group" "this" {
   dynamic "health_check" {
     for_each = var.healthchecks
     content {
-      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
-      # which keys might be set in maps assigned here, so it has
-      # produced a comprehensive set here. Consider simplifying
-      # this after confirming which keys can be set in practice.
 
       enabled             = lookup(health_check.value, "enabled", null)
       healthy_threshold   = lookup(health_check.value, "healthy_threshold", null)
