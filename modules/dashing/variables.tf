@@ -1,21 +1,21 @@
 variable "docker_tag" {
-  type = "string"
+  type = string
 }
 
 variable "task_status" {
-  type = "string"
+  type = string
 }
 
 variable "vpc" {
-  type = "map"
+  type = map(string)
 }
 
 variable "az" {
-  type = "map"
+  type = map(string)
 }
 
 variable "globals" {
-  type = "map"
+  type = map(string)
 
   default = {
     product              = ""

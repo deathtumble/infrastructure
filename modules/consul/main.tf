@@ -3,56 +3,56 @@ module "consul-instance" {
 
   count             = "3"
   instance_type     = "t2.small"
-  vpc_id            = "${local.vpc_id}"
-  availability_zone = "${local.availability_zone}"
-  subnet_id         = "${local.subnet_id}"
-  ami_id            = "${local.ecs_ami_id}"
+  vpc_id            = local.vpc_id
+  availability_zone = local.availability_zone
+  subnet_id         = local.subnet_id
+  ami_id            = local.ecs_ami_id
   cluster_name      = "consul"
   consul-service    = "no"
 
   vpc_security_group_ids = [
-    "${aws_security_group.consul.id}",
-    "${local.aws_security_group_os_id}",
+    aws_security_group.consul.id,
+    local.aws_security_group_os_id,
   ]
 
-  globals = "${var.globals}"
+  globals = var.globals
 }
 
 variable "healthchecks" {
-   type = "list"
-   default = [
-      {
-        healthy_threshold   = 2
-        unhealthy_threshold = 2
-        timeout             = 3
-        path                = "/v1/agent/checks"
-        protocol            = "HTTP"
-        port                = "8500"
-        interval            = 5
-        matcher             = "200,401,302"
-      }
-   ]
+  type = list(map(string))
+  default = [
+    {
+      healthy_threshold   = 2
+      unhealthy_threshold = 2
+      timeout             = 3
+      path                = "/v1/agent/checks"
+      protocol            = "HTTP"
+      port                = "8500"
+      interval            = 5
+      matcher             = "200,401,302"
+    },
+  ]
 }
 
 module "consul-ecs-alb" {
   source = "../ecs-alb"
 
-  healthchecks                    = "${var.healthchecks}"
+  healthchecks                    = var.healthchecks
   elb_instance_port               = "8500"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/v1/agent/checks"
   task_definition                 = "consul-${local.environment}:${aws_ecs_task_definition.consul.revision}"
-  task_status                     = "${var.task_status}"
+  task_status                     = var.task_status
   desired_task_count              = "3"
   aws_lb_listener_rule_priority   = 94
-  aws_lb_listener_default_arn     = "${local.aws_lb_listener_default_arn}"
-  aws_route53_environment_zone_id = "${local.aws_route53_environment_zone_id}"
-  aws_alb_default_dns_name        = "${local.aws_alb_default_dns_name}"
-  vpc_id                          = "${local.vpc_id}"
-  product                         = "${local.product}"
-  environment                     = "${local.environment}"
-  root_domain_name                = "${local.root_domain_name}"
-  ecs_iam_role                    = "${local.ecs_iam_role}"
+  aws_lb_listener_default_arn     = local.aws_lb_listener_default_arn
+  aws_route53_environment_zone_id = local.aws_route53_environment_zone_id
+  aws_alb_default_dns_name        = local.aws_alb_default_dns_name
+  vpc_id                          = local.vpc_id
+  product                         = local.product
+  environment                     = local.environment
+  root_domain_name                = local.root_domain_name
+  ecs_iam_role                    = local.ecs_iam_role
   role                            = "consul"
   cluster_name                    = "consul"
 }
@@ -143,73 +143,116 @@ resource "aws_ecs_task_definition" "consul" {
             ]
         }
     ]
-    DEFINITION
+    
+DEFINITION
+
 }
 
 resource "aws_security_group" "consul" {
   name = "consul-${local.product}-${local.environment}"
 
-  vpc_id      = "${local.vpc_id}"
+  vpc_id = local.vpc_id
 
   ingress {
-    from_port   = 8082
-    to_port     = 8082
-    protocol    = "tcp"
-    cidr_blocks = ["${local.admin_cidr}", "${local.vpc_cidr}"]
+    from_port = 8082
+    to_port = 8082
+    protocol = "tcp"
+    cidr_blocks = [local.admin_cidr, local.vpc_cidr]
   }
 
   ingress {
-    from_port   = 8301
-    to_port     = 8301
-    protocol    = "tcp"
-    cidr_blocks = ["${local.vpc_cidr}"]
+    from_port = 8301
+    to_port = 8301
+    protocol = "tcp"
+    # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
+    # force an interpolation expression to be interpreted as a list by wrapping it
+    # in an extra set of list brackets. That form was supported for compatibilty in
+    # v0.11, but is no longer supported in Terraform v0.12.
+    #
+    # If the expression in the following list itself returns a list, remove the
+    # brackets to avoid interpretation as a list of lists. If the expression
+    # returns a single list item then leave it as-is and remove this TODO comment.
+    cidr_blocks = [local.vpc_cidr]
   }
 
   ingress {
-    from_port   = 8301
-    to_port     = 8301
-    protocol    = "udp"
-    cidr_blocks = ["${local.vpc_cidr}"]
+    from_port = 8301
+    to_port = 8301
+    protocol = "udp"
+    # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
+    # force an interpolation expression to be interpreted as a list by wrapping it
+    # in an extra set of list brackets. That form was supported for compatibilty in
+    # v0.11, but is no longer supported in Terraform v0.12.
+    #
+    # If the expression in the following list itself returns a list, remove the
+    # brackets to avoid interpretation as a list of lists. If the expression
+    # returns a single list item then leave it as-is and remove this TODO comment.
+    cidr_blocks = [local.vpc_cidr]
   }
 
   ingress {
-    from_port   = 8300
-    to_port     = 8300
-    protocol    = "tcp"
-    cidr_blocks = ["${local.vpc_cidr}"]
+    from_port = 8300
+    to_port = 8300
+    protocol = "tcp"
+    # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
+    # force an interpolation expression to be interpreted as a list by wrapping it
+    # in an extra set of list brackets. That form was supported for compatibilty in
+    # v0.11, but is no longer supported in Terraform v0.12.
+    #
+    # If the expression in the following list itself returns a list, remove the
+    # brackets to avoid interpretation as a list of lists. If the expression
+    # returns a single list item then leave it as-is and remove this TODO comment.
+    cidr_blocks = [local.vpc_cidr]
   }
 
   ingress {
-    from_port   = 8302
-    to_port     = 8302
-    protocol    = "tcp"
-    cidr_blocks = ["${local.vpc_cidr}"]
+    from_port = 8302
+    to_port = 8302
+    protocol = "tcp"
+    # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
+    # force an interpolation expression to be interpreted as a list by wrapping it
+    # in an extra set of list brackets. That form was supported for compatibilty in
+    # v0.11, but is no longer supported in Terraform v0.12.
+    #
+    # If the expression in the following list itself returns a list, remove the
+    # brackets to avoid interpretation as a list of lists. If the expression
+    # returns a single list item then leave it as-is and remove this TODO comment.
+    cidr_blocks = [local.vpc_cidr]
   }
 
   ingress {
-    from_port   = 8500
-    to_port     = 8500
-    protocol    = "tcp"
-    cidr_blocks = ["${local.vpc_cidr}", "${local.admin_cidr}"]
+    from_port = 8500
+    to_port = 8500
+    protocol = "tcp"
+    cidr_blocks = [local.vpc_cidr, local.admin_cidr]
   }
 
   ingress {
-    from_port   = 8302
-    to_port     = 8302
-    protocol    = "udp"
-    cidr_blocks = ["${local.vpc_cidr}"]
+    from_port = 8302
+    to_port = 8302
+    protocol = "udp"
+    # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
+    # force an interpolation expression to be interpreted as a list by wrapping it
+    # in an extra set of list brackets. That form was supported for compatibilty in
+    # v0.11, but is no longer supported in Terraform v0.12.
+    #
+    # If the expression in the following list itself returns a list, remove the
+    # brackets to avoid interpretation as a list of lists. If the expression
+    # returns a single list item then leave it as-is and remove this TODO comment.
+    cidr_blocks = [local.vpc_cidr]
   }
 
   ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["${local.vpc_cidr}", "${local.admin_cidr}"]
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    cidr_blocks = [local.vpc_cidr, local.admin_cidr]
   }
 
-  tags {
-    Name        = "consul-${local.product}-${local.environment}"
-    Product     = "${local.product}"
-    Environment = "${local.environment}"
+  tags = {
+    Name = "consul-${local.product}-${local.environment}"
+    Product = local.product
+    Environment = local.environment
   }
 }
+

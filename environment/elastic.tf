@@ -2,7 +2,7 @@ resource "aws_ecs_service" "elasticsearch" {
   name            = "elasticsearch-${local.environment}"
   cluster         = "default-efs-${local.environment}"
   task_definition = "elasticsearch-${local.environment}:${aws_ecs_task_definition.elasticsearch.revision}"
-  desired_count   = "${var.elasticsearch_task_status == "down" ? 0 : 1}"
+  desired_count   = var.elasticsearch_task_status == "down" ? 0 : 1
 }
 
 resource "aws_ecs_task_definition" "elasticsearch" {
@@ -88,41 +88,51 @@ resource "aws_ecs_task_definition" "elasticsearch" {
             ]
         }
     ]
-    DEFINITION
+    
+DEFINITION
+
 }
 
 resource "aws_security_group" "elasticsearch" {
   name = "elasticsearch"
 
   description = "elasticsearch security group"
-  vpc_id      = "${module.vpc.vpc_id}"
+  vpc_id = module.vpc.vpc_id
 
   ingress {
-    from_port   = 9200
-    to_port     = 9200
-    protocol    = "tcp"
-    cidr_blocks = ["${local.admin_cidr}"]
+    from_port = 9200
+    to_port = 9200
+    protocol = "tcp"
+    # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
+    # force an interpolation expression to be interpreted as a list by wrapping it
+    # in an extra set of list brackets. That form was supported for compatibilty in
+    # v0.11, but is no longer supported in Terraform v0.12.
+    #
+    # If the expression in the following list itself returns a list, remove the
+    # brackets to avoid interpretation as a list of lists. If the expression
+    # returns a single list item then leave it as-is and remove this TODO comment.
+    cidr_blocks = [local.admin_cidr]
   }
 
   ingress {
-    from_port   = 9300
-    to_port     = 9300
-    protocol    = "tcp"
+    from_port = 9300
+    to_port = 9300
+    protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags {
-    Name        = "elasticsearch-${local.product}-${local.environment}"
-    Product     = "${local.product}"
-    Environment = "${local.environment}"
-    Layer       = "elasticsearch"
+  tags = {
+    Name = "elasticsearch-${local.product}-${local.environment}"
+    Product = local.product
+    Environment = local.environment
+    Layer = "elasticsearch"
   }
 }
 
@@ -132,14 +142,14 @@ resource "aws_iam_user" "elastic" {
 }
 
 resource "aws_iam_access_key" "elastic" {
-  user = "${aws_iam_user.elastic.name}"
+  user = aws_iam_user.elastic.name
 }
 
 resource "aws_iam_user_policy" "elastic" {
   name = "elastic"
-  
-  user = "${aws_iam_user.elastic.name}"
-  
+
+  user = aws_iam_user.elastic.name
+
   policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -171,6 +181,6 @@ resource "aws_iam_user_policy" "elastic" {
     ]
 }
 EOF
-}
 
+}
 

@@ -1,0 +1,1 @@
+logstash_docker_tag = "2cd0b80"

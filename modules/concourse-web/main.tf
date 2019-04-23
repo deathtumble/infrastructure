@@ -1,37 +1,37 @@
 variable "healthchecks" {
-   type = "list"
-   default = [
-      {
-        healthy_threshold   = 2
-        unhealthy_threshold = 2
-        timeout             = 3
-        path                = "/public/images/favicon.png"
-        protocol            = "HTTP"
-        port                = "8080"
-        interval            = 5
-        matcher             = "200,401,302"
-      }
-   ]
+  type = list(map(string))
+  default = [
+    {
+      healthy_threshold   = 2
+      unhealthy_threshold = 2
+      timeout             = 3
+      path                = "/public/images/favicon.png"
+      protocol            = "HTTP"
+      port                = "8080"
+      interval            = 5
+      matcher             = "200,401,302"
+    },
+  ]
 }
 
 module "concourse-ecs-alb" {
   source = "../ecs-alb"
 
-  healthchecks                    = "${var.healthchecks}"
-   elb_instance_port               = "8080"
+  healthchecks                    = var.healthchecks
+  elb_instance_port               = "8080"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/public/images/favicon.png"
   task_definition                 = "concourse-${local.environment}:${aws_ecs_task_definition.concourse.revision}"
-  task_status                     = "${var.task_status}"
+  task_status                     = var.task_status
   aws_lb_listener_rule_priority   = 98
-  aws_lb_listener_default_arn     = "${local.aws_lb_listener_default_arn}"
-  aws_route53_environment_zone_id = "${local.aws_route53_environment_zone_id}"
-  aws_alb_default_dns_name        = "${local.aws_alb_default_dns_name}"
-  vpc_id                          = "${local.vpc_id}"
-  product                         = "${local.product}"
-  environment                     = "${local.environment}"
-  root_domain_name                = "${local.root_domain_name}"
-  ecs_iam_role                    = "${local.ecs_iam_role}"
+  aws_lb_listener_default_arn     = local.aws_lb_listener_default_arn
+  aws_route53_environment_zone_id = local.aws_route53_environment_zone_id
+  aws_alb_default_dns_name        = local.aws_alb_default_dns_name
+  vpc_id                          = local.vpc_id
+  product                         = local.product
+  environment                     = local.environment
+  root_domain_name                = local.root_domain_name
+  ecs_iam_role                    = local.ecs_iam_role
   role                            = "concourse"
   cluster_name                    = "default"
 }
@@ -49,8 +49,8 @@ resource "aws_ecs_task_definition" "concourse" {
     name      = "goss_config"
     host_path = "/etc/goss"
   }
-  
-  depends_on = ["aws_db_instance.concourse"]
+
+  depends_on = [aws_db_instance.concourse]
 
   container_definitions = <<DEFINITION
     [
@@ -122,48 +122,66 @@ resource "aws_ecs_task_definition" "concourse" {
             ]            
         }
     ]
-    DEFINITION
+    
+DEFINITION
+
 }
 
 resource "aws_security_group" "concourse" {
   name = "concourse"
 
   description = "concourse security group"
-  vpc_id      = "${local.vpc_id}"
+  vpc_id = local.vpc_id
 
   ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
+    from_port = 8080
+    to_port = 8080
+    protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
-    from_port   = 2222
-    to_port     = 2222
-    protocol    = "tcp"
-    cidr_blocks = ["${local.vpc_cidr}"]
+    from_port = 2222
+    to_port = 2222
+    protocol = "tcp"
+    # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
+    # force an interpolation expression to be interpreted as a list by wrapping it
+    # in an extra set of list brackets. That form was supported for compatibilty in
+    # v0.11, but is no longer supported in Terraform v0.12.
+    #
+    # If the expression in the following list itself returns a list, remove the
+    # brackets to avoid interpretation as a list of lists. If the expression
+    # returns a single list item then leave it as-is and remove this TODO comment.
+    cidr_blocks = [local.vpc_cidr]
   }
 
   ingress {
-    from_port   = 2222
-    to_port     = 2222
-    protocol    = "udp"
-    cidr_blocks = ["${local.vpc_cidr}"]
+    from_port = 2222
+    to_port = 2222
+    protocol = "udp"
+    # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
+    # force an interpolation expression to be interpreted as a list by wrapping it
+    # in an extra set of list brackets. That form was supported for compatibilty in
+    # v0.11, but is no longer supported in Terraform v0.12.
+    #
+    # If the expression in the following list itself returns a list, remove the
+    # brackets to avoid interpretation as a list of lists. If the expression
+    # returns a single list item then leave it as-is and remove this TODO comment.
+    cidr_blocks = [local.vpc_cidr]
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags {
-    Name        = "concourse-${local.product}-${local.environment}"
-    Product     = "${local.product}"
-    Environment = "${local.environment}"
-    Layer       = "concourse"
+  tags = {
+    Name = "concourse-${local.product}-${local.environment}"
+    Product = local.product
+    Environment = local.environment
+    Layer = "concourse"
   }
 
   lifecycle {
@@ -172,50 +190,58 @@ resource "aws_security_group" "concourse" {
 }
 
 resource "aws_db_subnet_group" "concourse_db" {
-  name       = "concourse-db-${local.environment}"
-  subnet_ids = ["${var.subnet_ids}"]
+  name = "concourse-db-${local.environment}"
+  subnet_ids = var.subnet_ids
 }
 
 resource "aws_security_group" "concourse_db" {
   name = "concourse-db-${local.environment}"
 
   description = "dashing security group"
-  vpc_id      = "${local.vpc_id}"
+  vpc_id = local.vpc_id
 
   ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    cidr_blocks = ["${local.vpc_cidr}"]
+    from_port = 5432
+    to_port = 5432
+    protocol = "tcp"
+    # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
+    # force an interpolation expression to be interpreted as a list by wrapping it
+    # in an extra set of list brackets. That form was supported for compatibilty in
+    # v0.11, but is no longer supported in Terraform v0.12.
+    #
+    # If the expression in the following list itself returns a list, remove the
+    # brackets to avoid interpretation as a list of lists. If the expression
+    # returns a single list item then leave it as-is and remove this TODO comment.
+    cidr_blocks = [local.vpc_cidr]
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags {
-    Name        = "postgres-${local.product}-${local.environment}"
-    Product     = "${local.product}"
-    Environment = "${local.environment}"
+  tags = {
+    Name = "postgres-${local.product}-${local.environment}"
+    Product = local.product
+    Environment = local.environment
   }
 }
 
 resource "aws_db_instance" "concourse" {
-  identifier             = "${local.product}-${local.environment}"
-  allocated_storage      = 20
-  storage_type           = "gp2"
-  engine                 = "postgres"
-  engine_version         = "9.6.6"
-  instance_class         = "db.t2.micro"
-  name                   = "concourse"
-  username               = "concourse"
-  db_subnet_group_name   = "${aws_db_subnet_group.concourse_db.name}"
-  password               = "${var.concourse_postgres_password}"
-  parameter_group_name   = "default.postgres9.6"
-  vpc_security_group_ids = ["${aws_security_group.concourse_db.id}"]
-  skip_final_snapshot    = true
+  identifier = "${local.product}-${local.environment}"
+  allocated_storage = 20
+  storage_type = "gp2"
+  engine = "postgres"
+  engine_version = "9.6.6"
+  instance_class = "db.t2.micro"
+  name = "concourse"
+  username = "concourse"
+  db_subnet_group_name = aws_db_subnet_group.concourse_db.name
+  password = var.concourse_postgres_password
+  parameter_group_name = "default.postgres9.6"
+  vpc_security_group_ids = [aws_security_group.concourse_db.id]
+  skip_final_snapshot = true
 }
 

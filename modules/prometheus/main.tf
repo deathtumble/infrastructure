@@ -1,37 +1,37 @@
 variable "healthchecks" {
-   type = "list"
-   default = [
-      {
-        healthy_threshold   = 2
-        unhealthy_threshold = 10
-        timeout             = 60
-        path                = "/graph"
-        protocol            = "HTTP"
-        port                = "9090"
-        interval            = 300
-        matcher             = "200,401,302"
-      }
-   ]
+  type = list(map(string))
+  default = [
+    {
+      healthy_threshold   = 2
+      unhealthy_threshold = 10
+      timeout             = 60
+      path                = "/graph"
+      protocol            = "HTTP"
+      port                = "9090"
+      interval            = 300
+      matcher             = "200,401,302"
+    },
+  ]
 }
 
 module "prometheus-ecs-alb" {
   source = "../ecs-alb"
 
-  healthchecks                    = "${var.healthchecks}"  
+  healthchecks                    = var.healthchecks
   elb_instance_port               = "9090"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/graph"
   task_definition                 = "prometheus-${local.environment}:${aws_ecs_task_definition.prometheus.revision}"
-  task_status                     = "${var.task_status}"
+  task_status                     = var.task_status
   aws_lb_listener_rule_priority   = 93
-  aws_lb_listener_default_arn     = "${local.aws_lb_listener_default_arn}"
-  aws_route53_environment_zone_id = "${local.aws_route53_environment_zone_id}"
-  aws_alb_default_dns_name        = "${local.aws_alb_default_dns_name}"
-  vpc_id                          = "${local.vpc_id}"
-  product                         = "${local.product}"
-  environment                     = "${local.environment}"
-  root_domain_name                = "${local.root_domain_name}"
-  ecs_iam_role                    = "${local.ecs_iam_role}"
+  aws_lb_listener_default_arn     = local.aws_lb_listener_default_arn
+  aws_route53_environment_zone_id = local.aws_route53_environment_zone_id
+  aws_alb_default_dns_name        = local.aws_alb_default_dns_name
+  vpc_id                          = local.vpc_id
+  product                         = local.product
+  environment                     = local.environment
+  root_domain_name                = local.root_domain_name
+  ecs_iam_role                    = local.ecs_iam_role
   role                            = "prometheus"
   cluster_name                    = "default-efs"
 }
@@ -108,27 +108,29 @@ resource "aws_ecs_task_definition" "prometheus" {
             ]
         }
     ]
-    DEFINITION
+    
+DEFINITION
+
 }
 
 resource "aws_security_group" "prometheus" {
   name = "prometheus"
 
   description = "prometheus security group"
-  vpc_id      = "${local.vpc_id}"
+  vpc_id = local.vpc_id
 
   ingress {
-    from_port   = 9090
-    to_port     = 9090
-    protocol    = "tcp"
+    from_port = 9090
+    to_port = 9090
+    protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags {
-    Name        = "prometheus-${local.product}-${local.environment}"
-    Product     = "${local.product}"
-    Environment = "${local.environment}"
-    Layer       = "prometheus"
+  tags = {
+    Name = "prometheus-${local.product}-${local.environment}"
+    Product = local.product
+    Environment = local.environment
+    Layer = "prometheus"
   }
 }
 
@@ -138,14 +140,14 @@ resource "aws_iam_user" "prometheus" {
 }
 
 resource "aws_iam_access_key" "prometheus" {
-  user = "${aws_iam_user.prometheus.name}"
+  user = aws_iam_user.prometheus.name
 }
 
 resource "aws_iam_user_policy" "prometheus" {
   name = "prometheus"
-  
-  user = "${aws_iam_user.prometheus.name}"
-  
+
+  user = aws_iam_user.prometheus.name
+
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -158,6 +160,6 @@ resource "aws_iam_user_policy" "prometheus" {
   ]
 }
 EOF
-}
 
+}
 

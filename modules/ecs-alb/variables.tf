@@ -1,79 +1,78 @@
 variable "cluster_name" {
-  type = "string" 
+  type = string
 }
 
 variable "root_domain_name" {
-  type = "string"
+  type = string
 }
 
 variable "product" {
-  type = "string"
+  type = string
 }
 
 variable "environment" {
-  type = "string"
+  type = string
 }
 
 variable "aws_route53_environment_zone_id" {
-  type = "string"
+  type = string
 }
 
 variable "vpc_id" {
-  type = "string"
+  type = string
 }
 
 variable "task_definition" {
-  type = "string"
+  type = string
 }
 
 variable "task_status" {
-  type = "string"
+  type = string
 }
 
 variable "desired_task_count" {
-  type    = "string"
+  type    = string
   default = "1"
 }
 
 variable "role" {
-  type = "string"
+  type = string
 }
 
 variable "elb_instance_port" {
-  type = "string"
+  type = string
 }
 
 variable "aws_lb_listener_default_arn" {
-  type = "string"
+  type = string
 }
 
 variable "aws_lb_listener_rule_priority" {
-  type = "string"
+  type = string
 }
 
 variable "healthcheck_path" {
-  type = "string"
+  type = string
 }
 
 variable "aws_alb_default_dns_name" {
-  type = "string"
+  type = string
 }
 
 variable "healthcheck_protocol" {
-  type = "string"
+  type = string
 }
 
 variable "elb_protocol" {
-  type    = "string"
+  type    = string
   default = "http"
 }
 
 variable "ecs_iam_role" {
-  type = "string"
+  type = string
 }
 
-
 variable "healthchecks" {
-  type = "list"
+  type = list(map(string))
 }
 

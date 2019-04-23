@@ -2,7 +2,7 @@ resource "aws_ecs_service" "aws-proxy" {
   name            = "aws_proxy-${local.environment}"
   cluster         = "default-${local.environment}"
   task_definition = "aws-proxy-${local.environment}:${aws_ecs_task_definition.aws-proxy.revision}"
-  desired_count   = "${var.task_status == "down" ? 0 : 1}"
+  desired_count   = var.task_status == "down" ? 0 : 1
 }
 
 resource "aws_ecs_task_definition" "aws-proxy" {
@@ -62,34 +62,36 @@ resource "aws_ecs_task_definition" "aws-proxy" {
             ]
         }
     ]
-    DEFINITION
+    
+DEFINITION
+
 }
 
 resource "aws_security_group" "aws-proxy" {
   name = "aws-proxy"
 
   description = "aws-proxy security group"
-  vpc_id      = "${local.vpc_id}"
+  vpc_id = local.vpc_id
 
   ingress {
-    from_port   = 8081
-    to_port     = 8081
-    protocol    = "tcp"
-    cidr_blocks = ["${local.admin_cidr}", "${local.vpc_cidr}"]
+    from_port = 8081
+    to_port = 8081
+    protocol = "tcp"
+    cidr_blocks = [local.admin_cidr, local.vpc_cidr]
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags {
-    Name        = "aws-proxy-${local.product}-${local.environment}"
-    Product     = "${local.product}"
-    Environment = "${local.environment}"
-    Layer       = "aws-proxy"
+  tags = {
+    Name = "aws-proxy-${local.product}-${local.environment}"
+    Product = local.product
+    Environment = local.environment
+    Layer = "aws-proxy"
   }
 }
 
@@ -99,14 +101,14 @@ resource "aws_iam_user" "aws_proxy" {
 }
 
 resource "aws_iam_access_key" "aws_proxy" {
-  user = "${aws_iam_user.aws_proxy.name}"
+  user = aws_iam_user.aws_proxy.name
 }
 
 resource "aws_iam_user_policy" "aws_proxy" {
   name = "aws_proxy"
-  
-  user = "${aws_iam_user.aws_proxy.name}"
-  
+
+  user = aws_iam_user.aws_proxy.name
+
   policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -137,5 +139,6 @@ resource "aws_iam_user_policy" "aws_proxy" {
     ]
 }
 EOF
+
 }
 

@@ -1,17 +1,17 @@
 module "environment" {
   source = "../environment"
 
-  globals = "${var.globals}"
-  secrets = "${var.secrets}"
+  globals = var.globals
+  secrets = var.secrets
 
-  concourse_task_status  = "${var.concourse_task_status}"
-  grafana_task_status    = "${var.grafana_task_status}"
-  dashing_task_status    = "${var.dashing_task_status}"
-  nexus_task_status      = "${var.nexus_task_status}"
-  consul_task_status     = "${var.consul_task_status}"
-  
-  elasticsearch_docker_tag = "${var.elasticsearch_docker_tag}"
-  logstash_docker_tag = "${var.logstash_docker_tag}"
+  concourse_task_status = var.concourse_task_status
+  grafana_task_status   = var.grafana_task_status
+  dashing_task_status   = var.dashing_task_status
+  nexus_task_status     = var.nexus_task_status
+  consul_task_status    = var.consul_task_status
+
+  elasticsearch_docker_tag = var.elasticsearch_docker_tag
+  logstash_docker_tag      = var.logstash_docker_tag
 }
 
 terraform {
@@ -21,3 +21,4 @@ terraform {
     region = "eu-west-1"
   }
 }
+

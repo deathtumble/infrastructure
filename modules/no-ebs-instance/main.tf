@@ -10,28 +10,28 @@ variable "server_instance_names" {
 }
 
 variable "no-consul-service-config" {
-  type = "string"
+  type = string
 
   default = ""
 }
 
 variable "consul-service-config" {
-  type    = "string"
+  type    = string
   default = " - service consul start"
 }
 
 resource "aws_instance" "this" {
-  count                       = "${var.count}"
-  ami                         = "${var.ami_id}"
-  availability_zone           = "${var.availability_zone}"
+  count                       = var.instance_count
+  ami                         = var.ami_id
+  availability_zone           = var.availability_zone
   tenancy                     = "default"
   ebs_optimized               = "false"
   disable_api_termination     = "false"
-  instance_type               = "${var.instance_type}"
-  key_name                    = "${local.key_name}"
+  instance_type               = var.instance_type
+  key_name                    = local.key_name
   monitoring                  = "false"
-  vpc_security_group_ids      = ["${var.vpc_security_group_ids}"]
-  subnet_id                   = "${var.subnet_id}"
+  vpc_security_group_ids      = var.vpc_security_group_ids
+  subnet_id                   = var.subnet_id
   associate_public_ip_address = "true"
   source_dest_check           = "true"
   iam_instance_profile        = "ecsinstancerole"
@@ -59,11 +59,13 @@ runcmd:
 ${var.consul-service == "yes" ? var.consul-service-config : var.no-consul-service-config}
 EOF
 
-  tags {  
-    Name          = "${var.cluster_name}${var.count == 1 ? "" : lookup(var.server_instance_names, count.index)}"
-    Product       = "${local.product}"
-    Environment   = "${local.environment}"
+
+  tags = {
+    Name = "${var.cluster_name}${var.instance_count == 1 ? "" : var.server_instance_names[count.index]}"
+    Product = local.product
+    Environment = local.environment
     ConsulCluster = "${local.product}-${local.environment}"
-    Goss          = "true"
+    Goss = "true"
   }
 }
+
