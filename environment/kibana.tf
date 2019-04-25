@@ -1,6 +1,7 @@
-variable "healthchecks" {
-  type = map(any)
-  default = {
+module "kibana-ecs-alb" {
+  source = "../modules/ecs-alb"
+
+  healthchecks = {
     healthy_threshold   = 10
     unhealthy_threshold = 2
     timeout             = 60
@@ -10,12 +11,6 @@ variable "healthchecks" {
     interval            = 300
     matcher             = "200,401,302"
   }
-}
-
-module "kibana-ecs-alb" {
-  source = "../modules/ecs-alb"
-
-  healthchecks                    = var.healthchecks
   elb_instance_port               = "5601"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/status"
