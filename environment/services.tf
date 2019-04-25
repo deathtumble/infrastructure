@@ -4,9 +4,9 @@ module "aws-proxy" {
   docker_tag  = var.aws_proxy_docker_tag
   task_status = var.aws_proxy_task_status
 
-  context = var.context
-  vpc_id  = module.vpc.vpc_id
-  ecs_iam_role = var.ecs_iam_role
+  context                         = var.context
+  vpc_id                          = module.vpc.vpc_id
+  ecs_iam_role                    = var.ecs_iam_role
   aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
   aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
   aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
@@ -22,9 +22,9 @@ module "concourse_web" {
   concourse_password          = var.secrets.concourse_password
   concourse_postgres_password = var.secrets.concourse_postgres_password
 
-  context = var.context
-  vpc_id  = module.vpc.vpc_id
-  ecs_iam_role = var.ecs_iam_role
+  context                         = var.context
+  vpc_id                          = module.vpc.vpc_id
+  ecs_iam_role                    = var.ecs_iam_role
   aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
   aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
   aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
@@ -37,11 +37,11 @@ module "consul" {
   task_status = var.consul_task_status
 
   context = var.context
-  vpc = var.context.vpcs["primary"]
+  vpc     = var.context.vpcs["primary"]
   vpc_id  = module.vpc.vpc_id
-  
-  aws_security_group_os_id = aws_security_group.os.id
-  ecs_iam_role = var.ecs_iam_role
+
+  aws_security_group_os_id        = aws_security_group.os.id
+  ecs_iam_role                    = var.ecs_iam_role
   aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
   aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
   aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
@@ -53,9 +53,9 @@ module "dashing" {
   docker_tag  = var.dashing_docker_tag
   task_status = var.dashing_task_status
 
-  context = var.context
-  vpc_id  = module.vpc.vpc_id
-  ecs_iam_role = var.ecs_iam_role
+  context                         = var.context
+  vpc_id                          = module.vpc.vpc_id
+  ecs_iam_role                    = var.ecs_iam_role
   aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
   aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
   aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
@@ -67,9 +67,9 @@ module "grafana" {
   docker_tag  = var.grafana_docker_tag
   task_status = var.grafana_task_status
 
-  context = var.context
-  vpc_id  = module.vpc.vpc_id
-  ecs_iam_role = var.ecs_iam_role
+  context                         = var.context
+  vpc_id                          = module.vpc.vpc_id
+  ecs_iam_role                    = var.ecs_iam_role
   aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
   aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
   aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
@@ -81,9 +81,9 @@ module "nexus" {
   docker_tag  = var.nexus_docker_tag
   task_status = var.nexus_task_status
 
-  context = var.context
-  vpc_id  = module.vpc.vpc_id
-  ecs_iam_role = var.ecs_iam_role
+  context                         = var.context
+  vpc_id                          = module.vpc.vpc_id
+  ecs_iam_role                    = var.ecs_iam_role
   aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
   aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
   aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
@@ -95,9 +95,9 @@ module "prometheus" {
   docker_tag  = var.prometheus_docker_tag
   task_status = var.prometheus_task_status
 
-  context = var.context
-  vpc_id  = module.vpc.vpc_id
-  ecs_iam_role = var.ecs_iam_role
+  context                         = var.context
+  vpc_id                          = module.vpc.vpc_id
+  ecs_iam_role                    = var.ecs_iam_role
   aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
   aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
   aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name

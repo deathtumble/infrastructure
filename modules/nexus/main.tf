@@ -1,16 +1,16 @@
 module "nexus-ecs-alb" {
   source = "../ecs-alb"
 
-  healthchecks                    = {
-      healthy_threshold   = 2
-      unhealthy_threshold = 2
-      timeout             = 3
-      path                = "/service/metrics/healthcheck"
-      protocol            = "HTTP"
-      port                = "8081"
-      interval            = 300
-      matcher             = "200,401,302"
-    }
+  healthchecks = {
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 3
+    path                = "/service/metrics/healthcheck"
+    protocol            = "HTTP"
+    port                = "8081"
+    interval            = 300
+    matcher             = "200,401,302"
+  }
   elb_instance_port               = "8081"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/service/metrics/healthcheck"

@@ -1,16 +1,16 @@
 module "dashing-ecs-alb" {
   source = "../ecs-alb"
 
-  healthchecks                   = {
-      healthy_threshold   = 2
-      unhealthy_threshold = 2
-      timeout             = 3
-      path                = "/favicon.ico"
-      protocol            = "HTTP"
-      port                = "80"
-      interval            = 5
-      matcher             = "200,401,302"
-    }
+  healthchecks = {
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 3
+    path                = "/favicon.ico"
+    protocol            = "HTTP"
+    port                = "80"
+    interval            = 5
+    matcher             = "200,401,302"
+  }
   elb_instance_port               = "80"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/favicon.ico"

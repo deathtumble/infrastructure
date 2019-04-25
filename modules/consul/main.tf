@@ -2,35 +2,35 @@ module "consul-ecs-alb" {
   source = "../ecs-alb"
 
   healthchecks = {
-      healthy_threshold   = 2
-      unhealthy_threshold = 2
-      timeout             = 3
-      path                = "/v1/agent/checks"
-      protocol            = "HTTP"
-      port                = "8500"
-      interval            = 5
-      matcher             = "200,401,302"
-    }
-    
-  elb_instance_port               = "8500"
-  healthcheck_protocol            = "HTTP"
-  healthcheck_path                = "/v1/agent/checks"
-  task_definition                 = "consul-${var.context.environment.name}:${aws_ecs_task_definition.consul.revision}"
-  task_status                     = var.task_status
-  desired_task_count              = "3"
-  aws_lb_listener_rule_priority   = 94
-  
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 3
+    path                = "/v1/agent/checks"
+    protocol            = "HTTP"
+    port                = "8500"
+    interval            = 5
+    matcher             = "200,401,302"
+  }
+
+  elb_instance_port             = "8500"
+  healthcheck_protocol          = "HTTP"
+  healthcheck_path              = "/v1/agent/checks"
+  task_definition               = "consul-${var.context.environment.name}:${aws_ecs_task_definition.consul.revision}"
+  task_status                   = var.task_status
+  desired_task_count            = "3"
+  aws_lb_listener_rule_priority = 94
+
   aws_lb_listener_default_arn     = var.aws_lb_listener_default_arn
   aws_route53_environment_zone_id = var.aws_route53_environment_zone_id
   aws_alb_default_dns_name        = var.aws_alb_default_dns_name
   vpc_id                          = var.vpc_id
 
-  product                         = var.context.product.name
-  environment                     = var.context.environment.name
-  root_domain_name                = var.context.product.root_domain_name
-  ecs_iam_role                    = var.ecs_iam_role
-  role                            = "consul"
-  cluster_name                    = "consul"
+  product          = var.context.product.name
+  environment      = var.context.environment.name
+  root_domain_name = var.context.product.root_domain_name
+  ecs_iam_role     = var.ecs_iam_role
+  role             = "consul"
+  cluster_name     = "consul"
 }
 
 resource "aws_ecs_cluster" "consul" {

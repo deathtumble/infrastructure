@@ -28,8 +28,8 @@ module "default-efs-instance" {
   subnet_id         = module.vpc.az1_subnet_id
   ami_id            = var.ecs_ami_id
   efs_id            = var.context.region.efs_id
-  cluster_name      = "default-efs"	
-  context = var.context
+  cluster_name      = "default-efs"
+  context           = var.context
 
   vpc_security_group_ids = [
     module.prometheus.aws_security_group_id,

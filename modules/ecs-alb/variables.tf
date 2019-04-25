@@ -68,7 +68,7 @@ variable "elb_protocol" {
   default = "http"
 }
 
-variable "ecs_iam_role" {		
+variable "ecs_iam_role" {
   type = string
 }
 

@@ -1,7 +1,7 @@
 module "environment" {
   source = "../environment"
 
-  context = var.context	
+  context = var.context
   secrets = var.secrets
 
   concourse_task_status = var.concourse_task_status

@@ -2,16 +2,16 @@ module "concourse-ecs-alb" {
   source = "../ecs-alb"
 
   healthchecks = {
-      healthy_threshold   = 2
-      unhealthy_threshold = 2
-      timeout             = 3
-      path                = "/public/images/favicon.png"
-      protocol            = "HTTP"
-      port                = "8080"
-      interval            = 5
-      matcher             = "200,401,302"
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 3
+    path                = "/public/images/favicon.png"
+    protocol            = "HTTP"
+    port                = "8080"
+    interval            = 5
+    matcher             = "200,401,302"
   }
-    
+
   elb_instance_port               = "8080"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/public/images/favicon.png"

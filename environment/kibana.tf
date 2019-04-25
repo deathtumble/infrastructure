@@ -1,15 +1,15 @@
 variable "healthchecks" {
   type = map(any)
   default = {
-      healthy_threshold   = 10
-      unhealthy_threshold = 2
-      timeout             = 60
-      path                = "/status"
-      protocol            = "HTTP"
-      port                = "5601"
-      interval            = 300
-      matcher             = "200,401,302"
-    }
+    healthy_threshold   = 10
+    unhealthy_threshold = 2
+    timeout             = 60
+    path                = "/status"
+    protocol            = "HTTP"
+    port                = "5601"
+    interval            = 300
+    matcher             = "200,401,302"
+  }
 }
 
 module "kibana-ecs-alb" {
