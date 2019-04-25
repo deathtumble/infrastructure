@@ -1,7 +1,6 @@
 variable "healthchecks" {
-  type = list(map(string))
-  default = [
-    {
+  type = map(any)
+  default = {
       healthy_threshold   = 2
       unhealthy_threshold = 2
       timeout             = 3
@@ -10,8 +9,7 @@ variable "healthchecks" {
       port                = "8080"
       interval            = 5
       matcher             = "200,401,302"
-    },
-  ]
+    }
 }
 
 module "concourse-ecs-alb" {

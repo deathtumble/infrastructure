@@ -6,7 +6,7 @@ resource "aws_alb_target_group" "this" {
   deregistration_delay = "3"
 
   dynamic "health_check" {
-    for_each = var.healthchecks
+    for_each = list(var.healthchecks)
     content {
 
       enabled             = lookup(health_check.value, "enabled", null)

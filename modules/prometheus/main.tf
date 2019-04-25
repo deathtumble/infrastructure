@@ -1,7 +1,6 @@
 variable "healthchecks" {
-  type = list(map(string))
-  default = [
-    {
+  type = map(any)
+  default = {
       healthy_threshold   = 2
       unhealthy_threshold = 10
       timeout             = 60
@@ -10,8 +9,7 @@ variable "healthchecks" {
       port                = "9090"
       interval            = 300
       matcher             = "200,401,302"
-    },
-  ]
+    }
 }
 
 module "prometheus-ecs-alb" {
