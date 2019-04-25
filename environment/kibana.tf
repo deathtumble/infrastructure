@@ -17,9 +17,9 @@ module "kibana-ecs-alb" {
   task_definition                 = "kibana-${var.context.environment.name}:${aws_ecs_task_definition.kibana.revision}"
   task_status                     = var.kibana_task_status
   aws_lb_listener_rule_priority   = 90
-  aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
-  aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
-  aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
+  aws_lb_listener_default_arn     = module.alb.aws_lb_listener_default_arn
+  aws_route53_environment_zone_id = module.dns.aws_route53_environment_zone_id
+  aws_alb_default_dns_name        = module.alb.aws_alb_default_dns_name
   vpc_id                          = module.vpc.vpc_id
   product                         = var.context.product.name
   environment                     = var.context.environment.name
@@ -74,7 +74,7 @@ resource "aws_ecs_task_definition" "kibana" {
             "environment": [
                 {
                     "Name": "SERVER_NAME",
-                    "Value": "kibana.${module.vpc.aws_alb_default_dns_name}"
+                    "Value": "kibana.${module.alb.aws_alb_default_dns_name}"
                 },
                 {
                     "Name": "ELASTICSEARCH_URL",

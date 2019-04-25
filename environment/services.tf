@@ -7,9 +7,9 @@ module "aws-proxy" {
   context                         = var.context
   vpc_id                          = module.vpc.vpc_id
   ecs_iam_role                    = var.ecs_iam_role
-  aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
-  aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
-  aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
+  aws_route53_environment_zone_id = module.dns.aws_route53_environment_zone_id
+  aws_lb_listener_default_arn     = module.alb.aws_lb_listener_default_arn
+  aws_alb_default_dns_name        = module.alb.aws_alb_default_dns_name
 }
 
 module "concourse_web" {
@@ -25,9 +25,9 @@ module "concourse_web" {
   context                         = var.context
   vpc_id                          = module.vpc.vpc_id
   ecs_iam_role                    = var.ecs_iam_role
-  aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
-  aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
-  aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
+  aws_route53_environment_zone_id = module.dns.aws_route53_environment_zone_id
+  aws_lb_listener_default_arn     = module.alb.aws_lb_listener_default_arn
+  aws_alb_default_dns_name        = module.alb.aws_alb_default_dns_name
 }
 
 module "consul" {
@@ -42,9 +42,9 @@ module "consul" {
 
   aws_security_group_os_id        = aws_security_group.os.id
   ecs_iam_role                    = var.ecs_iam_role
-  aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
-  aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
-  aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
+  aws_route53_environment_zone_id = module.dns.aws_route53_environment_zone_id
+  aws_lb_listener_default_arn     = module.alb.aws_lb_listener_default_arn
+  aws_alb_default_dns_name        = module.alb.aws_alb_default_dns_name
 }
 
 module "dashing" {
@@ -56,9 +56,9 @@ module "dashing" {
   context                         = var.context
   vpc_id                          = module.vpc.vpc_id
   ecs_iam_role                    = var.ecs_iam_role
-  aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
-  aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
-  aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
+  aws_route53_environment_zone_id = module.dns.aws_route53_environment_zone_id
+  aws_lb_listener_default_arn     = module.alb.aws_lb_listener_default_arn
+  aws_alb_default_dns_name        = module.alb.aws_alb_default_dns_name
 }
 
 module "grafana" {
@@ -70,9 +70,9 @@ module "grafana" {
   context                         = var.context
   vpc_id                          = module.vpc.vpc_id
   ecs_iam_role                    = var.ecs_iam_role
-  aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
-  aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
-  aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
+  aws_route53_environment_zone_id = module.dns.aws_route53_environment_zone_id
+  aws_lb_listener_default_arn     = module.alb.aws_lb_listener_default_arn
+  aws_alb_default_dns_name        = module.alb.aws_alb_default_dns_name
 }
 
 module "nexus" {
@@ -84,9 +84,9 @@ module "nexus" {
   context                         = var.context
   vpc_id                          = module.vpc.vpc_id
   ecs_iam_role                    = var.ecs_iam_role
-  aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
-  aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
-  aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
+  aws_route53_environment_zone_id = module.dns.aws_route53_environment_zone_id
+  aws_lb_listener_default_arn     = module.alb.aws_lb_listener_default_arn
+  aws_alb_default_dns_name        = module.alb.aws_alb_default_dns_name
 }
 
 module "prometheus" {
@@ -98,13 +98,13 @@ module "prometheus" {
   context                         = var.context
   vpc_id                          = module.vpc.vpc_id
   ecs_iam_role                    = var.ecs_iam_role
-  aws_route53_environment_zone_id = module.vpc.aws_route53_environment_zone_id
-  aws_lb_listener_default_arn     = module.vpc.aws_lb_listener_default_arn
-  aws_alb_default_dns_name        = module.vpc.aws_alb_default_dns_name
+  aws_route53_environment_zone_id = module.dns.aws_route53_environment_zone_id
+  aws_lb_listener_default_arn     = module.alb.aws_lb_listener_default_arn
+  aws_alb_default_dns_name        = module.alb.aws_alb_default_dns_name
 }
 
 resource "aws_route53_record" "ssh" {
-  zone_id = module.vpc.aws_route53_environment_zone_id
+  zone_id = module.dns.aws_route53_environment_zone_id
   name    = "ssh.${var.context.environment.name}.${var.context.product.root_domain_name}"
   type    = "A"
   ttl     = 60
