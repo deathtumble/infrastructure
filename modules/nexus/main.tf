@@ -1,6 +1,7 @@
-variable "healthchecks" {
-  type = map(any)
-  default = {
+module "nexus-ecs-alb" {
+  source = "../ecs-alb"
+
+  healthchecks                    = {
       healthy_threshold   = 2
       unhealthy_threshold = 2
       timeout             = 3
@@ -10,12 +11,6 @@ variable "healthchecks" {
       interval            = 300
       matcher             = "200,401,302"
     }
-}
-
-module "nexus-ecs-alb" {
-  source = "../ecs-alb"
-
-  healthchecks                    = var.healthchecks
   elb_instance_port               = "8081"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/service/metrics/healthcheck"

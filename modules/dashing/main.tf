@@ -1,6 +1,7 @@
-variable "healthchecks" {
-  type = map(any)
-  default = {
+module "dashing-ecs-alb" {
+  source = "../ecs-alb"
+
+  healthchecks                   = {
       healthy_threshold   = 2
       unhealthy_threshold = 2
       timeout             = 3
@@ -10,12 +11,6 @@ variable "healthchecks" {
       interval            = 5
       matcher             = "200,401,302"
     }
-}
-
-module "dashing-ecs-alb" {
-  source = "../ecs-alb"
-
-  healthchecks                    = var.healthchecks
   elb_instance_port               = "80"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/favicon.ico"

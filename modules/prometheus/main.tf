@@ -1,6 +1,7 @@
-variable "healthchecks" {
-  type = map(any)
-  default = {
+module "prometheus-ecs-alb" {
+  source = "../ecs-alb"
+
+  healthchecks                    = {
       healthy_threshold   = 2
       unhealthy_threshold = 10
       timeout             = 60
@@ -10,12 +11,6 @@ variable "healthchecks" {
       interval            = 300
       matcher             = "200,401,302"
     }
-}
-
-module "prometheus-ecs-alb" {
-  source = "../ecs-alb"
-
-  healthchecks                    = var.healthchecks
   elb_instance_port               = "9090"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/graph"

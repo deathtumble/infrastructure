@@ -1,6 +1,7 @@
-variable "healthchecks" {
-  type = map(any)
-  default = {
+module "consul-ecs-alb" {
+  source = "../ecs-alb"
+
+  healthchecks = {
       healthy_threshold   = 2
       unhealthy_threshold = 2
       timeout             = 3
@@ -10,12 +11,7 @@ variable "healthchecks" {
       interval            = 5
       matcher             = "200,401,302"
     }
-}
-
-module "consul-ecs-alb" {
-  source = "../ecs-alb"
-
-  healthchecks                    = var.healthchecks
+    
   elb_instance_port               = "8500"
   healthcheck_protocol            = "HTTP"
   healthcheck_path                = "/v1/agent/checks"
@@ -23,10 +19,12 @@ module "consul-ecs-alb" {
   task_status                     = var.task_status
   desired_task_count              = "3"
   aws_lb_listener_rule_priority   = 94
+  
   aws_lb_listener_default_arn     = var.aws_lb_listener_default_arn
   aws_route53_environment_zone_id = var.aws_route53_environment_zone_id
   aws_alb_default_dns_name        = var.aws_alb_default_dns_name
   vpc_id                          = var.vpc_id
+
   product                         = var.context.product.name
   environment                     = var.context.environment.name
   root_domain_name                = var.context.product.root_domain_name
